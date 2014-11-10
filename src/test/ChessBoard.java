@@ -26,7 +26,6 @@ public class ChessBoard {
 
 	public ChessBoard() {
 		initialiseBoard();
-		System.out.println(Long.toBinaryString(blackRooks).length());
 	}
 
 	private void initialiseBoard() {
@@ -123,5 +122,28 @@ public class ChessBoard {
 
 	private long returnAllPieces() {
 		return (returnWhitePieces() | returnBlackPieces());
+	}
+
+	private long clearRank(int rankToClear) {
+		return ~maskRank(rankToClear);
+	}
+
+	private long clearFile(int fileToClear) {
+		return ~maskFile(fileToClear);
+	}
+
+	private long maskRank(int rankToMask) {
+		String temp = "0000000000000000000000000000000000000000000000000000000011111111";
+		long maskedRank = Long.parseLong(temp, 2);
+		maskedRank = maskedRank << (8 * (rankToMask - 1));
+		return maskedRank;
+	}
+
+	private long maskFile(int fileToMask) {
+
+		String temp = "0000000100000001000000010000000100000001000000010000000100000001";
+		long maskedFile = Long.parseLong(temp, 2);
+		maskedFile = maskedFile << (fileToMask - 1);
+		return maskedFile;
 	}
 }

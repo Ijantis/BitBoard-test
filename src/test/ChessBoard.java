@@ -22,10 +22,11 @@ public class ChessBoard {
 			{ "K", "P", " ", " ", " ", " ", "p", "k" },
 			{ "B", "P", " ", " ", " ", " ", "p", "b" },
 			{ "N", "P", " ", " ", " ", " ", "p", "n" },
-			{ "R", "P", " ", " ", " ", " ", "p", "r" } };;
+			{ "R", " ", "P", " ", " ", " ", "p", "r" } };;
 
 	public ChessBoard() {
 		initialiseBoard();
+		printBitBoard(whitePawns);
 	}
 
 	private void initialiseBoard() {
@@ -145,5 +146,25 @@ public class ChessBoard {
 		long maskedFile = Long.parseLong(temp, 2);
 		maskedFile = maskedFile << (fileToMask - 1);
 		return maskedFile;
+	}
+
+	private void printBitBoard(long bitBoard) {
+		String stringBitBoard = Long.toBinaryString(bitBoard);
+
+		while (stringBitBoard.length() != 64) {
+			stringBitBoard = "0" + stringBitBoard;
+		}
+		
+		StringBuilder stringReverser = new StringBuilder(stringBitBoard);
+		stringReverser.reverse();
+		stringBitBoard = stringReverser.toString();
+		
+		System.out.println(stringBitBoard);
+		for (int i = 63; i >= 0; i--) {
+			if (((i + 1) % 8) == 0) {
+				System.out.println();
+			}
+			System.out.print(stringBitBoard.charAt(i));
+		}
 	}
 }

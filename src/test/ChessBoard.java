@@ -7,10 +7,10 @@ public class ChessBoard {
 		new ChessBoard();
 	}
 
-	private long whitePawns = 0L, whiteRooks = 0L, whiteKnights = 0L,
-			whiteBishops = 0L, whiteQueens = 0L, whiteKing = 0L;
-	private long blackPawns = 0L, blackRooks = 0L, blackKnights = 0L,
-			blackBishops = 0L, blackQueens = 0L, blackKing = 0L;
+	private long whitePawns, whiteRooks, whiteKnights, whiteBishops,
+			whiteQueens, whiteKing;
+	private long blackPawns, blackRooks, blackKnights, blackBishops,
+			blackQueens, blackKing;
 	// Upper case for WHITE
 	// Lower case for BLACK
 	// 0,0 is top left 0,7 is top right 7,7 bottom right
@@ -25,11 +25,58 @@ public class ChessBoard {
 			{ "R", " ", "P", " ", " ", " ", "p", "r" } };;
 
 	public ChessBoard() {
-		initialiseBoard();
-		printBitBoard(whitePawns);
+		for (int y = 0; y < 8; y++) {
+			for (int x = 0; x < 8; x++) {
+				currentBoard[x][y] = " ";
+			}
+		}
+		for (int i = 0; i < 64; i++) {
+			clearBoard();
+			System.out.println(i / 8 + "," + i % 8);
+			currentBoard[i / 8][i % 8] = "K";
+			initialiseBoard();
+			printBitBoard(getKingMoves());
+			printBoard();
+		}
+
+	}
+
+	private void clearBoard() {
+		for (int y = 0; y < 8; y++) {
+			for (int x = 0; x < 8; x++) {
+				currentBoard[x][y] = " ";
+			}
+		}
+	}
+
+	private long getKingMoves() {
+
+		// vertical movement 8 bit shift
+		long up = whiteKing << 8;
+		long down = whiteKing >>> 8;
+
+		long left = ((whiteKing & clearFile(1)) >>> 1);
+		long upLeft = ((whiteKing & clearFile(1)) & clearRank(8)) << 7;
+		long downLeft = ((whiteKing & clearFile(1)) & clearRank(1)) >>> 9;
+		long right = ((whiteKing & clearFile(8)) << 1);
+		long upRight = (((whiteKing & clearFile(8)) & clearRank(8)) << 9);
+		long downRight = (((whiteKing & clearFile(8)) & clearRank(1)) >>> 7);
+		return (up | down | left | right | upRight | downRight | upLeft | downLeft);
 	}
 
 	private void initialiseBoard() {
+		whitePawns = 0L;
+		whiteRooks = 0L;
+		whiteKnights = 0L;
+		whiteBishops = 0L;
+		whiteQueens = 0L;
+		whiteKing = 0L;
+		blackPawns = 0L;
+		blackRooks = 0L;
+		blackKnights = 0L;
+		blackBishops = 0L;
+		blackQueens = 0L;
+		blackKing = 0L;
 		String binaryLong;
 		int currentIndex;
 		for (int y = 7; y >= 0; y--) {
@@ -111,18 +158,18 @@ public class ChessBoard {
 		}
 	}
 
-	private long returnWhitePieces() {
+	private long getWhiteSquares() {
 		return (whiteBishops | whiteKing | whiteKnights | whitePawns
 				| whiteQueens | whiteRooks);
 	}
 
-	private long returnBlackPieces() {
+	private long getBlackSquares() {
 		return (blackBishops | blackKing | blackKnights | blackPawns
 				| blackQueens | blackRooks);
 	}
 
-	private long returnAllPieces() {
-		return (returnWhitePieces() | returnBlackPieces());
+	private long getOccupiedSquares() {
+		return (getWhiteSquares() | getBlackSquares());
 	}
 
 	private long clearRank(int rankToClear) {
@@ -150,21 +197,17 @@ public class ChessBoard {
 
 	private void printBitBoard(long bitBoard) {
 		String stringBitBoard = Long.toBinaryString(bitBoard);
-
+		System.out.println(stringBitBoard);
 		while (stringBitBoard.length() != 64) {
 			stringBitBoard = "0" + stringBitBoard;
 		}
-		
-		StringBuilder stringReverser = new StringBuilder(stringBitBoard);
-		stringReverser.reverse();
-		stringBitBoard = stringReverser.toString();
-		
-		System.out.println(stringBitBoard);
-		for (int i = 63; i >= 0; i--) {
-			if (((i + 1) % 8) == 0) {
-				System.out.println();
-			}
-			System.out.print(stringBitBoard.charAt(i));
+
+		for (int i = 0; i < 8; i++) {
+			StringBuilder stringReverser = new StringBuilder(
+					stringBitBoard.substring(i * 8, ((i + 1) * 8)));
+			stringReverser.reverse();
+			System.out.println(stringReverser.toString());
 		}
+
 	}
 }

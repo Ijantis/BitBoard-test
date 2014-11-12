@@ -22,22 +22,12 @@ public class ChessBoard {
 			{ "K", "P", " ", " ", " ", " ", "p", "k" },
 			{ "B", "P", " ", " ", " ", " ", "p", "b" },
 			{ "N", "P", " ", " ", " ", " ", "p", "n" },
-			{ "R", " ", "P", " ", " ", " ", "p", "r" } };;
+			{ "R", "P", " ", " ", " ", " ", "p", "r" } };;
 
 	public ChessBoard() {
-		for (int y = 0; y < 8; y++) {
-			for (int x = 0; x < 8; x++) {
-				currentBoard[x][y] = " ";
-			}
-		}
-		for (int i = 0; i < 64; i++) {
-			clearBoard();
-			System.out.println(i / 8 + "," + i % 8);
-			currentBoard[i / 8][i % 8] = "K";
-			initialiseBoard();
-			printBitBoard(getKingMoves());
-			printBoard();
-		}
+
+		initialiseBoard();
+		printBitBoard(getBlackPawnMovesVertical());
 
 	}
 
@@ -49,21 +39,84 @@ public class ChessBoard {
 		}
 	}
 
-	private long getKingMoves() {
+	/*
+	 * Generate white king moves.
+	 */
+	private long getWhiteKingMoves() {
 
 		// vertical movement 8 bit shift
 		long up = whiteKing << 8;
 		long down = whiteKing >>> 8;
 
+		// clear file stops move generation to the left if on the 1st file
 		long left = ((whiteKing & clearFile(1)) >>> 1);
 		long upLeft = (whiteKing & clearFile(1)) << 7;
 		long downLeft = (whiteKing & clearFile(1)) >>> 9;
-		
+
+		// clear file stops move generation to the right if on the 8th file
 		long right = ((whiteKing & clearFile(8)) << 1);
 		long upRight = ((whiteKing & clearFile(8)) << 9);
 		long downRight = ((whiteKing & clearFile(8)) >>> 7);
-		
-		return (up | down | left | right | upRight | downRight | upLeft | downLeft);
+
+		long possibleMoves = (up | down | left | right | upRight | downRight
+				| upLeft | downLeft);
+
+		// TODO: Add another check to not let the king move onto a square under
+		// attack by the opposite colour.
+		return possibleMoves & ~getWhitePieces();
+	}
+
+	/*
+	 * Generate black king moves.
+	 */
+	private long getBlackKingMoves() {
+
+		// vertical movement 8 bit shift
+		long up = blackKing << 8;
+		long down = blackKing >>> 8;
+
+		// clear file stops move generation to the left if on the 1st file
+		long left = ((blackKing & clearFile(1)) >>> 1);
+		long upLeft = (blackKing & clearFile(1)) << 7;
+		long downLeft = (blackKing & clearFile(1)) >>> 9;
+
+		// clear file stops move generation to the right if on the 8th file
+		long right = ((blackKing & clearFile(8)) << 1);
+		long upRight = ((blackKing & clearFile(8)) << 9);
+		long downRight = ((blackKing & clearFile(8)) >>> 7);
+
+		long possibleMoves = (up | down | left | right | upRight | downRight
+				| upLeft | downLeft);
+
+		// TODO: Add another check to not let the king move onto a square under
+		// attack by the opposite colour.
+		return possibleMoves & ~getBlackPieces();
+	}
+
+	private long getWhitePawnMovesVertical() {
+
+		// Vertical single rank
+		long upOne = (whitePawns << 8) & ~getOccupiedSquares();
+
+		// Moving up 2 spaces from 2nd rank
+		long secondRankPawns = whitePawns & maskRank(2);
+		long pawnsNotBlocked = (((secondRankPawns << 8) & ~getOccupiedSquares()) >>> 8);
+		long upTwo = pawnsNotBlocked << 16 & ~getOccupiedSquares();
+
+		return upOne | upTwo;
+	}
+
+	private long getBlackPawnMovesVertical() {
+
+		// Vertical single rank
+		long downOne = (blackPawns >>> 8) & ~getOccupiedSquares();
+
+		// Moving down 2 ranks from 7th rank
+		long seventhRankPawns = blackPawns & maskRank(7);
+		long pawnsNotBlocked = (((seventhRankPawns >>> 8) & ~getOccupiedSquares()) << 8);
+		long downTwo = pawnsNotBlocked >>> 16 & ~getOccupiedSquares();
+
+		return downOne | downTwo;
 	}
 
 	private void initialiseBoard() {
@@ -146,7 +199,6 @@ public class ChessBoard {
 	 * relying on a gui.
 	 */
 	public void printBoard() {
-		System.out.println();
 		for (int y = 7; y >= 0; y--) {
 			for (int x = 0; x < currentBoard.length; x++) {
 				String temp = currentBoard[x][y];
@@ -158,20 +210,21 @@ public class ChessBoard {
 			}
 			System.out.println();
 		}
+		System.out.println();
 	}
 
-	private long getWhiteSquares() {
+	private long getWhitePieces() {
 		return (whiteBishops | whiteKing | whiteKnights | whitePawns
 				| whiteQueens | whiteRooks);
 	}
 
-	private long getBlackSquares() {
+	private long getBlackPieces() {
 		return (blackBishops | blackKing | blackKnights | blackPawns
 				| blackQueens | blackRooks);
 	}
 
 	private long getOccupiedSquares() {
-		return (getWhiteSquares() | getBlackSquares());
+		return (getWhitePieces() | getBlackPieces());
 	}
 
 	private long clearRank(int rankToClear) {
@@ -199,7 +252,7 @@ public class ChessBoard {
 
 	private void printBitBoard(long bitBoard) {
 		String stringBitBoard = Long.toBinaryString(bitBoard);
-		System.out.println(stringBitBoard);
+		System.out.println("Value : " + stringBitBoard);
 		while (stringBitBoard.length() != 64) {
 			stringBitBoard = "0" + stringBitBoard;
 		}
@@ -210,6 +263,6 @@ public class ChessBoard {
 			stringReverser.reverse();
 			System.out.println(stringReverser.toString());
 		}
-
+		System.out.println();
 	}
 }

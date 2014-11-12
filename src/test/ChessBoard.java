@@ -56,11 +56,13 @@ public class ChessBoard {
 		long down = whiteKing >>> 8;
 
 		long left = ((whiteKing & clearFile(1)) >>> 1);
-		long upLeft = ((whiteKing & clearFile(1)) & clearRank(8)) << 7;
-		long downLeft = ((whiteKing & clearFile(1)) & clearRank(1)) >>> 9;
+		long upLeft = (whiteKing & clearFile(1)) << 7;
+		long downLeft = (whiteKing & clearFile(1)) >>> 9;
+		
 		long right = ((whiteKing & clearFile(8)) << 1);
-		long upRight = (((whiteKing & clearFile(8)) & clearRank(8)) << 9);
-		long downRight = (((whiteKing & clearFile(8)) & clearRank(1)) >>> 7);
+		long upRight = ((whiteKing & clearFile(8)) << 9);
+		long downRight = ((whiteKing & clearFile(8)) >>> 7);
+		
 		return (up | down | left | right | upRight | downRight | upLeft | downLeft);
 	}
 

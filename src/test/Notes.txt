@@ -1,9 +1,11 @@
 Next thing to do
 
-Ignore these
+Need to check if Kings move into attacked squares.
+Also to be added is if piece is moved and same king in check then move not allowed.
 
 Generate Black king possible moves
 Generate Knight possible moves
 Generate Pawn possible moves
 
+-Added black king moves
 -Added vertical pawn moves single and double rank

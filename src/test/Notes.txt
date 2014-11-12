@@ -1,0 +1,9 @@
+Next thing to do
+
+Ignore these
+
+Generate Black king possible moves
+Generate Knight possible moves
+Generate Pawn possible moves
+
+-Added vertical pawn moves single and double rank

@@ -9,6 +9,7 @@ Generate Pawn possible moves
 
 -Added black king moves
 -Added vertical pawn moves single and double rank
+-Added diagonal pawn moves
 
 
 To check if a king is in check : if ((KingOccupiedSquare & squaresUnderAttack) != 0) if it doesnt equal zero then king is in check. 

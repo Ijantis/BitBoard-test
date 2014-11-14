@@ -27,16 +27,43 @@ public class ChessBoard {
 	public ChessBoard() {
 
 		initialiseBoard();
-		printBitBoard(getBlackPawnMovesVertical());
 
 	}
 
-	private void clearBoard() {
+	private void clearChessBoard() {
 		for (int y = 0; y < 8; y++) {
 			for (int x = 0; x < 8; x++) {
 				currentBoard[x][y] = " ";
 			}
 		}
+	}
+
+	/*
+	 * Generate white pawn moves for attacking a piece
+	 */
+	private long getWhitePawnMovesDiagonal() {
+
+		long upLeft = ((whitePawns & clearFile(1)) << 7);
+		long upRight = ((whitePawns & clearFile(8)) << 9);
+		long attackingAPiece = (upLeft | upRight) & getBlackPieces();
+
+		printBitBoard(upLeft);
+
+		return attackingAPiece;
+	}
+
+	/*
+	 * Generate black pawn moves when attacking a piece
+	 */
+	private long getBlackPawnMovesDiagonal() {
+
+		long downRight = ((blackPawns & clearFile(8)) >>> 7);
+		long downLeft = ((blackPawns & clearFile(1)) >>> 9);
+		long attackingAPiece = (downRight | downLeft) & getWhitePieces();
+
+		printBitBoard(attackingAPiece);
+
+		return 0;
 	}
 
 	/*

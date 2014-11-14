@@ -27,6 +27,7 @@ public class ChessBoard {
 	public ChessBoard() {
 
 		initialiseBoard();
+		printBitBoard(getBlackKnightMoves());
 
 	}
 
@@ -36,6 +37,50 @@ public class ChessBoard {
 				currentBoard[x][y] = " ";
 			}
 		}
+	}
+
+	private long getWhiteKnightMoves() {
+
+		// variable names are first direction then second direction
+
+		long upRight = (whiteKnights & clearFile(8)) << 17;
+		long upLeft = (whiteKnights & clearFile(1)) << 15;
+
+		long rightUp = (clearFile(8) & clearFile(7) & whiteKnights) << 10;
+		long rightDown = (clearFile(8) & clearFile(7) & whiteKnights) >>> 6;
+
+		long downRight = (whiteKnights & clearFile(8)) >>> 15;
+		long downLeft = (whiteKnights & clearFile(1)) >>> 17;
+
+		long leftUp = (clearFile(1) & clearFile(2) & whiteKnights) << 6;
+		long leftDown = (clearFile(1) & clearFile(2) & whiteKnights) >>> 10;
+
+		long possibleMoves = upRight | upLeft | rightUp | rightDown | downRight
+				| downLeft | leftUp | leftDown;
+
+		return possibleMoves & ~getWhitePieces();// & ~getWhitePieces();
+	}
+
+	private long getBlackKnightMoves() {
+
+		// variable names are first direction then second direction
+
+		long upRight = (blackKnights & clearFile(8)) << 17;
+		long upLeft = (blackKnights & clearFile(1)) << 15;
+
+		long rightUp = (clearFile(8) & clearFile(7) & blackKnights) << 10;
+		long rightDown = (clearFile(8) & clearFile(7) & blackKnights) >>> 6;
+
+		long downRight = (blackKnights & clearFile(8)) >>> 15;
+		long downLeft = (blackKnights & clearFile(1)) >>> 17;
+
+		long leftUp = (clearFile(1) & clearFile(2) & blackKnights) << 6;
+		long leftDown = (clearFile(1) & clearFile(2) & blackKnights) >>> 10;
+
+		long possibleMoves = upRight | upLeft | rightUp | rightDown | downRight
+				| downLeft | leftUp | leftDown;
+
+		return possibleMoves & ~getBlackPieces();// & ~getWhitePieces();
 	}
 
 	/*
@@ -147,18 +192,7 @@ public class ChessBoard {
 	}
 
 	private void initialiseBoard() {
-		whitePawns = 0L;
-		whiteRooks = 0L;
-		whiteKnights = 0L;
-		whiteBishops = 0L;
-		whiteQueens = 0L;
-		whiteKing = 0L;
-		blackPawns = 0L;
-		blackRooks = 0L;
-		blackKnights = 0L;
-		blackBishops = 0L;
-		blackQueens = 0L;
-		blackKing = 0L;
+		initialiseBitBoards();
 		String binaryLong;
 		int currentIndex;
 		for (int y = 7; y >= 0; y--) {
@@ -211,6 +245,21 @@ public class ChessBoard {
 				}
 			}
 		}
+	}
+
+	private void initialiseBitBoards() {
+		whitePawns = 0L;
+		whiteRooks = 0L;
+		whiteKnights = 0L;
+		whiteBishops = 0L;
+		whiteQueens = 0L;
+		whiteKing = 0L;
+		blackPawns = 0L;
+		blackRooks = 0L;
+		blackKnights = 0L;
+		blackBishops = 0L;
+		blackQueens = 0L;
+		blackKing = 0L;
 	}
 
 	private long convertStringToBinary(String binaryLong) {

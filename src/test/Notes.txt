@@ -4,13 +4,18 @@ Need to check if Kings move into attacked squares.
 Also to be added is if piece is moved and same king in check then move not allowed.
 
 Generate Black king possible moves
-Generate Knight possible moves
 Generate Pawn possible moves
+Generate Knight possible moves
 
 -Added black king moves
 -Added vertical pawn moves single and double rank
 -Added diagonal pawn moves
+-Added white knight moves
 
 
 To check if a king is in check : if ((KingOccupiedSquare & squaresUnderAttack) != 0) if it doesnt equal zero then king is in check. 
 If it equals 0 then king is not in check
+
+For en passant when a pawn moves two squares set a variable for each square. Bitboard of en passant squares?
+
+For castling if its possible getKingMoves() | getCastleSquares()

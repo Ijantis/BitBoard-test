@@ -29,12 +29,11 @@ public class ChessBoard {
 		initialiseBoard();
 
 		clearChessBoard();
-		currentBoard[2][0] = "p";
-		currentBoard[3][0] = "R";
-		currentBoard[6][0] = "p";
+		currentBoard[3][0] = "r";
+		currentBoard[5][0] = "p";
 		initialiseBoard();
 		printBoard();
-		getWhiteRookMoves(whiteRooks);
+		printBitBoard(getBlackRookMoves(blackRooks));
 	}
 
 	private void clearChessBoard() {
@@ -45,6 +44,17 @@ public class ChessBoard {
 		}
 	}
 
+	/*
+	 * Returns the bitboard of possible moves for a single rook.
+	 */
+	/**
+	 * Takes in a bitboard with a single piece on it and outputs the moves
+	 * associated with that rook.
+	 * 
+	 * @param rookToMove
+	 *            - The bitboard of a rook to compute the moves for.
+	 * @return - The bitboard of possible moves for the inputed rook.
+	 */
 	private long getWhiteRookMoves(long rookToMove) {
 
 		long right_moves = getRightSquares(rookToMove) & getOccupiedSquares();
@@ -62,6 +72,38 @@ public class ChessBoard {
 		left_moves = left_moves & getLeftSquares(rookToMove);
 		left_moves = left_moves ^ getLeftSquares(rookToMove);
 		left_moves = left_moves & ~getWhitePieces();
+
+		return left_moves | right_moves;
+	}
+
+	/*
+	 * Returns the bitboard of possible moves for a single rook.
+	 */
+	/**
+	 * Takes in a bitboard with a single piece on it and outputs the moves
+	 * associated with that rook.
+	 * 
+	 * @param rookToMove
+	 *            - The bitboard of a rook to compute the moves for.
+	 * @return - The bitboard of possible moves for the inputed rook.
+	 */
+	private long getBlackRookMoves(long rookToMove) {
+
+		long right_moves = getRightSquares(rookToMove) & getOccupiedSquares();
+		right_moves = (right_moves << 1) | (right_moves << 2)
+				| (right_moves << 3) | (right_moves << 4) | (right_moves << 5)
+				| (right_moves << 6);
+		right_moves = right_moves & getRightSquares(rookToMove);
+		right_moves = right_moves ^ getRightSquares(rookToMove);
+		right_moves = right_moves & ~getBlackPieces();
+
+		long left_moves = getLeftSquares(rookToMove) & getOccupiedSquares();
+		left_moves = (left_moves >>> 1) | (left_moves >>> 2)
+				| (left_moves >>> 3) | (left_moves >>> 4) | (left_moves >>> 5)
+				| (left_moves >>> 6);
+		left_moves = left_moves & getLeftSquares(rookToMove);
+		left_moves = left_moves ^ getLeftSquares(rookToMove);
+		left_moves = left_moves & ~getBlackPieces();
 
 		return left_moves | right_moves;
 	}

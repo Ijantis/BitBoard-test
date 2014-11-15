@@ -27,8 +27,14 @@ public class ChessBoard {
 	public ChessBoard() {
 
 		initialiseBoard();
-		printBitBoard(getBlackKnightMoves());
 
+		clearChessBoard();
+		currentBoard[2][0] = "p";
+		currentBoard[3][0] = "R";
+		currentBoard[6][0] = "p";
+		initialiseBoard();
+		printBoard();
+		getWhiteRookMoves(whiteRooks);
 	}
 
 	private void clearChessBoard() {
@@ -37,6 +43,70 @@ public class ChessBoard {
 				currentBoard[x][y] = " ";
 			}
 		}
+	}
+
+	private long getWhiteRookMoves(long rookToMove) {
+
+		long right_moves = getRightSquares(rookToMove) & getOccupiedSquares();
+		right_moves = (right_moves << 1) | (right_moves << 2)
+				| (right_moves << 3) | (right_moves << 4) | (right_moves << 5)
+				| (right_moves << 6);
+		right_moves = right_moves & getRightSquares(rookToMove);
+		right_moves = right_moves ^ getRightSquares(rookToMove);
+		right_moves = right_moves & ~getWhitePieces();
+
+		long left_moves = getLeftSquares(rookToMove) & getOccupiedSquares();
+		left_moves = (left_moves >>> 1) | (left_moves >>> 2)
+				| (left_moves >>> 3) | (left_moves >>> 4) | (left_moves >>> 5)
+				| (left_moves >>> 6);
+		left_moves = left_moves & getLeftSquares(rookToMove);
+		left_moves = left_moves ^ getLeftSquares(rookToMove);
+		left_moves = left_moves & ~getWhitePieces();
+
+		return left_moves | right_moves;
+	}
+
+	/*
+	 * Returns all squares to the right of a possible bitboard.
+	 */
+	private long getRightSquares(long bitboard) {
+
+		long rightSquares = 0L;
+		long currentRank = 0L;
+		long temp = 0L;
+
+		for (int i = 1; i < 9; i++) {
+			currentRank = bitboard & maskRank(i);
+			for (int j = 1; j < 8; j++) {
+				temp = temp | currentRank << j;
+			}
+			temp = temp & maskRank(i);
+			rightSquares = rightSquares | temp;
+			temp = 0L;
+		}
+
+		return rightSquares;
+	}
+
+	/*
+	 * Returns all squares to the left of a possible bitboard
+	 */
+	private long getLeftSquares(long bitboard) {
+
+		long leftSquares = 0L;
+		long currentRank = 0L;
+		long temp = 0L;
+
+		for (int i = 1; i < 9; i++) {
+			currentRank = bitboard & maskRank(i);
+			for (int j = 1; j < 8; j++) {
+				temp = temp | currentRank >>> j;
+			}
+			temp = temp & maskRank(i);
+			leftSquares = leftSquares | temp;
+			temp = 0L;
+		}
+		return leftSquares;
 	}
 
 	private long getWhiteKnightMoves() {

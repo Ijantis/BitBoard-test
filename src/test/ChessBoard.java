@@ -30,10 +30,12 @@ public class ChessBoard {
 
 		clearChessBoard();
 		currentBoard[3][0] = "r";
-		currentBoard[5][0] = "p";
+		currentBoard[7][0] = "p";
+		currentBoard[5][4] = "p";
+		currentBoard[1][6] = "R";
+		currentBoard[0][7] = "R";
 		initialiseBoard();
 		printBoard();
-		printBitBoard(getBlackRookMoves(blackRooks));
 	}
 
 	private void clearChessBoard() {
@@ -149,6 +151,43 @@ public class ChessBoard {
 			temp = 0L;
 		}
 		return leftSquares;
+	}
+
+	/*
+	 * Returns all squares above the possible bitboard
+	 */
+	private long getUpSquares(long bitboard) {
+		long upSquares = 0L;
+		long currentFile = 0L;
+		long temp = 0L;
+
+		for (int i = 1; i < 9; i++) {
+			currentFile = bitboard & maskFile(i);
+			printBitBoard(currentFile);
+			for (int j = 8; j < 57; j += 8) {
+				temp = temp | currentFile << j;
+			}
+			upSquares = upSquares | temp;
+		}
+		return upSquares;
+	}
+
+	/*
+	 * Returns all squares below the possible bitboard
+	 */
+	private long getDownSquares(long bitboard) {
+		long downSquares = 0L;
+		long currentFile = 0L;
+		long temp = 0L;
+
+		for (int i = 1; i < 2; i++) {
+			currentFile = bitboard & maskFile(i);
+			for (int j = 8; j < 57; j += 8) {
+				temp = temp | currentFile >>> j;
+			}
+			downSquares = downSquares | temp;
+		}
+		return downSquares;
 	}
 
 	private long getWhiteKnightMoves() {

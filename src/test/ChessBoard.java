@@ -29,13 +29,8 @@ public class ChessBoard {
 		initialiseBoard();
 
 		clearChessBoard();
-		currentBoard[3][0] = "r";
-		currentBoard[7][0] = "p";
-		currentBoard[5][4] = "p";
-		currentBoard[1][6] = "R";
-		currentBoard[0][7] = "R";
 		initialiseBoard();
-		printBoard();
+		printBitBoard(getWhiteRookMoves(whiteRooks));
 	}
 
 	private void clearChessBoard() {
@@ -75,7 +70,22 @@ public class ChessBoard {
 		left_moves = left_moves ^ getLeftSquares(rookToMove);
 		left_moves = left_moves & ~getWhitePieces();
 
-		return left_moves | right_moves;
+		long up_moves = getUpSquares(rookToMove) & getOccupiedSquares();
+		up_moves = (up_moves << 8) | (up_moves << 16) | (up_moves << 24)
+				| (up_moves << 32) | (up_moves << 40) | (up_moves << 48);
+		up_moves = up_moves & getUpSquares(rookToMove);
+		up_moves = up_moves ^ getUpSquares(rookToMove);
+		up_moves = up_moves & ~getWhitePieces();
+
+		long down_moves = getDownSquares(rookToMove) & getOccupiedSquares();
+		down_moves = (down_moves >>> 8) | (down_moves >>> 16)
+				| (down_moves >>> 24) | (down_moves >>> 32)
+				| (down_moves >>> 40) | (down_moves >>> 48);
+		down_moves = down_moves & getDownSquares(rookToMove);
+		down_moves = down_moves ^ getDownSquares(rookToMove);
+		down_moves = down_moves & ~getWhitePieces();
+
+		return left_moves | right_moves | up_moves | down_moves;
 	}
 
 	/*
@@ -107,7 +117,22 @@ public class ChessBoard {
 		left_moves = left_moves ^ getLeftSquares(rookToMove);
 		left_moves = left_moves & ~getBlackPieces();
 
-		return left_moves | right_moves;
+		long up_moves = getUpSquares(rookToMove) & getOccupiedSquares();
+		up_moves = (up_moves << 8) | (up_moves << 16) | (up_moves << 24)
+				| (up_moves << 32) | (up_moves << 40) | (up_moves << 48);
+		up_moves = up_moves & getUpSquares(rookToMove);
+		up_moves = up_moves ^ getUpSquares(rookToMove);
+		up_moves = up_moves & ~getBlackPieces();
+
+		long down_moves = getDownSquares(rookToMove) & getOccupiedSquares();
+		down_moves = (down_moves >>> 8) | (down_moves >>> 16)
+				| (down_moves >>> 24) | (down_moves >>> 32)
+				| (down_moves >>> 40) | (down_moves >>> 48);
+		down_moves = down_moves & getDownSquares(rookToMove);
+		down_moves = down_moves ^ getDownSquares(rookToMove);
+		down_moves = down_moves & ~getBlackPieces();
+
+		return left_moves | right_moves | up_moves | down_moves;
 	}
 
 	/*
@@ -163,7 +188,6 @@ public class ChessBoard {
 
 		for (int i = 1; i < 9; i++) {
 			currentFile = bitboard & maskFile(i);
-			printBitBoard(currentFile);
 			for (int j = 8; j < 57; j += 8) {
 				temp = temp | currentFile << j;
 			}
@@ -180,7 +204,7 @@ public class ChessBoard {
 		long currentFile = 0L;
 		long temp = 0L;
 
-		for (int i = 1; i < 2; i++) {
+		for (int i = 1; i < 9; i++) {
 			currentFile = bitboard & maskFile(i);
 			for (int j = 8; j < 57; j += 8) {
 				temp = temp | currentFile >>> j;

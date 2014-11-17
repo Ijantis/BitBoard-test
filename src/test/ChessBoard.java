@@ -26,11 +26,25 @@ public class ChessBoard {
 
 	public ChessBoard() {
 
+		long time = System.currentTimeMillis();
+		long timeNano = System.nanoTime();
+
 		initialiseBoard();
 
 		clearChessBoard();
+		currentBoard[0][0] = "B";
+		currentBoard[0][7] = "P";
 		initialiseBoard();
-		printBitBoard(getWhiteRookMoves(whiteRooks));
+		printBoard();
+
+		// getWhiteBishopMoves(getOccupiedSquares());
+
+		getWhiteBishopMoves(getOccupiedSquares());
+
+		System.out.println("That took :" + (System.currentTimeMillis() - time)
+				+ "ms");
+		System.out.println("That took :"
+				+ ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
 	}
 
 	private void clearChessBoard() {
@@ -39,6 +53,107 @@ public class ChessBoard {
 				currentBoard[x][y] = " ";
 			}
 		}
+	}
+
+	private long getWhiteBishopMoves(long bitboard) {
+
+		long possibleTopLeftMoves = getTopLeftSquares(bitboard);
+
+		long possibleBottomLeftMoves = getBottomLeftSquares(bitboard);
+
+		long possibleTopRightSquares = getTopRightSquares(bitboard);
+
+		long possibleBottomRightMoves = getBottomRightMoves(bitboard);
+
+		printBitBoard(possibleBottomRightMoves);
+		// if (secondFile == 0) {
+		// System.out.println("Exit");
+		// }
+		return 0L;
+	}
+
+	private long getBottomRightMoves(long bitboard) {
+		long currentFile = 0L;
+		long bottomRightSquares = 0L;
+
+		for (int fileToMask = 8; fileToMask > 0; fileToMask--) {
+			currentFile = bitboard & maskFile(fileToMask);
+			// optimises it
+			if (currentFile == 0) {
+				continue;
+			}
+			printBitBoard(currentFile);
+			for (int shift = fileToMask; shift < 8; shift++) {
+				currentFile = currentFile | currentFile >>> 7;
+			}
+			bottomRightSquares = (currentFile | bottomRightSquares);
+		}
+
+		return bottomRightSquares & ~bitboard;
+	}
+
+	private long getTopRightSquares(long bitboard) {
+		long currentFile = 0L;
+		long topRightSquares = 0L;
+
+		for (int fileToMask = 8; fileToMask > 0; fileToMask--) {
+			currentFile = bitboard & maskFile(fileToMask);
+			// optimises it
+			if (currentFile == 0) {
+				continue;
+			}
+			for (int shift = fileToMask; shift < 8; shift++) {
+				currentFile = currentFile | currentFile << 9;
+			}
+			topRightSquares = (currentFile | topRightSquares);
+		}
+
+		return topRightSquares & ~bitboard;
+
+	}
+
+	private long getBottomLeftSquares(long bitboard) {
+		long currentFile = 0L;
+		long bottomLeftSquares = 0L;
+
+		for (int fileToMask = 1; fileToMask < 9; fileToMask++) {
+			currentFile = bitboard & maskFile(fileToMask);
+			// optimises it
+			if (currentFile == 0) {
+				continue;
+			}
+			for (int shift = 7; shift < (fileToMask) * 7; shift += 7) {
+				currentFile = currentFile | currentFile >>> 9;
+			}
+			bottomLeftSquares = (currentFile | bottomLeftSquares);
+		}
+
+		// if (secondFile == 0) {
+		// System.out.println("Exit");
+		// }
+		return bottomLeftSquares & ~bitboard;
+	}
+
+	private long getTopLeftSquares(long bitboard) {
+		long currentFile = 0L;
+		long topLeftSquares = 0L;
+
+		for (int fileToMask = 1; fileToMask < 9; fileToMask++) {
+			currentFile = bitboard & maskFile(fileToMask);
+			// optimises it
+			if (currentFile == 0) {
+				continue;
+			}
+			for (int shift = 7; shift < (fileToMask) * 7; shift += 7) {
+				currentFile = currentFile | currentFile << 7;
+			}
+			topLeftSquares = (currentFile | topLeftSquares);
+		}
+
+		// if (secondFile == 0) {
+		// System.out.println("Exit");
+		// }
+		return topLeftSquares & ~bitboard;
 	}
 
 	/*

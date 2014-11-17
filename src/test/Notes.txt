@@ -3,14 +3,20 @@ Next thing to do
 Need to check if Kings move into attacked squares.
 Also to be added is if piece is moved and same king in check then move not allowed.
 
-Generate Black king possible moves
-Generate Pawn possible moves
-Generate Knight possible moves
+TODO:
+Generate Black king possible moves.
+Generate Pawn possible moves.
+Generate Knight possible moves.
+Generate moves for single rook.
+Generate moves for multiple rooks.
+Generate moves for bishop.
+Generate moves for queen.
 
--Added black king moves
+-Added king king moves
 -Added vertical pawn moves single and double rank
 -Added diagonal pawn moves
--Added white knight moves
+-Added knight moves
+-Added move generation for rooks
 
 
 To check if a king is in check : if ((KingOccupiedSquare & squaresUnderAttack) != 0) if it doesnt equal zero then king is in check. 

@@ -30,15 +30,7 @@ public class ChessBoard {
 		long timeNano = System.nanoTime();
 
 		initialiseBoard();
-
-		clearChessBoard();
-		currentBoard[0][0] = "B";
-		currentBoard[1][1] = "P";
-		initialiseBoard();
-		printBoard();
-
-		printBitBoard(getWhiteBishopMoves(whiteBishops));
-
+		
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
 		System.out.println("That took :"
@@ -51,6 +43,14 @@ public class ChessBoard {
 				currentBoard[x][y] = " ";
 			}
 		}
+	}
+
+	private long getWhiteQueenMoves(long bitboard) {
+		return getWhiteBishopMoves(bitboard) | getWhiteRookMoves(bitboard);
+	}
+
+	private long getBlackQueenMoves(long bitboard) {
+		return getBlackBishopMoves(bitboard) | getBlackRookMoves(bitboard);
 	}
 
 	private long getWhiteBishopMoves(long bitboard) {

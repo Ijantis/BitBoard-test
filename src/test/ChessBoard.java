@@ -33,13 +33,11 @@ public class ChessBoard {
 
 		clearChessBoard();
 		currentBoard[0][0] = "B";
-		currentBoard[0][7] = "P";
+		currentBoard[1][1] = "P";
 		initialiseBoard();
 		printBoard();
 
-		// getWhiteBishopMoves(getOccupiedSquares());
-
-		getWhiteBishopMoves(getOccupiedSquares());
+		printBitBoard(getWhiteBishopMoves(whiteBishops));
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -57,22 +55,79 @@ public class ChessBoard {
 
 	private long getWhiteBishopMoves(long bitboard) {
 
-		long possibleTopLeftMoves = getTopLeftSquares(bitboard);
+		long topRight = getTopRightSquares(bitboard) & getOccupiedSquares();
+		topRight = (topRight << 9) | (topRight << 18) | (topRight << 27)
+				| (topRight << 36) | (topRight << 45) | (topRight << 54);
+		topRight = topRight & getTopRightSquares(bitboard);
+		topRight = topRight ^ getTopRightSquares(bitboard);
+		topRight = topRight & ~getWhitePieces();
 
-		long possibleBottomLeftMoves = getBottomLeftSquares(bitboard);
+		long bottomLeft = getBottomLeftSquares(bitboard) & getOccupiedSquares();
+		bottomLeft = (bottomLeft >>> 9) | (bottomLeft >>> 18)
+				| (bottomLeft >>> 27) | (bottomLeft >>> 36)
+				| (bottomLeft >>> 45) | (bottomLeft >>> 54);
+		bottomLeft = bottomLeft & getBottomLeftSquares(bitboard);
+		bottomLeft = bottomLeft ^ getBottomLeftSquares(bitboard);
+		bottomLeft = bottomLeft & ~getWhitePieces();
 
-		long possibleTopRightSquares = getTopRightSquares(bitboard);
+		long bottomRight = getBottomRightSquares(bitboard)
+				& getOccupiedSquares();
+		bottomRight = (bottomRight >>> 7) | (bottomRight >>> 14)
+				| (bottomRight >>> 21) | (bottomRight >>> 28)
+				| (bottomRight >>> 35) | (bottomRight >>> 42);
+		printBitBoard(bottomRight);
+		bottomRight = bottomRight & getBottomRightSquares(bitboard);
+		bottomRight = bottomRight ^ getBottomRightSquares(bitboard);
+		bottomRight = bottomRight & ~getWhitePieces();
 
-		long possibleBottomRightMoves = getBottomRightMoves(bitboard);
+		long topLeft = getTopLeftSquares(bitboard) & getOccupiedSquares();
+		topLeft = (topLeft << 7) | (topLeft << 14) | (topLeft << 21)
+				| (topLeft << 28) | (topLeft << 35) | (topLeft << 42);
+		topLeft = topLeft & getTopLeftSquares(bitboard);
+		topLeft = topLeft ^ getTopLeftSquares(bitboard);
+		topLeft = topLeft & ~getWhitePieces();
 
-		printBitBoard(possibleBottomRightMoves);
-		// if (secondFile == 0) {
-		// System.out.println("Exit");
-		// }
-		return 0L;
+		return topRight | topLeft | bottomRight | bottomLeft;
 	}
 
-	private long getBottomRightMoves(long bitboard) {
+	private long getBlackBishopMoves(long bitboard) {
+
+		long topRight = getTopRightSquares(bitboard) & getOccupiedSquares();
+		topRight = (topRight << 9) | (topRight << 18) | (topRight << 27)
+				| (topRight << 36) | (topRight << 45) | (topRight << 54);
+		topRight = topRight & getTopRightSquares(bitboard);
+		topRight = topRight ^ getTopRightSquares(bitboard);
+		topRight = topRight & ~getBlackPieces();
+
+		long bottomLeft = getBottomLeftSquares(bitboard) & getOccupiedSquares();
+		bottomLeft = (bottomLeft >>> 9) | (bottomLeft >>> 18)
+				| (bottomLeft >>> 27) | (bottomLeft >>> 36)
+				| (bottomLeft >>> 45) | (bottomLeft >>> 54);
+		bottomLeft = bottomLeft & getBottomLeftSquares(bitboard);
+		bottomLeft = bottomLeft ^ getBottomLeftSquares(bitboard);
+		bottomLeft = bottomLeft & ~getBlackPieces();
+
+		long bottomRight = getBottomRightSquares(bitboard)
+				& getOccupiedSquares();
+		bottomRight = (bottomRight >>> 7) | (bottomRight >>> 14)
+				| (bottomRight >>> 21) | (bottomRight >>> 28)
+				| (bottomRight >>> 35) | (bottomRight >>> 42);
+		printBitBoard(bottomRight);
+		bottomRight = bottomRight & getBottomRightSquares(bitboard);
+		bottomRight = bottomRight ^ getBottomRightSquares(bitboard);
+		bottomRight = bottomRight & ~getBlackPieces();
+
+		long topLeft = getTopLeftSquares(bitboard) & getOccupiedSquares();
+		topLeft = (topLeft << 7) | (topLeft << 14) | (topLeft << 21)
+				| (topLeft << 28) | (topLeft << 35) | (topLeft << 42);
+		topLeft = topLeft & getTopLeftSquares(bitboard);
+		topLeft = topLeft ^ getTopLeftSquares(bitboard);
+		topLeft = topLeft & ~getBlackPieces();
+
+		return topRight | topLeft | bottomRight | bottomLeft;
+	}
+
+	private long getBottomRightSquares(long bitboard) {
 		long currentFile = 0L;
 		long bottomRightSquares = 0L;
 
@@ -82,13 +137,11 @@ public class ChessBoard {
 			if (currentFile == 0) {
 				continue;
 			}
-			printBitBoard(currentFile);
 			for (int shift = fileToMask; shift < 8; shift++) {
 				currentFile = currentFile | currentFile >>> 7;
 			}
 			bottomRightSquares = (currentFile | bottomRightSquares);
 		}
-
 		return bottomRightSquares & ~bitboard;
 	}
 
@@ -107,7 +160,6 @@ public class ChessBoard {
 			}
 			topRightSquares = (currentFile | topRightSquares);
 		}
-
 		return topRightSquares & ~bitboard;
 
 	}
@@ -127,10 +179,6 @@ public class ChessBoard {
 			}
 			bottomLeftSquares = (currentFile | bottomLeftSquares);
 		}
-
-		// if (secondFile == 0) {
-		// System.out.println("Exit");
-		// }
 		return bottomLeftSquares & ~bitboard;
 	}
 
@@ -149,10 +197,6 @@ public class ChessBoard {
 			}
 			topLeftSquares = (currentFile | topLeftSquares);
 		}
-
-		// if (secondFile == 0) {
-		// System.out.println("Exit");
-		// }
 		return topLeftSquares & ~bitboard;
 	}
 
@@ -382,8 +426,6 @@ public class ChessBoard {
 		long upRight = ((whitePawns & clearFile(8)) << 9);
 		long attackingAPiece = (upLeft | upRight) & getBlackPieces();
 
-		printBitBoard(upLeft);
-
 		return attackingAPiece;
 	}
 
@@ -395,8 +437,6 @@ public class ChessBoard {
 		long downRight = ((blackPawns & clearFile(8)) >>> 7);
 		long downLeft = ((blackPawns & clearFile(1)) >>> 9);
 		long attackingAPiece = (downRight | downLeft) & getWhitePieces();
-
-		printBitBoard(attackingAPiece);
 
 		return 0;
 	}

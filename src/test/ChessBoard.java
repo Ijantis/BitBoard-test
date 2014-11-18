@@ -30,6 +30,14 @@ public class ChessBoard {
 		long timeNano = System.nanoTime();
 
 		initialiseBoard();
+		clearChessBoard();
+		
+		currentBoard[2][2] = "R";
+		initialiseBoard();
+		printBoard();
+		printBitBoard(getOccupiedSquares());
+		
+		
 		
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -609,9 +617,9 @@ public class ChessBoard {
 			for (int x = 0; x < currentBoard.length; x++) {
 				String temp = currentBoard[x][y];
 				if (temp.equals(" ")) {
-					System.out.print(",");
+					System.out.print(", ");
 				} else {
-					System.out.print(currentBoard[x][y]);
+					System.out.print(currentBoard[x][y] + " ");
 				}
 			}
 			System.out.println();
@@ -667,7 +675,10 @@ public class ChessBoard {
 			StringBuilder stringReverser = new StringBuilder(
 					stringBitBoard.substring(i * 8, ((i + 1) * 8)));
 			stringReverser.reverse();
-			System.out.println(stringReverser.toString());
+			for (int j = 0; j < stringReverser.toString().length(); j++) {
+				System.out.print(stringReverser.toString().charAt(j) + " ");
+			}
+			System.out.println();
 		}
 		System.out.println();
 	}

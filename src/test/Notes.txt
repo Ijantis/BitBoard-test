@@ -20,6 +20,8 @@ Generate moves for queen.
 -Added move generation for bishops
 -Added move generation for queens
 
+CHECK IF GET BISHOP MOVES SUPPORTS MORE THAN ONE BISHOP
+
 
 To check if a king is in check : if ((KingOccupiedSquare & squaresUnderAttack) != 0) if it doesnt equal zero then king is in check. 
 If it equals 0 then king is not in check

@@ -30,19 +30,113 @@ public class ChessBoard {
 		long timeNano = System.nanoTime();
 
 		initialiseBoard();
-		clearChessBoard();
-		
-		currentBoard[2][2] = "R";
-		initialiseBoard();
-		printBoard();
-		printBitBoard(getOccupiedSquares());
-		
-		
-		
+		printBitBoard(getWhiteAttackingSquares());
+		printBitBoard(getWhitePawnMovesDiagonal());
+
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
 		System.out.println("That took :"
 				+ ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
+	}
+
+	private boolean isWhiteKingInCheck() {
+
+		long blackMoves = getBlackAttackingSquares();
+
+		if ((blackMoves & whiteKing) == 0) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	private boolean isBlackKingInCheck() {
+
+		long whiteMoves = getWhiteAttackingSquares();
+
+		if ((whiteMoves & blackKing) == 0) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	private long getWhiteAttackingSquares() {
+		long attackedSquares = 0L;
+
+		attackedSquares = attackedSquares | getWhitePawnMovesDiagonal()
+				| getAllWhiteRookMoves(whiteRooks) | getWhiteKnightMoves()
+				| getWhiteBishopMoves(whiteBishops)
+				| getWhiteQueenMoves(whiteQueens) | getWhiteKingMoves();
+		return attackedSquares;
+	}
+
+	private long getBlackAttackingSquares() {
+
+		long attackedSquares = 0L;
+
+		attackedSquares = attackedSquares | getBlackPawnMovesDiagonal()
+				| getAllBlackRookMoves(blackRooks) | getBlackKnightMoves()
+				| getBlackBishopMoves(blackBishops)
+				| getBlackQueenMoves(blackQueens) | getBlackKingMoves();
+
+		return attackedSquares;
+	}
+
+	private long getAllWhiteRookMoves(long currentRookBitboard) {
+		long nextRook = 0L;
+		long rookMoves = 0L;
+
+		while (currentRookBitboard != 0) {
+			nextRook = Long.parseLong("1", 2);
+			for (int i = 0; i < Long.toBinaryString(currentRookBitboard)
+					.length() - 1; i++) {
+				if (Long.toBinaryString(nextRook).length() == 63) {
+					nextRook = nextRook * 2;
+				} else {
+					nextRook = Long.parseLong(Long.toBinaryString(nextRook)
+							+ "0", 2);
+				}
+			}
+			if (currentRookBitboard == 1) {
+				rookMoves = rookMoves | getWhiteRookMoves(nextRook);
+				break;
+			} else {
+				currentRookBitboard = Long.parseLong(
+						Long.toBinaryString(currentRookBitboard).substring(1),
+						2);
+				rookMoves = rookMoves | getWhiteRookMoves(nextRook);
+			}
+		}
+		return rookMoves;
+	}
+
+	private long getAllBlackRookMoves(long currentRookBitboard) {
+		long nextRook = 0L;
+		long rookMoves = 0L;
+
+		while (currentRookBitboard != 0) {
+			nextRook = Long.parseLong("1", 2);
+			for (int i = 0; i < Long.toBinaryString(currentRookBitboard)
+					.length() - 1; i++) {
+				if (Long.toBinaryString(nextRook).length() == 63) {
+					nextRook = nextRook * 2;
+				} else {
+					nextRook = Long.parseLong(Long.toBinaryString(nextRook)
+							+ "0", 2);
+				}
+			}
+			if (currentRookBitboard == 1) {
+				rookMoves = rookMoves | getBlackRookMoves(nextRook);
+				break;
+			} else {
+				currentRookBitboard = Long.parseLong(
+						Long.toBinaryString(currentRookBitboard).substring(1),
+						2);
+				rookMoves = rookMoves | getBlackRookMoves(nextRook);
+			}
+		}
+		return rookMoves;
 	}
 
 	private void clearChessBoard() {
@@ -54,11 +148,11 @@ public class ChessBoard {
 	}
 
 	private long getWhiteQueenMoves(long bitboard) {
-		return getWhiteBishopMoves(bitboard) | getWhiteRookMoves(bitboard);
+		return getWhiteBishopMoves(bitboard) | getAllWhiteRookMoves(bitboard);
 	}
 
 	private long getBlackQueenMoves(long bitboard) {
-		return getBlackBishopMoves(bitboard) | getBlackRookMoves(bitboard);
+		return getBlackBishopMoves(bitboard) | getAllBlackRookMoves(bitboard);
 	}
 
 	private long getWhiteBishopMoves(long bitboard) {
@@ -83,7 +177,6 @@ public class ChessBoard {
 		bottomRight = (bottomRight >>> 7) | (bottomRight >>> 14)
 				| (bottomRight >>> 21) | (bottomRight >>> 28)
 				| (bottomRight >>> 35) | (bottomRight >>> 42);
-		printBitBoard(bottomRight);
 		bottomRight = bottomRight & getBottomRightSquares(bitboard);
 		bottomRight = bottomRight ^ getBottomRightSquares(bitboard);
 		bottomRight = bottomRight & ~getWhitePieces();
@@ -120,7 +213,6 @@ public class ChessBoard {
 		bottomRight = (bottomRight >>> 7) | (bottomRight >>> 14)
 				| (bottomRight >>> 21) | (bottomRight >>> 28)
 				| (bottomRight >>> 35) | (bottomRight >>> 42);
-		printBitBoard(bottomRight);
 		bottomRight = bottomRight & getBottomRightSquares(bitboard);
 		bottomRight = bottomRight ^ getBottomRightSquares(bitboard);
 		bottomRight = bottomRight & ~getBlackPieces();

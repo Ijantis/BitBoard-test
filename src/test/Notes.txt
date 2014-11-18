@@ -19,6 +19,13 @@ Generate moves for queen.
 -Added move generation for rooks
 -Added move generation for bishops
 -Added move generation for queens
+-Added 
+
+Diagonal pawn moves only show up when enemy piece is present in the diagonal. If you want to generate a list of
+squares under attack you need a seperate method for ignoring the condition.
+The same thing happens for every other piece. A white knight with a white piece in one of its attacked squares
+won't show up when the getWhiteAttackedSquares method is called even though the square is under attack.
+Seperate method for every single class?
 
 CHECK IF GET BISHOP MOVES SUPPORTS MORE THAN ONE BISHOP
 

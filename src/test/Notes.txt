@@ -12,11 +12,13 @@ Generate moves for multiple rooks.
 Generate moves for bishop.
 Generate moves for queen.
 
--Added king king moves
+-Added king moves
 -Added vertical pawn moves single and double rank
 -Added diagonal pawn moves
 -Added knight moves
 -Added move generation for rooks
+-Added move generation for bishops
+-Added move generation for queens
 
 
 To check if a king is in check : if ((KingOccupiedSquare & squaresUnderAttack) != 0) if it doesnt equal zero then king is in check. 

@@ -457,8 +457,6 @@ public class ChessBoard {
 		long up = blackKing << 8;
 		long down = blackKing >>> 8;
 
-		long currentFileCleared = );
-		
 		// clear file stops move generation to the left if on the 1st file
 		long left = ((blackKing & BitboardOperations.clearFile(1)) >>> 1);
 		long upLeft = (blackKing & BitboardOperations.clearFile(1)) << 7;

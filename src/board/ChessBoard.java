@@ -29,9 +29,14 @@ public class ChessBoard {
 		long time = System.currentTimeMillis();
 		long timeNano = System.nanoTime();
 
+		clearChessBoard();
+
+		currentBoard[0][0] = "K";
+		currentBoard[1][7] = "r";
+
 		initialiseBoard();
-		printBitBoard(getWhiteAttackingSquares());
-		printBitBoard(getWhitePawnMovesDiagonal());
+		printBitBoard(getWhiteKingMoves());
+		printBitBoard(getBlackAttackingSquaresNonKing());
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -41,7 +46,7 @@ public class ChessBoard {
 
 	private boolean isWhiteKingInCheck() {
 
-		long blackMoves = getBlackAttackingSquares();
+		long blackMoves = getBlackAttackingSquaresNonKing();
 
 		if ((blackMoves & whiteKing) == 0) {
 			return false;
@@ -52,7 +57,7 @@ public class ChessBoard {
 
 	private boolean isBlackKingInCheck() {
 
-		long whiteMoves = getWhiteAttackingSquares();
+		long whiteMoves = getWhiteAttackingSquaresNonKing();
 
 		if ((whiteMoves & blackKing) == 0) {
 			return false;
@@ -61,29 +66,30 @@ public class ChessBoard {
 		}
 	}
 
-	private long getWhiteAttackingSquares() {
+	private long getWhiteAttackingSquaresNonKing() {
 		long attackedSquares = 0L;
 
-		attackedSquares = attackedSquares | getWhitePawnMovesDiagonal()
+		attackedSquares = attackedSquares | getWhitePawnAttackingSquares()
 				| getAllWhiteRookMoves(whiteRooks) | getWhiteKnightMoves()
 				| getWhiteBishopMoves(whiteBishops)
-				| getWhiteQueenMoves(whiteQueens) | getWhiteKingMoves();
+				| getWhiteQueenMoves(whiteQueens);
 		return attackedSquares;
 	}
 
-	private long getBlackAttackingSquares() {
+	private long getBlackAttackingSquaresNonKing() {
 
 		long attackedSquares = 0L;
 
-		attackedSquares = attackedSquares | getBlackPawnMovesDiagonal()
+		attackedSquares = attackedSquares | getBlackPawnAttackingSquares()
 				| getAllBlackRookMoves(blackRooks) | getBlackKnightMoves()
 				| getBlackBishopMoves(blackBishops)
-				| getBlackQueenMoves(blackQueens) | getBlackKingMoves();
+				| getBlackQueenMoves(blackQueens);
 
 		return attackedSquares;
 	}
 
 	private long getAllWhiteRookMoves(long currentRookBitboard) {
+
 		long nextRook = 0L;
 		long rookMoves = 0L;
 
@@ -157,7 +163,8 @@ public class ChessBoard {
 
 	private long getWhiteBishopMoves(long bitboard) {
 
-		long topRight = BitboardOperations.getTopRightSquares(bitboard) & getOccupiedSquares();
+		long topRight = BitboardOperations.getTopRightSquares(bitboard)
+				& getOccupiedSquares();
 		topRight = (topRight << 9) | (topRight << 18) | (topRight << 27)
 				| (topRight << 36) | (topRight << 45) | (topRight << 54);
 		topRight = topRight & BitboardOperations.getTopRightSquares(bitboard);
@@ -199,7 +206,8 @@ public class ChessBoard {
 
 	private long getBlackBishopMoves(long bitboard) {
 
-		long topRight = BitboardOperations.getTopRightSquares(bitboard) & getOccupiedSquares();
+		long topRight = BitboardOperations.getTopRightSquares(bitboard)
+				& getOccupiedSquares();
 		topRight = (topRight << 9) | (topRight << 18) | (topRight << 27)
 				| (topRight << 36) | (topRight << 45) | (topRight << 54);
 		topRight = topRight & BitboardOperations.getTopRightSquares(bitboard);
@@ -398,6 +406,17 @@ public class ChessBoard {
 	}
 
 	/*
+	 * Generate squares under attack diagonally by a white pawn
+	 */
+	private long getWhitePawnAttackingSquares() {
+		long upLeft = ((whitePawns & BitboardOperations.clearFile(1)) << 7);
+		long upRight = ((whitePawns & BitboardOperations.clearFile(8)) << 9);
+		long attackingAPiece = (upLeft | upRight);
+
+		return attackingAPiece;
+	}
+
+	/*
 	 * Generate white pawn moves for attacking a piece
 	 */
 	private long getWhitePawnMovesDiagonal() {
@@ -405,6 +424,18 @@ public class ChessBoard {
 		long upLeft = ((whitePawns & BitboardOperations.clearFile(1)) << 7);
 		long upRight = ((whitePawns & BitboardOperations.clearFile(8)) << 9);
 		long attackingAPiece = (upLeft | upRight) & getBlackPieces();
+
+		return attackingAPiece;
+	}
+
+	/*
+	 * Generate squares under attack diagonally by a black pawn
+	 */
+	private long getBlackPawnAttackingSquares() {
+
+		long downRight = ((blackPawns & BitboardOperations.clearFile(8)) >>> 7);
+		long downLeft = ((blackPawns & BitboardOperations.clearFile(1)) >>> 9);
+		long attackingAPiece = (downRight | downLeft);
 
 		return attackingAPiece;
 	}
@@ -418,7 +449,7 @@ public class ChessBoard {
 		long downLeft = ((blackPawns & BitboardOperations.clearFile(1)) >>> 9);
 		long attackingAPiece = (downRight | downLeft) & getWhitePieces();
 
-		return 0;
+		return attackingAPiece;
 	}
 
 	/*
@@ -445,7 +476,8 @@ public class ChessBoard {
 
 		// TODO: Add another check to not let the king move onto a square under
 		// attack by the opposite colour.
-		return possibleMoves & ~getWhitePieces();
+		return (possibleMoves & ~getWhitePieces())
+				& ~getBlackAttackingSquaresNonKing();
 	}
 
 	/*
@@ -472,7 +504,8 @@ public class ChessBoard {
 
 		// TODO: Add another check to not let the king move onto a square under
 		// attack by the opposite colour.
-		return possibleMoves & ~getBlackPieces();
+		return (possibleMoves & ~getBlackPieces())
+				& ~getWhiteAttackingSquaresNonKing();
 	}
 
 	private long getWhitePawnMovesVertical() {

@@ -25,23 +25,26 @@ public class ChessBoard {
 			{ "R", "P", " ", " ", " ", " ", "p", "r" } };;
 
 	public ChessBoard() {
+		newGame();
+	}
+
+	public void newGame() {
 
 		long time = System.currentTimeMillis();
 		long timeNano = System.nanoTime();
 
-		clearChessBoard();
-
-		currentBoard[0][0] = "K";
-		currentBoard[1][7] = "r";
-
-		initialiseBoard();
-		printBitBoard(getWhiteKingMoves());
-		printBitBoard(getBlackAttackingSquaresNonKing());
+		updateBitboards();
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
 		System.out.println("That took :"
 				+ ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
+
+	}
+
+	public boolean makeMove(int fromSquare, int toSquare) {
+
+		return false;
 	}
 
 	private boolean isWhiteKingInCheck() {
@@ -69,10 +72,17 @@ public class ChessBoard {
 	private long getWhiteAttackingSquaresNonKing() {
 		long attackedSquares = 0L;
 
-		attackedSquares = attackedSquares | getWhitePawnAttackingSquares()
-				| getAllWhiteRookMoves(whiteRooks) | getWhiteKnightMoves()
-				| getWhiteBishopMoves(whiteBishops)
-				| getWhiteQueenMoves(whiteQueens);
+		attackedSquares = attackedSquares
+				| WhitePieceOperations.getWhitePawnAttackingSquares(whitePawns)
+				| WhitePieceOperations.getWhiteRookAttackingSquares(whiteRooks,
+						getOccupiedSquares())
+				| WhitePieceOperations
+						.getWhiteKnightAttackingSquares(whiteKnights)
+				| WhitePieceOperations.getWhiteBishopAttackingSquares(
+						whiteBishops, getOccupiedSquares())
+				| WhitePieceOperations.getWhiteQueenAttackingSquares(
+						whiteQueens, getOccupiedSquares());
+
 		return attackedSquares;
 	}
 
@@ -80,69 +90,18 @@ public class ChessBoard {
 
 		long attackedSquares = 0L;
 
-		attackedSquares = attackedSquares | getBlackPawnAttackingSquares()
-				| getAllBlackRookMoves(blackRooks) | getBlackKnightMoves()
-				| getBlackBishopMoves(blackBishops)
-				| getBlackQueenMoves(blackQueens);
+		attackedSquares = attackedSquares
+				| BlackPieceOperations.getblackPawnAttackingSquares(blackPawns)
+				| BlackPieceOperations.getblackRookAttackingSquares(blackRooks,
+						getOccupiedSquares())
+				| BlackPieceOperations
+						.getblackKnightAttackingSquares(blackKnights)
+				| BlackPieceOperations.getblackBishopAttackingSquares(
+						blackBishops, getOccupiedSquares())
+				| BlackPieceOperations.getblackQueenAttackingSquares(
+						blackQueens, getOccupiedSquares());
 
 		return attackedSquares;
-	}
-
-	private long getAllWhiteRookMoves(long currentRookBitboard) {
-
-		long nextRook = 0L;
-		long rookMoves = 0L;
-
-		while (currentRookBitboard != 0) {
-			nextRook = Long.parseLong("1", 2);
-			for (int i = 0; i < Long.toBinaryString(currentRookBitboard)
-					.length() - 1; i++) {
-				if (Long.toBinaryString(nextRook).length() == 63) {
-					nextRook = nextRook * 2;
-				} else {
-					nextRook = Long.parseLong(Long.toBinaryString(nextRook)
-							+ "0", 2);
-				}
-			}
-			if (currentRookBitboard == 1) {
-				rookMoves = rookMoves | getWhiteRookMoves(nextRook);
-				break;
-			} else {
-				currentRookBitboard = Long.parseLong(
-						Long.toBinaryString(currentRookBitboard).substring(1),
-						2);
-				rookMoves = rookMoves | getWhiteRookMoves(nextRook);
-			}
-		}
-		return rookMoves;
-	}
-
-	private long getAllBlackRookMoves(long currentRookBitboard) {
-		long nextRook = 0L;
-		long rookMoves = 0L;
-
-		while (currentRookBitboard != 0) {
-			nextRook = Long.parseLong("1", 2);
-			for (int i = 0; i < Long.toBinaryString(currentRookBitboard)
-					.length() - 1; i++) {
-				if (Long.toBinaryString(nextRook).length() == 63) {
-					nextRook = nextRook * 2;
-				} else {
-					nextRook = Long.parseLong(Long.toBinaryString(nextRook)
-							+ "0", 2);
-				}
-			}
-			if (currentRookBitboard == 1) {
-				rookMoves = rookMoves | getBlackRookMoves(nextRook);
-				break;
-			} else {
-				currentRookBitboard = Long.parseLong(
-						Long.toBinaryString(currentRookBitboard).substring(1),
-						2);
-				rookMoves = rookMoves | getBlackRookMoves(nextRook);
-			}
-		}
-		return rookMoves;
 	}
 
 	private void clearChessBoard() {
@@ -153,389 +112,8 @@ public class ChessBoard {
 		}
 	}
 
-	private long getWhiteQueenMoves(long bitboard) {
-		return getWhiteBishopMoves(bitboard) | getAllWhiteRookMoves(bitboard);
-	}
-
-	private long getBlackQueenMoves(long bitboard) {
-		return getBlackBishopMoves(bitboard) | getAllBlackRookMoves(bitboard);
-	}
-
-	private long getWhiteBishopMoves(long bitboard) {
-
-		long topRight = BitboardOperations.getTopRightSquares(bitboard)
-				& getOccupiedSquares();
-		topRight = (topRight << 9) | (topRight << 18) | (topRight << 27)
-				| (topRight << 36) | (topRight << 45) | (topRight << 54);
-		topRight = topRight & BitboardOperations.getTopRightSquares(bitboard);
-		topRight = topRight ^ BitboardOperations.getTopRightSquares(bitboard);
-		topRight = topRight & ~getWhitePieces();
-
-		long bottomLeft = BitboardOperations.getBottomLeftSquares(bitboard)
-				& getOccupiedSquares();
-		bottomLeft = (bottomLeft >>> 9) | (bottomLeft >>> 18)
-				| (bottomLeft >>> 27) | (bottomLeft >>> 36)
-				| (bottomLeft >>> 45) | (bottomLeft >>> 54);
-		bottomLeft = bottomLeft
-				& BitboardOperations.getBottomLeftSquares(bitboard);
-		bottomLeft = bottomLeft
-				^ BitboardOperations.getBottomLeftSquares(bitboard);
-		bottomLeft = bottomLeft & ~getWhitePieces();
-
-		long bottomRight = BitboardOperations.getBottomRightSquares(bitboard)
-				& getOccupiedSquares();
-		bottomRight = (bottomRight >>> 7) | (bottomRight >>> 14)
-				| (bottomRight >>> 21) | (bottomRight >>> 28)
-				| (bottomRight >>> 35) | (bottomRight >>> 42);
-		bottomRight = bottomRight
-				& BitboardOperations.getBottomRightSquares(bitboard);
-		bottomRight = bottomRight
-				^ BitboardOperations.getBottomRightSquares(bitboard);
-		bottomRight = bottomRight & ~getWhitePieces();
-
-		long topLeft = BitboardOperations.getTopLeftSquares(bitboard)
-				& getOccupiedSquares();
-		topLeft = (topLeft << 7) | (topLeft << 14) | (topLeft << 21)
-				| (topLeft << 28) | (topLeft << 35) | (topLeft << 42);
-		topLeft = topLeft & BitboardOperations.getTopLeftSquares(bitboard);
-		topLeft = topLeft ^ BitboardOperations.getTopLeftSquares(bitboard);
-		topLeft = topLeft & ~getWhitePieces();
-
-		return topRight | topLeft | bottomRight | bottomLeft;
-	}
-
-	private long getBlackBishopMoves(long bitboard) {
-
-		long topRight = BitboardOperations.getTopRightSquares(bitboard)
-				& getOccupiedSquares();
-		topRight = (topRight << 9) | (topRight << 18) | (topRight << 27)
-				| (topRight << 36) | (topRight << 45) | (topRight << 54);
-		topRight = topRight & BitboardOperations.getTopRightSquares(bitboard);
-		topRight = topRight ^ BitboardOperations.getTopRightSquares(bitboard);
-		topRight = topRight & ~getBlackPieces();
-
-		long bottomLeft = BitboardOperations.getBottomLeftSquares(bitboard)
-				& getOccupiedSquares();
-		bottomLeft = (bottomLeft >>> 9) | (bottomLeft >>> 18)
-				| (bottomLeft >>> 27) | (bottomLeft >>> 36)
-				| (bottomLeft >>> 45) | (bottomLeft >>> 54);
-		bottomLeft = bottomLeft
-				& BitboardOperations.getBottomLeftSquares(bitboard);
-		bottomLeft = bottomLeft
-				^ BitboardOperations.getBottomLeftSquares(bitboard);
-		bottomLeft = bottomLeft & ~getBlackPieces();
-
-		long bottomRight = BitboardOperations.getBottomRightSquares(bitboard)
-				& getOccupiedSquares();
-		bottomRight = (bottomRight >>> 7) | (bottomRight >>> 14)
-				| (bottomRight >>> 21) | (bottomRight >>> 28)
-				| (bottomRight >>> 35) | (bottomRight >>> 42);
-		bottomRight = bottomRight
-				& BitboardOperations.getBottomRightSquares(bitboard);
-		bottomRight = bottomRight
-				^ BitboardOperations.getBottomRightSquares(bitboard);
-		bottomRight = bottomRight & ~getBlackPieces();
-
-		long topLeft = BitboardOperations.getTopLeftSquares(bitboard)
-				& getOccupiedSquares();
-		topLeft = (topLeft << 7) | (topLeft << 14) | (topLeft << 21)
-				| (topLeft << 28) | (topLeft << 35) | (topLeft << 42);
-		topLeft = topLeft & BitboardOperations.getTopLeftSquares(bitboard);
-		topLeft = topLeft ^ BitboardOperations.getTopLeftSquares(bitboard);
-		topLeft = topLeft & ~getBlackPieces();
-
-		return topRight | topLeft | bottomRight | bottomLeft;
-	}
-
-	/*
-	 * Returns the bitboard of possible moves for a single rook.
-	 */
-	/**
-	 * Takes in a bitboard with a single piece on it and outputs the moves
-	 * associated with that rook.
-	 * 
-	 * @param rookToMove
-	 *            - The bitboard of a rook to compute the moves for.
-	 * @return - The bitboard of possible moves for the inputed rook.
-	 */
-	private long getWhiteRookMoves(long rookToMove) {
-
-		long right_moves = BitboardOperations.getRightSquares(rookToMove)
-				& getOccupiedSquares();
-		right_moves = (right_moves << 1) | (right_moves << 2)
-				| (right_moves << 3) | (right_moves << 4) | (right_moves << 5)
-				| (right_moves << 6);
-		right_moves = right_moves
-				& BitboardOperations.getRightSquares(rookToMove);
-		right_moves = right_moves
-				^ BitboardOperations.getRightSquares(rookToMove);
-		right_moves = right_moves & ~getWhitePieces();
-
-		long left_moves = BitboardOperations.getLeftSquares(rookToMove)
-				& getOccupiedSquares();
-		left_moves = (left_moves >>> 1) | (left_moves >>> 2)
-				| (left_moves >>> 3) | (left_moves >>> 4) | (left_moves >>> 5)
-				| (left_moves >>> 6);
-		left_moves = left_moves & BitboardOperations.getLeftSquares(rookToMove);
-		left_moves = left_moves ^ BitboardOperations.getLeftSquares(rookToMove);
-		left_moves = left_moves & ~getWhitePieces();
-
-		long up_moves = BitboardOperations.getUpSquares(rookToMove)
-				& getOccupiedSquares();
-		up_moves = (up_moves << 8) | (up_moves << 16) | (up_moves << 24)
-				| (up_moves << 32) | (up_moves << 40) | (up_moves << 48);
-		up_moves = up_moves & BitboardOperations.getUpSquares(rookToMove);
-		up_moves = up_moves ^ BitboardOperations.getUpSquares(rookToMove);
-		up_moves = up_moves & ~getWhitePieces();
-
-		long down_moves = BitboardOperations.getDownSquares(rookToMove)
-				& getOccupiedSquares();
-		down_moves = (down_moves >>> 8) | (down_moves >>> 16)
-				| (down_moves >>> 24) | (down_moves >>> 32)
-				| (down_moves >>> 40) | (down_moves >>> 48);
-		down_moves = down_moves & BitboardOperations.getDownSquares(rookToMove);
-		down_moves = down_moves ^ BitboardOperations.getDownSquares(rookToMove);
-		down_moves = down_moves & ~getWhitePieces();
-
-		return left_moves | right_moves | up_moves | down_moves;
-	}
-
-	/*
-	 * Returns the bitboard of possible moves for a single rook.
-	 */
-	/**
-	 * Takes in a bitboard with a single piece on it and outputs the moves
-	 * associated with that rook.
-	 * 
-	 * @param rookToMove
-	 *            - The bitboard of a rook to compute the moves for.
-	 * @return - The bitboard of possible moves for the inputed rook.
-	 */
-	private long getBlackRookMoves(long rookToMove) {
-
-		long right_moves = BitboardOperations.getRightSquares(rookToMove)
-				& getOccupiedSquares();
-		right_moves = (right_moves << 1) | (right_moves << 2)
-				| (right_moves << 3) | (right_moves << 4) | (right_moves << 5)
-				| (right_moves << 6);
-		right_moves = right_moves
-				& BitboardOperations.getRightSquares(rookToMove);
-		right_moves = right_moves
-				^ BitboardOperations.getRightSquares(rookToMove);
-		right_moves = right_moves & ~getBlackPieces();
-
-		long left_moves = BitboardOperations.getLeftSquares(rookToMove)
-				& getOccupiedSquares();
-		left_moves = (left_moves >>> 1) | (left_moves >>> 2)
-				| (left_moves >>> 3) | (left_moves >>> 4) | (left_moves >>> 5)
-				| (left_moves >>> 6);
-		left_moves = left_moves & BitboardOperations.getLeftSquares(rookToMove);
-		left_moves = left_moves ^ BitboardOperations.getLeftSquares(rookToMove);
-		left_moves = left_moves & ~getBlackPieces();
-
-		long up_moves = BitboardOperations.getUpSquares(rookToMove)
-				& getOccupiedSquares();
-		up_moves = (up_moves << 8) | (up_moves << 16) | (up_moves << 24)
-				| (up_moves << 32) | (up_moves << 40) | (up_moves << 48);
-		up_moves = up_moves & BitboardOperations.getUpSquares(rookToMove);
-		up_moves = up_moves ^ BitboardOperations.getUpSquares(rookToMove);
-		up_moves = up_moves & ~getBlackPieces();
-
-		long down_moves = BitboardOperations.getDownSquares(rookToMove)
-				& getOccupiedSquares();
-		down_moves = (down_moves >>> 8) | (down_moves >>> 16)
-				| (down_moves >>> 24) | (down_moves >>> 32)
-				| (down_moves >>> 40) | (down_moves >>> 48);
-		down_moves = down_moves & BitboardOperations.getDownSquares(rookToMove);
-		down_moves = down_moves ^ BitboardOperations.getDownSquares(rookToMove);
-		down_moves = down_moves & ~getBlackPieces();
-
-		return left_moves | right_moves | up_moves | down_moves;
-	}
-
-	private long getWhiteKnightMoves() {
-
-		// variable names are first direction then second direction
-
-		long upRight = (whiteKnights & BitboardOperations.clearFile(8)) << 17;
-		long upLeft = (whiteKnights & BitboardOperations.clearFile(1)) << 15;
-
-		long rightUp = (BitboardOperations.clearFile(8)
-				& BitboardOperations.clearFile(7) & whiteKnights) << 10;
-		long rightDown = (BitboardOperations.clearFile(8)
-				& BitboardOperations.clearFile(7) & whiteKnights) >>> 6;
-
-		long downRight = (whiteKnights & BitboardOperations.clearFile(8)) >>> 15;
-		long downLeft = (whiteKnights & BitboardOperations.clearFile(1)) >>> 17;
-
-		long leftUp = (BitboardOperations.clearFile(1)
-				& BitboardOperations.clearFile(2) & whiteKnights) << 6;
-		long leftDown = (BitboardOperations.clearFile(1)
-				& BitboardOperations.clearFile(2) & whiteKnights) >>> 10;
-
-		long possibleMoves = upRight | upLeft | rightUp | rightDown | downRight
-				| downLeft | leftUp | leftDown;
-
-		return possibleMoves & ~getWhitePieces();// & ~getWhitePieces();
-	}
-
-	private long getBlackKnightMoves() {
-
-		// variable names are first direction then second direction
-
-		long upRight = (blackKnights & BitboardOperations.clearFile(8)) << 17;
-		long upLeft = (blackKnights & BitboardOperations.clearFile(1)) << 15;
-
-		long rightUp = (BitboardOperations.clearFile(8)
-				& BitboardOperations.clearFile(7) & blackKnights) << 10;
-		long rightDown = (BitboardOperations.clearFile(8)
-				& BitboardOperations.clearFile(7) & blackKnights) >>> 6;
-
-		long downRight = (blackKnights & BitboardOperations.clearFile(8)) >>> 15;
-		long downLeft = (blackKnights & BitboardOperations.clearFile(1)) >>> 17;
-
-		long leftUp = (BitboardOperations.clearFile(1)
-				& BitboardOperations.clearFile(2) & blackKnights) << 6;
-		long leftDown = (BitboardOperations.clearFile(1)
-				& BitboardOperations.clearFile(2) & blackKnights) >>> 10;
-
-		long possibleMoves = upRight | upLeft | rightUp | rightDown | downRight
-				| downLeft | leftUp | leftDown;
-
-		return possibleMoves & ~getBlackPieces();// & ~getWhitePieces();
-	}
-
-	/*
-	 * Generate squares under attack diagonally by a white pawn
-	 */
-	private long getWhitePawnAttackingSquares() {
-		long upLeft = ((whitePawns & BitboardOperations.clearFile(1)) << 7);
-		long upRight = ((whitePawns & BitboardOperations.clearFile(8)) << 9);
-		long attackingAPiece = (upLeft | upRight);
-
-		return attackingAPiece;
-	}
-
-	/*
-	 * Generate white pawn moves for attacking a piece
-	 */
-	private long getWhitePawnMovesDiagonal() {
-
-		long upLeft = ((whitePawns & BitboardOperations.clearFile(1)) << 7);
-		long upRight = ((whitePawns & BitboardOperations.clearFile(8)) << 9);
-		long attackingAPiece = (upLeft | upRight) & getBlackPieces();
-
-		return attackingAPiece;
-	}
-
-	/*
-	 * Generate squares under attack diagonally by a black pawn
-	 */
-	private long getBlackPawnAttackingSquares() {
-
-		long downRight = ((blackPawns & BitboardOperations.clearFile(8)) >>> 7);
-		long downLeft = ((blackPawns & BitboardOperations.clearFile(1)) >>> 9);
-		long attackingAPiece = (downRight | downLeft);
-
-		return attackingAPiece;
-	}
-
-	/*
-	 * Generate black pawn moves when attacking a piece
-	 */
-	private long getBlackPawnMovesDiagonal() {
-
-		long downRight = ((blackPawns & BitboardOperations.clearFile(8)) >>> 7);
-		long downLeft = ((blackPawns & BitboardOperations.clearFile(1)) >>> 9);
-		long attackingAPiece = (downRight | downLeft) & getWhitePieces();
-
-		return attackingAPiece;
-	}
-
-	/*
-	 * Generate white king moves.
-	 */
-	private long getWhiteKingMoves() {
-
-		// vertical movement 8 bit shift
-		long up = whiteKing << 8;
-		long down = whiteKing >>> 8;
-
-		// clear file stops move generation to the left if on the 1st file
-		long left = ((whiteKing & BitboardOperations.clearFile(1)) >>> 1);
-		long upLeft = (whiteKing & BitboardOperations.clearFile(1)) << 7;
-		long downLeft = (whiteKing & BitboardOperations.clearFile(1)) >>> 9;
-
-		// clear file stops move generation to the right if on the 8th file
-		long right = ((whiteKing & BitboardOperations.clearFile(8)) << 1);
-		long upRight = ((whiteKing & BitboardOperations.clearFile(8)) << 9);
-		long downRight = ((whiteKing & BitboardOperations.clearFile(8)) >>> 7);
-
-		long possibleMoves = (up | down | left | right | upRight | downRight
-				| upLeft | downLeft);
-
-		// TODO: Add another check to not let the king move onto a square under
-		// attack by the opposite colour.
-		return (possibleMoves & ~getWhitePieces())
-				& ~getBlackAttackingSquaresNonKing();
-	}
-
-	/*
-	 * Generate black king moves.
-	 */
-	private long getBlackKingMoves() {
-
-		// vertical movement 8 bit shift
-		long up = blackKing << 8;
-		long down = blackKing >>> 8;
-
-		// clear file stops move generation to the left if on the 1st file
-		long left = ((blackKing & BitboardOperations.clearFile(1)) >>> 1);
-		long upLeft = (blackKing & BitboardOperations.clearFile(1)) << 7;
-		long downLeft = (blackKing & BitboardOperations.clearFile(1)) >>> 9;
-
-		// clear file stops move generation to the right if on the 8th file
-		long right = ((blackKing & BitboardOperations.clearFile(8)) << 1);
-		long upRight = ((blackKing & BitboardOperations.clearFile(8)) << 9);
-		long downRight = ((blackKing & BitboardOperations.clearFile(8)) >>> 7);
-
-		long possibleMoves = (up | down | left | right | upRight | downRight
-				| upLeft | downLeft);
-
-		// TODO: Add another check to not let the king move onto a square under
-		// attack by the opposite colour.
-		return (possibleMoves & ~getBlackPieces())
-				& ~getWhiteAttackingSquaresNonKing();
-	}
-
-	private long getWhitePawnMovesVertical() {
-
-		// Vertical single rank
-		long upOne = (whitePawns << 8) & ~getOccupiedSquares();
-
-		// Moving up 2 spaces from 2nd rank
-		long secondRankPawns = whitePawns & BitboardOperations.maskRank(2);
-		long pawnsNotBlocked = (((secondRankPawns << 8) & ~getOccupiedSquares()) >>> 8);
-		long upTwo = pawnsNotBlocked << 16 & ~getOccupiedSquares();
-
-		return upOne | upTwo;
-	}
-
-	private long getBlackPawnMovesVertical() {
-
-		// Vertical single rank
-		long downOne = (blackPawns >>> 8) & ~getOccupiedSquares();
-
-		// Moving down 2 ranks from 7th rank
-		long seventhRankPawns = blackPawns & BitboardOperations.maskRank(7);
-		long pawnsNotBlocked = (((seventhRankPawns >>> 8) & ~getOccupiedSquares()) << 8);
-		long downTwo = pawnsNotBlocked >>> 16 & ~getOccupiedSquares();
-
-		return downOne | downTwo;
-	}
-
-	private void initialiseBoard() {
-		initialiseBitBoards();
+	private void updateBitboards() {
+		resetBitboards();
 		String binaryLong;
 		int currentIndex;
 		for (int y = 7; y >= 0; y--) {
@@ -590,7 +168,7 @@ public class ChessBoard {
 		}
 	}
 
-	private void initialiseBitBoards() {
+	private void resetBitboards() {
 		whitePawns = 0L;
 		whiteRooks = 0L;
 		whiteKnights = 0L;

@@ -251,8 +251,8 @@ public class WhitePieces {
 	/*
 	 * Generate white king moves.
 	 */
-	private long getWhiteKingMoves(long whiteKing, long whitePieces,
-			long blackAttackingSquares) {
+	protected static long getWhiteKingAttackingSquares(long whiteKing,
+			long whitePieces) {
 
 		// vertical movement 8 bit shift
 		long up = whiteKing << 8;
@@ -273,6 +273,12 @@ public class WhitePieces {
 
 		// TODO: Add another check to not let the king move onto a square under
 		// attack by the opposite colour.
-		return (possibleMoves & ~whitePieces) & ~blackAttackingSquares;
+		return (possibleMoves & ~whitePieces);
+	}
+
+	protected static long getWhiteKingMoves(long whiteKing, long whitePieces,
+			long blackAttackingSquares) {
+		return getWhiteKingAttackingSquares(whiteKing, whitePieces)
+				& ~blackAttackingSquares;
 	}
 }

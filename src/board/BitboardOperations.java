@@ -2,6 +2,23 @@ package board;
 
 public class BitboardOperations {
 
+	protected static long getPositionBitboard(long position) {
+
+		String temp = "1";
+
+		for (int i = 0; i < position - 1; i++) {
+			temp += "0";
+		}
+
+		if (temp.length() == 64) {
+			temp = temp.substring(0, temp.length() - 1);
+			return Long.parseLong(temp, 2) * 2;
+		} else {
+			return Long.parseLong(temp, 2);
+		}
+
+	}
+
 	protected static long getBottomRightSquares(long bitboard) {
 		long currentFile = 0L;
 		long bottomRightSquares = 0L;

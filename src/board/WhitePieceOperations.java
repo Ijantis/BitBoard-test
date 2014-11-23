@@ -21,6 +21,12 @@ public class WhitePieceOperations {
 		System.out.println();
 	}
 
+	protected static long getWhitePawnMoves(long whitePawns,
+			long occupiedSquares, long blackPieces) {
+		return getWhitePawnMovesVertical(whitePawns, occupiedSquares)
+				| getWhitePawnMovesDiagonal(whitePawns, blackPieces);
+	}
+
 	protected static long getWhitePawnMovesVertical(long whitePawns,
 			long occupiedSquares) {
 

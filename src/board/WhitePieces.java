@@ -21,13 +21,13 @@ public class WhitePieces {
 		System.out.println();
 	}
 
-	protected static long getWhitePawnMoves(long whitePawns,
+	protected static long getPawnMoves(long whitePawns,
 			long occupiedSquares, long blackPieces) {
-		return getWhitePawnMovesVertical(whitePawns, occupiedSquares)
-				| getWhitePawnMovesDiagonal(whitePawns, blackPieces);
+		return getPawnMovesVertical(whitePawns, occupiedSquares)
+				| getPawnMovesDiagonal(whitePawns, blackPieces);
 	}
 
-	protected static long getWhitePawnMovesVertical(long whitePawns,
+	protected static long getPawnMovesVertical(long whitePawns,
 			long occupiedSquares) {
 
 		// Vertical single rank
@@ -45,15 +45,15 @@ public class WhitePieces {
 	/*
 	 * Generate white pawn moves for attacking a piece
 	 */
-	protected static long getWhitePawnMovesDiagonal(long whitePawns,
+	protected static long getPawnMovesDiagonal(long whitePawns,
 			long blackPieces) {
-		return getWhitePawnAttackingSquares(whitePawns) & blackPieces;
+		return getPawnAttackingSquares(whitePawns) & blackPieces;
 	}
 
 	/*
 	 * Generate squares under attack diagonally by a white pawn
 	 */
-	protected static long getWhitePawnAttackingSquares(long whitePawns) {
+	protected static long getPawnAttackingSquares(long whitePawns) {
 		long upLeft = ((whitePawns & BitboardOperations.clearFile(1)) << 7);
 		long upRight = ((whitePawns & BitboardOperations.clearFile(8)) << 9);
 		long attackingAPiece = (upLeft | upRight);
@@ -61,13 +61,13 @@ public class WhitePieces {
 		return attackingAPiece;
 	}
 
-	protected static long getWhiteKnightMoves(long whiteKnights,
+	protected static long getKnightMoves(long whiteKnights,
 			long whitePieces) {
-		return getWhiteKnightAttackingSquares(whiteKnights) & ~whitePieces;// &
+		return getKnightAttackingSquares(whiteKnights) & ~whitePieces;// &
 																			// ~getWhitePieces();
 	}
 
-	protected static long getWhiteKnightAttackingSquares(long whiteKnights) {
+	protected static long getKnightAttackingSquares(long whiteKnights) {
 		// variable names are first direction then second direction
 
 		long upRight = (whiteKnights & BitboardOperations.clearFile(8)) << 17;
@@ -92,13 +92,13 @@ public class WhitePieces {
 		return possibleMoves;
 	}
 
-	protected static long getWhiteRookMoves(long rookBitboardToCalculate,
+	protected static long getRookMoves(long rookBitboardToCalculate,
 			long occupiedSquares, long whitePieces) {
-		return getWhiteRookAttackingSquares(rookBitboardToCalculate,
+		return getRookAttackingSquares(rookBitboardToCalculate,
 				occupiedSquares) & ~whitePieces;
 	}
 
-	protected static long getWhiteRookAttackingSquares(
+	protected static long getRookAttackingSquares(
 			long rookBitboardToCalculate, long occupiedSquares) {
 
 		long nextRook = 0L;
@@ -183,14 +183,14 @@ public class WhitePieces {
 		return left_moves | right_moves | up_moves | down_moves;
 	}
 
-	protected static long getWhiteBishopMoves(long whiteBishops,
+	protected static long getBishopMoves(long whiteBishops,
 			long occupiedSquares, long whitePieces) {
-		return getWhiteBishopAttackingSquares(whiteBishops, occupiedSquares)
+		return getBishopAttackingSquares(whiteBishops, occupiedSquares)
 				& ~whitePieces;
 
 	}
 
-	protected static long getWhiteBishopAttackingSquares(long whiteBishops,
+	protected static long getBishopAttackingSquares(long whiteBishops,
 			long occupiedSquares) {
 
 		long topRight = BitboardOperations.getTopRightSquares(whiteBishops)
@@ -236,22 +236,22 @@ public class WhitePieces {
 		return topRight | topLeft | bottomRight | bottomLeft;
 	}
 
-	protected static long getWhiteQueenAttackingSquares(long whiteQueens,
+	protected static long getQueenAttackingSquares(long whiteQueens,
 			long occupiedSquares) {
-		return getWhiteBishopAttackingSquares(whiteQueens, occupiedSquares)
-				| getWhiteRookAttackingSquares(whiteQueens, occupiedSquares);
+		return getBishopAttackingSquares(whiteQueens, occupiedSquares)
+				| getRookAttackingSquares(whiteQueens, occupiedSquares);
 	}
 
-	protected static long getWhiteQueenMoves(long whiteQueens,
+	protected static long getQueenMoves(long whiteQueens,
 			long occupiedSquares, long whitePieces) {
-		return getWhiteQueenAttackingSquares(whiteQueens, occupiedSquares)
+		return getQueenAttackingSquares(whiteQueens, occupiedSquares)
 				& ~whitePieces;
 	}
 
 	/*
 	 * Generate white king moves.
 	 */
-	protected static long getWhiteKingAttackingSquares(long whiteKing,
+	protected static long getKingAttackingSquares(long whiteKing,
 			long whitePieces) {
 
 		// vertical movement 8 bit shift
@@ -276,9 +276,9 @@ public class WhitePieces {
 		return (possibleMoves & ~whitePieces);
 	}
 
-	protected static long getWhiteKingMoves(long whiteKing, long whitePieces,
+	protected static long getKingMoves(long whiteKing, long whitePieces,
 			long blackAttackingSquares) {
-		return getWhiteKingAttackingSquares(whiteKing, whitePieces)
+		return getKingAttackingSquares(whiteKing, whitePieces)
 				& ~blackAttackingSquares;
 	}
 }

@@ -32,12 +32,11 @@ public class ChessBoard {
 		long timeNano = System.nanoTime();
 
 		newGame();
-		clearChessBoard();
-		currentBoard[7][0] = "K";
-		currentBoard[6][0] = "R";
-		currentBoard[3][0] = "q";
-		updateBitboards();
-		makeMove(6, 14);
+		makeMove(8, 16);
+		makeMove(16, 24);
+		makeMove(24, 32);
+		makeMove(32, 40);
+		makeMove(40, 48);
 		printBoard();
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
@@ -60,9 +59,6 @@ public class ChessBoard {
 		int x = (int) (fromSquare % 8);
 		int y = (int) (fromSquare / 8);
 
-		System.out.println("Attempting to move a piece from (" + x + "," + y
-				+ ")");
-
 		long fromBitboard = BitboardOperations.getPositionBitboard(fromSquare);
 		long toBitboard = BitboardOperations.getPositionBitboard(toSquare);
 		String[][] tempBoard = copyCurrentBoard();
@@ -71,19 +67,12 @@ public class ChessBoard {
 		// check to see if the move is possible
 
 		if (moveIsPossible(fromBitboard, fromSquare, toBitboard)) {
-			System.out.println("Piece exists at (" + x + "," + y
-					+ ") and move is possible to (" + (toSquare % 8) + ","
-					+ (toSquare / 8) + ")");
 			// moving the piece
 			tempBoard[(int) toSquare % 8][(int) toSquare / 8] = tempBoard[(int) x][(int) y];
 			tempBoard[x][y] = " ";
 
-			// next check if tempBoard puts the same colour king in check and if
-			// its in check then check for checkmate. Then check for any draws
-			// etc.
+			// next check if tempBoard puts the same colour king in check and
 			// if its all good then currentBoard = tempBoard;
-			System.out.println("Current state");
-			printBoard();
 			boolean isValid;
 			if (tempBoard[x][y].toUpperCase().equals(tempBoard[x][y])) {
 				isValid = BoardChecker.IsSelfCheck(tempBoard, true);
@@ -93,9 +82,12 @@ public class ChessBoard {
 
 			if (isValid) {
 				currentBoard = tempBoard;
-				return isValid;
+				updateBitboards();
+				return true;
+				// return isValid;
 			} else {
-				return isValid;
+				return false;
+				// return isValid;
 			}
 		}
 
@@ -107,15 +99,9 @@ public class ChessBoard {
 
 		// checks if a piece exists at that coordinate
 		long pieceExists = fromBitboard & getOccupiedSquares();
-		printBitboard(fromBitboard);
-		printBitboard(getOccupiedSquares());
-		// System.out.println("piece exists:");
-		// printBitboard(pieceExists);
 		// checks to see if a move exists
 		long moveExists = generatePieceMoves(fromSquare, fromBitboard)
 				& toBitboard;
-		// System.out.println("move exists");
-		// printBitboard(moveExists);
 
 		return pieceExists != 0 && moveExists != 0;
 	}
@@ -161,28 +147,6 @@ public class ChessBoard {
 					getWhiteAttackingSquares());
 		}
 		return 0L;
-	}
-
-	private boolean isWhiteKingInCheck() {
-
-		long blackMoves = getBlackAttackingSquares();
-
-		if ((blackMoves & whiteKing) == 0) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-
-	private boolean isBlackKingInCheck() {
-
-		long whiteMoves = getWhiteAttackingSquares();
-
-		if ((whiteMoves & blackKing) == 0) {
-			return false;
-		} else {
-			return true;
-		}
 	}
 
 	// move this method to WhitePieces.java

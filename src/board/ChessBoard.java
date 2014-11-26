@@ -1,10 +1,13 @@
 package board;
 
+import java.lang.reflect.Array;
+
 public class ChessBoard {
 
 	public static void main(String[] args) {
 
 		new ChessBoard();
+
 	}
 
 	private long whitePawns, whiteRooks, whiteKnights, whiteBishops,
@@ -25,31 +28,117 @@ public class ChessBoard {
 			{ "R", "P", " ", " ", " ", " ", "p", "r" } };;
 
 	public ChessBoard() {
-		newGame();
-	}
-
-	public void newGame() {
-
 		long time = System.currentTimeMillis();
 		long timeNano = System.nanoTime();
 
-		updateBitboards();
+		newGame();
+		makeMove(10, 26);
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
 		System.out.println("That took :"
 				+ ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
+	}
+
+	public void newGame() {
+
+		updateBitboards();
 
 	}
 
-	public boolean makeMove(int fromSquare, int toSquare) {
+	/*
+	 * fromSquare and toSquare should be between 0 and 63 inclusive
+	 */
+	public boolean makeMove(long fromSquare, long toSquare) {
+
+		System.out.println("Attempting to move a piece from ("
+				+ (fromSquare % 8) + "," + (fromSquare / 8) + ")");
+
+		long fromBitboard = BitboardOperations.getPositionBitboard(fromSquare);
+		long toBitboard = BitboardOperations.getPositionBitboard(toSquare);
+		String[][] tempBoard = copyCurrentBoard();
+
+		// check to see if there is a piece there
+		// check to see if the move is possible
+
+		if (moveIsPossible(fromBitboard, fromSquare, toBitboard)) {
+			System.out.println("Piece exists at (" + (fromSquare % 8) + ","
+					+ (fromSquare / 8) + ") and move is possible to ("
+					+ (toSquare % 8) + "," + (toSquare / 8) + ")");
+			// moving the piece
+			tempBoard[(int) toSquare % 8][(int) toSquare / 8] = tempBoard[(int) fromSquare % 8][(int) fromSquare / 8];
+			tempBoard[(int) fromSquare % 8][(int) fromSquare / 8] = " ";
+			// next check if tempBoard puts the same colour king in check and if
+			// its in check then check for checkmate. Then check for any draws
+			// etc.
+			// if its all good then currentBoard = tempBoard;
+			printBoard();
+			printBoard(tempBoard);
+		}
 
 		return false;
 	}
 
+	private boolean moveIsPossible(long fromBitboard, long fromSquare,
+			long toBitboard) {
+
+		// checks if a piece exists at that coordinate
+		long pieceExists = fromBitboard & getOccupiedSquares();
+		// checks to see if a move exists
+		long moveExists = generatePieceMoves(fromSquare, fromBitboard)
+				& toBitboard;
+
+		return pieceExists != 0 && moveExists != 0;
+	}
+
+	/*
+	 * Returns a bitboard of the generated moves for a particular coordinate
+	 */
+	private long generatePieceMoves(long fromSquare, long fromBitboard) {
+		switch (currentBoard[(int) fromSquare % 8][(int) fromSquare / 8]) {
+		case "P":
+			return WhitePieces.getPawnMoves(fromBitboard,
+					getOccupiedSquares(), getBlackPieces());
+		case "R":
+			return WhitePieces.getRookMoves(fromBitboard,
+					getOccupiedSquares(), getWhitePieces());
+		case "N":
+			return WhitePieces.getKnightMoves(fromBitboard,
+					getWhitePieces());
+		case "B":
+			return WhitePieces.getBishopMoves(fromBitboard,
+					getOccupiedSquares(), getWhitePieces());
+		case "Q":
+			return WhitePieces.getQueenMoves(fromBitboard,
+					getOccupiedSquares(), getWhitePieces());
+		case "K":
+			return WhitePieces.getKingMoves(fromBitboard,
+					getWhitePieces(), getBlackAttackingSquares());
+		case "p":
+			return BlackPieces.getPawnMoves(fromBitboard,
+					getOccupiedSquares(), getWhitePieces());
+		case "r":
+			return BlackPieces.getRookMoves(fromBitboard,
+					getOccupiedSquares(), getBlackPieces());
+		case "n":
+			return BlackPieces
+					.getKnightMoves(fromSquare, getBlackPieces());
+		case "b":
+			return BlackPieces.getBishopMoves(fromBitboard,
+					getOccupiedSquares(), getBlackPieces());
+		case "q":
+			return BlackPieces.getQueenMoves(fromBitboard,
+					getOccupiedSquares(), getBlackPieces());
+		case "k":
+			return BlackPieces.getKingMoves(fromBitboard,
+					getBlackPieces(), getWhiteAttackingSquares());
+		}
+		return 0L;
+	}
+
 	private boolean isWhiteKingInCheck() {
 
-		long blackMoves = getBlackAttackingSquaresNonKing();
+		long blackMoves = getBlackAttackingSquares();
 
 		if ((blackMoves & whiteKing) == 0) {
 			return false;
@@ -60,7 +149,7 @@ public class ChessBoard {
 
 	private boolean isBlackKingInCheck() {
 
-		long whiteMoves = getWhiteAttackingSquaresNonKing();
+		long whiteMoves = getWhiteAttackingSquares();
 
 		if ((whiteMoves & blackKing) == 0) {
 			return false;
@@ -69,37 +158,39 @@ public class ChessBoard {
 		}
 	}
 
-	private long getWhiteAttackingSquaresNonKing() {
+	private long getWhiteAttackingSquares() {
 		long attackedSquares = 0L;
 
 		attackedSquares = attackedSquares
-				| WhitePieceOperations.getWhitePawnAttackingSquares(whitePawns)
-				| WhitePieceOperations.getWhiteRookAttackingSquares(whiteRooks,
+				| WhitePieces.getPawnAttackingSquares(whitePawns)
+				| WhitePieces.getRookAttackingSquares(whiteRooks,
 						getOccupiedSquares())
-				| WhitePieceOperations
-						.getWhiteKnightAttackingSquares(whiteKnights)
-				| WhitePieceOperations.getWhiteBishopAttackingSquares(
-						whiteBishops, getOccupiedSquares())
-				| WhitePieceOperations.getWhiteQueenAttackingSquares(
-						whiteQueens, getOccupiedSquares());
+				| WhitePieces.getKnightAttackingSquares(whiteKnights)
+				| WhitePieces.getBishopAttackingSquares(whiteBishops,
+						getOccupiedSquares())
+				| WhitePieces.getQueenAttackingSquares(whiteQueens,
+						getOccupiedSquares())
+				| WhitePieces.getKingAttackingSquares(whiteKing,
+						getWhitePieces());
 
 		return attackedSquares;
 	}
 
-	private long getBlackAttackingSquaresNonKing() {
+	private long getBlackAttackingSquares() {
 
 		long attackedSquares = 0L;
 
 		attackedSquares = attackedSquares
-				| BlackPieceOperations.getblackPawnAttackingSquares(blackPawns)
-				| BlackPieceOperations.getblackRookAttackingSquares(blackRooks,
+				| BlackPieces.getPawnAttackingSquares(blackPawns)
+				| BlackPieces.getRookAttackingSquares(blackRooks,
 						getOccupiedSquares())
-				| BlackPieceOperations
-						.getblackKnightAttackingSquares(blackKnights)
-				| BlackPieceOperations.getblackBishopAttackingSquares(
-						blackBishops, getOccupiedSquares())
-				| BlackPieceOperations.getblackQueenAttackingSquares(
-						blackQueens, getOccupiedSquares());
+				| BlackPieces.getKnightAttackingSquares(blackKnights)
+				| BlackPieces.getBishopAttackingSquares(blackBishops,
+						getOccupiedSquares())
+				| BlackPieces.getQueenAttackingSquares(blackQueens,
+						getOccupiedSquares())
+				| BlackPieces.getKingAttackingSquares(blackKing,
+						getBlackPieces());
 
 		return attackedSquares;
 	}
@@ -195,6 +286,25 @@ public class ChessBoard {
 	 * Temporary class for printing out the current state of the board wihout
 	 * relying on a gui.
 	 */
+	public void printBoard(String[][] board) {
+		for (int y = 7; y >= 0; y--) {
+			for (int x = 0; x < board.length; x++) {
+				String temp = board[x][y];
+				if (temp.equals(" ")) {
+					System.out.print(", ");
+				} else {
+					System.out.print(board[x][y] + " ");
+				}
+			}
+			System.out.println();
+		}
+		System.out.println();
+	}
+
+	/*
+	 * Temporary class for printing out the current state of the board wihout
+	 * relying on a gui.
+	 */
 	public void printBoard() {
 		for (int y = 7; y >= 0; y--) {
 			for (int x = 0; x < currentBoard.length; x++) {
@@ -224,7 +334,7 @@ public class ChessBoard {
 		return (getWhitePieces() | getBlackPieces());
 	}
 
-	private void printBitBoard(long bitBoard) {
+	private void printBitboard(long bitBoard) {
 		String stringBitBoard = Long.toBinaryString(bitBoard);
 		System.out.println("Value : " + stringBitBoard);
 		while (stringBitBoard.length() != 64) {
@@ -241,5 +351,16 @@ public class ChessBoard {
 			System.out.println();
 		}
 		System.out.println();
+	}
+
+	private String[][] copyCurrentBoard() {
+		String[][] temp = new String[currentBoard.length][currentBoard.length];
+
+		for (int x = 0; x < temp.length; x++) {
+			for (int y = 0; y < temp.length; y++) {
+				temp[x][y] = new String(currentBoard[x][y]);
+			}
+		}
+		return temp;
 	}
 }

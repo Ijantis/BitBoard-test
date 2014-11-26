@@ -21,8 +21,8 @@ public class BlackPieces {
 		System.out.println();
 	}
 
-	protected static long getPawnMoves(long blackPawns,
-			long occupiedSquares, long whitePieces) {
+	protected static long getPawnMoves(long blackPawns, long occupiedSquares,
+			long whitePieces) {
 		return getPawnMovesVertical(blackPawns, occupiedSquares)
 				| getPawnMovesDiagonal(blackPawns, whitePieces);
 	}
@@ -38,15 +38,13 @@ public class BlackPieces {
 		long pawnsNotBlocked = (((seventhRankPawns << 8) & ~occupiedSquares) << 8);
 		long upTwo = pawnsNotBlocked >>> 16 & ~occupiedSquares;
 
-		System.out.println("Exit");
 		return upOne | upTwo;
 	}
 
 	/*
 	 * Generate black pawn moves for attacking a piece
 	 */
-	protected static long getPawnMovesDiagonal(long blackPawns,
-			long whitePieces) {
+	protected static long getPawnMovesDiagonal(long blackPawns, long whitePieces) {
 		return getPawnAttackingSquares(blackPawns) & whitePieces;
 	}
 
@@ -61,10 +59,9 @@ public class BlackPieces {
 		return attackingAPiece;
 	}
 
-	protected static long getKnightMoves(long blackKnights,
-			long blackPieces) {
+	protected static long getKnightMoves(long blackKnights, long blackPieces) {
 		return getKnightAttackingSquares(blackKnights) & ~blackPieces;// &
-																			// ~getblackPieces();
+																		// ~getblackPieces();
 	}
 
 	protected static long getKnightAttackingSquares(long blackKnights) {
@@ -94,12 +91,12 @@ public class BlackPieces {
 
 	protected static long getRookMoves(long rookBitboardToCalculate,
 			long occupiedSquares, long blackPieces) {
-		return getRookAttackingSquares(rookBitboardToCalculate,
-				occupiedSquares) & ~blackPieces;
+		return getRookAttackingSquares(rookBitboardToCalculate, occupiedSquares)
+				& ~blackPieces;
 	}
 
-	protected static long getRookAttackingSquares(
-			long rookBitboardToCalculate, long occupiedSquares) {
+	protected static long getRookAttackingSquares(long rookBitboardToCalculate,
+			long occupiedSquares) {
 
 		long nextRook = 0L;
 		long allRookMoves = 0L;
@@ -242,8 +239,8 @@ public class BlackPieces {
 				| getRookAttackingSquares(blackQueens, occupiedSquares);
 	}
 
-	protected static long getQueenMoves(long blackQueens,
-			long occupiedSquares, long blackPieces) {
+	protected static long getQueenMoves(long blackQueens, long occupiedSquares,
+			long blackPieces) {
 		return getQueenAttackingSquares(blackQueens, occupiedSquares)
 				& ~blackPieces;
 	}
@@ -273,12 +270,12 @@ public class BlackPieces {
 
 		// TODO: Add another check to not let the king move onto a square under
 		// attack by the opposite colour.
-		return (possibleMoves & ~blackPieces);
+		return (possibleMoves);
 	}
 
 	protected static long getKingMoves(long blackKing, long blackPieces,
 			long whiteAttackingSquares) {
-		return getKingAttackingSquares(blackKing, blackPieces)
-				& ~whiteAttackingSquares;
+		return (getKingAttackingSquares(blackKing, blackPieces) & ~whiteAttackingSquares)
+				& ~blackPieces;
 	}
 }

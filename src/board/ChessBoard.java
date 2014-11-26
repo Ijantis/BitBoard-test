@@ -32,7 +32,13 @@ public class ChessBoard {
 		long timeNano = System.nanoTime();
 
 		newGame();
-		makeMove(10, 26);
+		clearChessBoard();
+		currentBoard[7][0] = "K";
+		currentBoard[6][0] = "R";
+		currentBoard[3][0] = "q";
+		updateBitboards();
+		makeMove(6, 14);
+		printBoard();
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -51,8 +57,11 @@ public class ChessBoard {
 	 */
 	public boolean makeMove(long fromSquare, long toSquare) {
 
-		System.out.println("Attempting to move a piece from ("
-				+ (fromSquare % 8) + "," + (fromSquare / 8) + ")");
+		int x = (int) (fromSquare % 8);
+		int y = (int) (fromSquare / 8);
+
+		System.out.println("Attempting to move a piece from (" + x + "," + y
+				+ ")");
 
 		long fromBitboard = BitboardOperations.getPositionBitboard(fromSquare);
 		long toBitboard = BitboardOperations.getPositionBitboard(toSquare);
@@ -62,18 +71,32 @@ public class ChessBoard {
 		// check to see if the move is possible
 
 		if (moveIsPossible(fromBitboard, fromSquare, toBitboard)) {
-			System.out.println("Piece exists at (" + (fromSquare % 8) + ","
-					+ (fromSquare / 8) + ") and move is possible to ("
-					+ (toSquare % 8) + "," + (toSquare / 8) + ")");
+			System.out.println("Piece exists at (" + x + "," + y
+					+ ") and move is possible to (" + (toSquare % 8) + ","
+					+ (toSquare / 8) + ")");
 			// moving the piece
-			tempBoard[(int) toSquare % 8][(int) toSquare / 8] = tempBoard[(int) fromSquare % 8][(int) fromSquare / 8];
-			tempBoard[(int) fromSquare % 8][(int) fromSquare / 8] = " ";
+			tempBoard[(int) toSquare % 8][(int) toSquare / 8] = tempBoard[(int) x][(int) y];
+			tempBoard[x][y] = " ";
+
 			// next check if tempBoard puts the same colour king in check and if
 			// its in check then check for checkmate. Then check for any draws
 			// etc.
 			// if its all good then currentBoard = tempBoard;
+			System.out.println("Current state");
 			printBoard();
-			printBoard(tempBoard);
+			boolean isValid;
+			if (tempBoard[x][y].toUpperCase().equals(tempBoard[x][y])) {
+				isValid = BoardChecker.IsSelfCheck(tempBoard, true);
+			} else {
+				isValid = BoardChecker.IsSelfCheck(tempBoard, false);
+			}
+
+			if (isValid) {
+				currentBoard = tempBoard;
+				return isValid;
+			} else {
+				return isValid;
+			}
 		}
 
 		return false;
@@ -84,9 +107,15 @@ public class ChessBoard {
 
 		// checks if a piece exists at that coordinate
 		long pieceExists = fromBitboard & getOccupiedSquares();
+		printBitboard(fromBitboard);
+		printBitboard(getOccupiedSquares());
+		// System.out.println("piece exists:");
+		// printBitboard(pieceExists);
 		// checks to see if a move exists
 		long moveExists = generatePieceMoves(fromSquare, fromBitboard)
 				& toBitboard;
+		// System.out.println("move exists");
+		// printBitboard(moveExists);
 
 		return pieceExists != 0 && moveExists != 0;
 	}
@@ -97,14 +126,13 @@ public class ChessBoard {
 	private long generatePieceMoves(long fromSquare, long fromBitboard) {
 		switch (currentBoard[(int) fromSquare % 8][(int) fromSquare / 8]) {
 		case "P":
-			return WhitePieces.getPawnMoves(fromBitboard,
-					getOccupiedSquares(), getBlackPieces());
+			return WhitePieces.getPawnMoves(fromBitboard, getOccupiedSquares(),
+					getBlackPieces());
 		case "R":
-			return WhitePieces.getRookMoves(fromBitboard,
-					getOccupiedSquares(), getWhitePieces());
-		case "N":
-			return WhitePieces.getKnightMoves(fromBitboard,
+			return WhitePieces.getRookMoves(fromBitboard, getOccupiedSquares(),
 					getWhitePieces());
+		case "N":
+			return WhitePieces.getKnightMoves(fromBitboard, getWhitePieces());
 		case "B":
 			return WhitePieces.getBishopMoves(fromBitboard,
 					getOccupiedSquares(), getWhitePieces());
@@ -112,17 +140,16 @@ public class ChessBoard {
 			return WhitePieces.getQueenMoves(fromBitboard,
 					getOccupiedSquares(), getWhitePieces());
 		case "K":
-			return WhitePieces.getKingMoves(fromBitboard,
-					getWhitePieces(), getBlackAttackingSquares());
+			return WhitePieces.getKingMoves(fromBitboard, getWhitePieces(),
+					getBlackAttackingSquares());
 		case "p":
-			return BlackPieces.getPawnMoves(fromBitboard,
-					getOccupiedSquares(), getWhitePieces());
+			return BlackPieces.getPawnMoves(fromBitboard, getOccupiedSquares(),
+					getWhitePieces());
 		case "r":
-			return BlackPieces.getRookMoves(fromBitboard,
-					getOccupiedSquares(), getBlackPieces());
+			return BlackPieces.getRookMoves(fromBitboard, getOccupiedSquares(),
+					getBlackPieces());
 		case "n":
-			return BlackPieces
-					.getKnightMoves(fromSquare, getBlackPieces());
+			return BlackPieces.getKnightMoves(fromSquare, getBlackPieces());
 		case "b":
 			return BlackPieces.getBishopMoves(fromBitboard,
 					getOccupiedSquares(), getBlackPieces());
@@ -130,8 +157,8 @@ public class ChessBoard {
 			return BlackPieces.getQueenMoves(fromBitboard,
 					getOccupiedSquares(), getBlackPieces());
 		case "k":
-			return BlackPieces.getKingMoves(fromBitboard,
-					getBlackPieces(), getWhiteAttackingSquares());
+			return BlackPieces.getKingMoves(fromBitboard, getBlackPieces(),
+					getWhiteAttackingSquares());
 		}
 		return 0L;
 	}
@@ -158,6 +185,7 @@ public class ChessBoard {
 		}
 	}
 
+	// move this method to WhitePieces.java
 	private long getWhiteAttackingSquares() {
 		long attackedSquares = 0L;
 
@@ -176,6 +204,7 @@ public class ChessBoard {
 		return attackedSquares;
 	}
 
+	// move this method to BlackPieces.java
 	private long getBlackAttackingSquares() {
 
 		long attackedSquares = 0L;

@@ -1,6 +1,7 @@
 package board;
 
 import java.lang.reflect.Array;
+import java.util.Vector;
 
 public class ChessBoard {
 
@@ -14,6 +15,7 @@ public class ChessBoard {
 			whiteQueens, whiteKing;
 	private long blackPawns, blackRooks, blackKnights, blackBishops,
 			blackQueens, blackKing;
+	
 	// Upper case for WHITE
 	// Lower case for BLACK
 	// 0,0 is top left 0,7 is top right 7,7 bottom right
@@ -32,11 +34,6 @@ public class ChessBoard {
 		long timeNano = System.nanoTime();
 
 		newGame();
-		makeMove(8, 16);
-		makeMove(16, 24);
-		makeMove(24, 32);
-		makeMove(32, 40);
-		makeMove(40, 48);
 		printBoard();
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
@@ -46,6 +43,38 @@ public class ChessBoard {
 	}
 
 	public void newGame() {
+
+		currentBoard[0][0] = "R";
+		currentBoard[1][0] = "N";
+		currentBoard[2][0] = "B";
+		currentBoard[3][0] = "Q";
+		currentBoard[4][0] = "K";
+		currentBoard[5][0] = "B";
+		currentBoard[6][0] = "N";
+		currentBoard[7][0] = "R";
+
+		currentBoard[0][7] = "r";
+		currentBoard[1][7] = "n";
+		currentBoard[2][7] = "b";
+		currentBoard[3][7] = "q";
+		currentBoard[4][7] = "k";
+		currentBoard[5][7] = "b";
+		currentBoard[6][7] = "n";
+		currentBoard[7][7] = "r";
+
+		for (int x = 0; x < 7; x++) {
+			currentBoard[x][1] = "P";
+		}
+
+		for (int x = 0; x < 7; x++) {
+			currentBoard[x][6] = "p";
+		}
+
+		for (int y = 2; y < 5; y++) {
+			for (int x = 0; x < 7; x++) {
+				currentBoard[x][y] = " ";
+			}
+		}
 
 		updateBitboards();
 
@@ -67,7 +96,7 @@ public class ChessBoard {
 		// check to see if the move is possible
 
 		if (moveIsPossible(fromBitboard, fromSquare, toBitboard)) {
-			// moving the piece
+			// move the piece on the temporary board
 			tempBoard[(int) toSquare % 8][(int) toSquare / 8] = tempBoard[(int) x][(int) y];
 			tempBoard[x][y] = " ";
 
@@ -75,9 +104,9 @@ public class ChessBoard {
 			// if its all good then currentBoard = tempBoard;
 			boolean isValid;
 			if (tempBoard[x][y].toUpperCase().equals(tempBoard[x][y])) {
-				isValid = BoardChecker.IsSelfCheck(tempBoard, true);
+				isValid = BoardManager.IsSelfCheck(tempBoard, true);
 			} else {
-				isValid = BoardChecker.IsSelfCheck(tempBoard, false);
+				isValid = BoardManager.IsSelfCheck(tempBoard, false);
 			}
 
 			if (isValid) {
@@ -94,6 +123,19 @@ public class ChessBoard {
 		return false;
 	}
 
+	/**
+	 * 
+	 * Checks to see if a move is possible by seeing if the piece exists and if
+	 * one of its possible moves exists at the coordinate stated.
+	 * 
+	 * @param fromBitboard
+	 *            - The bitboard of the piece
+	 * @param fromSquare
+	 *            - The coordinate of the piece being moved
+	 * @param toBitboard
+	 *            - The bitboard of the destination square
+	 * @return
+	 */
 	private boolean moveIsPossible(long fromBitboard, long fromSquare,
 			long toBitboard) {
 
@@ -107,7 +149,15 @@ public class ChessBoard {
 	}
 
 	/*
-	 * Returns a bitboard of the generated moves for a particular coordinate
+	 * Returns a bitboard of the generated moves for a single coordinate
+	 */
+	/**
+	 * 
+	 * @param fromSquare
+	 *            - The coordinate of the piece
+	 * @param fromBitboard
+	 *            - The bitboard of the piece
+	 * @return - The bitboard of all possible moves
 	 */
 	private long generatePieceMoves(long fromSquare, long fromBitboard) {
 		switch (currentBoard[(int) fromSquare % 8][(int) fromSquare / 8]) {
@@ -149,7 +199,6 @@ public class ChessBoard {
 		return 0L;
 	}
 
-	// move this method to WhitePieces.java
 	private long getWhiteAttackingSquares() {
 		long attackedSquares = 0L;
 
@@ -168,7 +217,6 @@ public class ChessBoard {
 		return attackedSquares;
 	}
 
-	// move this method to BlackPieces.java
 	private long getBlackAttackingSquares() {
 
 		long attackedSquares = 0L;

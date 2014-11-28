@@ -1,6 +1,6 @@
 package board;
 
-public class BoardChecker {
+public class BoardManager {
 
 	private static long whitePawns, whiteRooks, whiteKnights, whiteBishops,
 			whiteQueens, whiteKing;

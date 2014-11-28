@@ -2,6 +2,9 @@ package board;
 
 public class BitboardOperations {
 
+	/*
+	 * Returns a bitboard for a coordinate
+	 */
 	protected static long getPositionBitboard(long position) {
 
 		String temp = "1";

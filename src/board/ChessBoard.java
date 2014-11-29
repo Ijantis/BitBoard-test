@@ -1,8 +1,5 @@
 package board;
 
-import java.lang.reflect.Array;
-import java.util.Vector;
-
 public class ChessBoard {
 
 	public static void main(String[] args) {
@@ -15,7 +12,7 @@ public class ChessBoard {
 			whiteQueens, whiteKing;
 	private long blackPawns, blackRooks, blackKnights, blackBishops,
 			blackQueens, blackKing;
-	
+
 	// Upper case for WHITE
 	// Lower case for BLACK
 	// 0,0 is top left 0,7 is top right 7,7 bottom right
@@ -34,7 +31,11 @@ public class ChessBoard {
 		long timeNano = System.nanoTime();
 
 		newGame();
+
 		printBoard();
+		MoveGenerator.generateWhiteLegalMoves(currentBoard, whitePawns,
+				whiteRooks, whiteKnights, whiteBishops, whiteQueens, whiteKing,
+				getBlackPieces(), getWhitePieces());
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -70,8 +71,8 @@ public class ChessBoard {
 			currentBoard[x][6] = "p";
 		}
 
-		for (int y = 2; y < 5; y++) {
-			for (int x = 0; x < 7; x++) {
+		for (int y = 2; y < 6; y++) {
+			for (int x = 0; x < 8; x++) {
 				currentBoard[x][y] = " ";
 			}
 		}
@@ -92,10 +93,10 @@ public class ChessBoard {
 		long toBitboard = BitboardOperations.getPositionBitboard(toSquare);
 		String[][] tempBoard = copyCurrentBoard();
 
-		// check to see if there is a piece there
-		// check to see if the move is possible
-
+		// check to see if a piece exists at the from coordinate
+		// check to see if the piece has a move possible
 		if (moveIsPossible(fromBitboard, fromSquare, toBitboard)) {
+
 			// move the piece on the temporary board
 			tempBoard[(int) toSquare % 8][(int) toSquare / 8] = tempBoard[(int) x][(int) y];
 			tempBoard[x][y] = " ";

@@ -30,12 +30,12 @@ public class ChessBoard {
 		long time = System.currentTimeMillis();
 		long timeNano = System.nanoTime();
 
-		newGame();
+		updateBitboards();
 
 		printBoard();
 		MoveGenerator.generateWhiteLegalMoves(currentBoard, whitePawns,
 				whiteRooks, whiteKnights, whiteBishops, whiteQueens, whiteKing,
-				getBlackPieces(), getWhitePieces());
+				getBlackPieces(), getWhitePieces(), getBlackAttackingSquares());
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -405,4 +405,23 @@ public class ChessBoard {
 		}
 		return temp;
 	}
+
+	private void printAllBitboards() {
+
+		printBitboard(whitePawns);
+		printBitboard(whiteKnights);
+		printBitboard(whiteRooks);
+		printBitboard(whiteBishops);
+		printBitboard(whiteQueens);
+		printBitboard(whiteKing);
+
+		printBitboard(blackPawns);
+		printBitboard(blackKnights);
+		printBitboard(blackRooks);
+		printBitboard(blackBishops);
+		printBitboard(blackQueens);
+		printBitboard(blackKing);
+
+	}
+
 }

@@ -185,7 +185,191 @@ public class MoveGenerator {
 			System.out.println("Checkmate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		} else {
 			while (!possibleStates.isEmpty()) {
-//				printBoard(possibleStates.firstElement());
+				printBoard(possibleStates.firstElement());
+				possibleStates.remove(0);
+			}
+		}
+
+	}
+
+	protected static void generateBlackLegalMoves(String[][] currentBoard,
+			long blackPawns, long blackRooks, long blackKnights,
+			long blackBishops, long blackQueens, long blackKing,
+			long whitePieces, long blackPieces, long whiteAttackingSquares) {
+
+		Vector<String[][]> possibleStates = new Vector<String[][]>(20, 20);
+
+		while (blackPawns != 0) {
+			long nextPawn;
+			String nextPawnString = "1";
+
+			for (int i = 0; i < Long.toBinaryString(blackPawns).length() - 1; i++) {
+				nextPawnString += "0";
+			}
+
+			nextPawn = Long.parseLong(nextPawnString, 2);
+			// System.out.println("The next piece is: ");
+			// printBitboard(nextPawn);
+			// System.out.println("With possible moves: ");
+			long bitboardOfMoves = BlackPieces.getPawnMoves(nextPawn,
+					blackPieces | whitePieces, whitePieces);
+			// printBitboard(bitboardOfMoves);
+
+			possibleStates.addAll(generateNextMoves(nextPawn, bitboardOfMoves,
+					copyCurrentBoard(currentBoard)));
+
+			String blackPawnsString = Long.toBinaryString(blackPawns);
+			// stops String.substring(1) throwing an error
+			if (blackPawnsString.length() == 1) {
+				break;
+			}
+			blackPawns = Long.parseLong(blackPawnsString.substring(1), 2);
+		}
+
+		while (blackKnights != 0) {
+
+			long nextKnight;
+			String nextKnightString = "1";
+
+			for (int i = 0; i < Long.toBinaryString(blackKnights).length() - 1; i++) {
+				nextKnightString += "0";
+			}
+
+			if (nextKnightString.length() == 64) {
+				nextKnight = Long.parseLong(nextKnightString.substring(0,
+						nextKnightString.length() - 1), 2);
+			}
+
+			nextKnight = Long.parseLong(nextKnightString, 2);
+			// System.out.println("The next piece is: ");
+			// printBitboard(nextPawn);
+			// System.out.println("With possible moves: ");
+			long bitboardOfMoves = BlackPieces.getKnightMoves(nextKnight,
+					blackPieces);
+			// printBitboard(bitboardOfMoves);
+
+			possibleStates.addAll(generateNextMoves(nextKnight,
+					bitboardOfMoves, copyCurrentBoard(currentBoard)));
+
+			String blackKnightsString = Long.toBinaryString(blackKnights);
+			// stops String.substring(1) throwing an error
+			if (blackKnightsString.length() == 1) {
+				break;
+			}
+			blackKnights = Long.parseLong(blackKnightsString.substring(1), 2);
+		}
+
+		while (blackBishops != 0) {
+			long nextBishop;
+			String nextBishopString = "1";
+
+			for (int i = 0; i < Long.toBinaryString(blackBishops).length() - 1; i++) {
+				nextBishopString += "0";
+			}
+
+			if (nextBishopString.length() == 64) {
+				nextBishop = Long.parseLong(nextBishopString.substring(0,
+						nextBishopString.length() - 1), 2);
+			} else {
+				nextBishop = Long.parseLong(nextBishopString, 2);
+			}
+
+			// System.out.println("The next piece is: ");
+			// printBitboard(nextPawn);
+			// System.out.println("With possible moves: ");
+			long bitboardOfMoves = BlackPieces.getBishopMoves(nextBishop,
+					blackPieces | whitePieces, blackPieces);
+			// printBitboard(bitboardOfMoves);
+
+			possibleStates.addAll(generateNextMoves(nextBishop,
+					bitboardOfMoves, copyCurrentBoard(currentBoard)));
+
+			String blackBishopsString = Long.toBinaryString(blackBishops);
+			// stops String.substring(1) throwing an error
+			if (blackBishopsString.length() == 1) {
+				break;
+			}
+			blackBishops = Long.parseLong(blackBishopsString.substring(1), 2);
+		}
+
+		while (blackQueens != 0) {
+			long nextQueen;
+			String nextQueenString = "1";
+
+			for (int i = 0; i < Long.toBinaryString(blackQueens).length() - 1; i++) {
+				nextQueenString += "0";
+			}
+
+			if (nextQueenString.length() == 64) {
+				nextQueen = Long.parseLong(nextQueenString.substring(0,
+						nextQueenString.length() - 1), 2);
+			} else {
+
+				nextQueen = Long.parseLong(nextQueenString, 2);
+			}
+
+			// System.out.println("The next piece is: ");
+			// printBitboard(nextPawn);
+			// System.out.println("With possible moves: ");
+			long bitboardOfMoves = BlackPieces.getQueenMoves(blackQueens,
+					blackPieces | whitePieces, blackPieces);
+			// printBitboard(bitboardOfMoves);
+
+			possibleStates.addAll(generateNextMoves(nextQueen, bitboardOfMoves,
+					copyCurrentBoard(currentBoard)));
+
+			String blackQueensString = Long.toBinaryString(blackQueens);
+			// stops String.substring(1) throwing an error
+			if (blackQueensString.length() == 1) {
+				break;
+			}
+			blackQueens = Long.parseLong(blackQueensString.substring(1), 2);
+		}
+
+		while (blackRooks != 0) {
+			long nextRook;
+			String nextRookString = "1";
+
+			for (int i = 0; i < Long.toBinaryString(blackRooks).length() - 1; i++) {
+				nextRookString += "0";
+			}
+
+			if (nextRookString.length() == 64) {
+
+				nextRook = Long.parseLong(nextRookString.substring(0,
+						nextRookString.length() - 1), 2);
+
+			} else {
+				nextRook = Long.parseLong(nextRookString, 2);
+			}
+			// System.out.println("The next piece is: ");
+			// printBitboard(nextPawn);
+			// System.out.println("With possible moves: ");
+			long bitboardOfMoves = BlackPieces.getRookMoves(nextRook,
+					blackPieces | whitePieces, blackPieces);
+			// printBitboard(bitboardOfMoves);
+
+			possibleStates.addAll(generateNextMoves(nextRook, bitboardOfMoves,
+					copyCurrentBoard(currentBoard)));
+
+			String blackRooksString = Long.toBinaryString(blackRooks);
+			// stops String.substring(1) throwing an error
+			if (blackRooksString.length() == 1) {
+				break;
+			}
+			blackRooks = Long.parseLong(blackRooksString.substring(1), 2);
+		}
+
+		long kingMovesBitboard = BlackPieces.getKingMoves(blackKing,
+				blackPieces, whiteAttackingSquares);
+		possibleStates.addAll(generateNextMoves(blackKing, kingMovesBitboard,
+				currentBoard));
+
+		if (possibleStates.isEmpty()) {
+			System.out.println("Checkmate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		} else {
+			while (!possibleStates.isEmpty()) {
+				printBoard(possibleStates.firstElement());
 				possibleStates.remove(0);
 			}
 		}

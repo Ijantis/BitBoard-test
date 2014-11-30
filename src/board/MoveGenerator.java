@@ -8,12 +8,11 @@ public class MoveGenerator {
 	 * NOTE: Do not return a Vector<String[][]> return squares numbers instead.
 	 */
 	protected static void generateWhiteLegalMoves(String[][] currentBoard,
-			long whitePawns, long whiteQueens, long whiteKnights,
+			long whitePawns, long whiteRooks, long whiteKnights,
 			long whiteBishops, long whiteQueens, long whiteKing,
-			long blackPieces, long whitePieces) {
+			long blackPieces, long whitePieces, long blackAttackingSquares) {
 
 		Vector<String[][]> possibleStates = new Vector<String[][]>(20, 20);
-		printBitboard(whitePawns);
 
 		while (whitePawns != 0) {
 
@@ -46,13 +45,18 @@ public class MoveGenerator {
 		while (whiteKnights != 0) {
 
 			long nextKnight;
-			String nextPawnString = "1";
+			String nextKnightString = "1";
 
 			for (int i = 0; i < Long.toBinaryString(whiteKnights).length() - 1; i++) {
-				nextPawnString += "0";
+				nextKnightString += "0";
 			}
 
-			nextKnight = Long.parseLong(nextPawnString, 2);
+			if (nextKnightString.length() == 64) {
+				nextKnight = Long.parseLong(nextKnightString.substring(0,
+						nextKnightString.length() - 1), 2);
+			}
+
+			nextKnight = Long.parseLong(nextKnightString, 2);
 			// System.out.println("The next piece is: ");
 			// printBitboard(nextPawn);
 			// System.out.println("With possible moves: ");
@@ -72,15 +76,20 @@ public class MoveGenerator {
 		}
 
 		while (whiteBishops != 0) {
-
 			long nextBishop;
-			String nextPawnString = "1";
+			String nextBishopString = "1";
 
 			for (int i = 0; i < Long.toBinaryString(whiteBishops).length() - 1; i++) {
-				nextPawnString += "0";
+				nextBishopString += "0";
 			}
 
-			nextBishop = Long.parseLong(nextPawnString, 2);
+			if (nextBishopString.length() == 64) {
+				nextBishop = Long.parseLong(nextBishopString.substring(0,
+						nextBishopString.length() - 1), 2);
+			} else {
+				nextBishop = Long.parseLong(nextBishopString, 2);
+			}
+
 			// System.out.println("The next piece is: ");
 			// printBitboard(nextPawn);
 			// System.out.println("With possible moves: ");
@@ -100,35 +109,6 @@ public class MoveGenerator {
 		}
 
 		while (whiteQueens != 0) {
-
-			long nextRook;
-			String nextRookString = "1";
-
-			for (int i = 0; i < Long.toBinaryString(whiteQueens).length() - 1; i++) {
-				nextRookString += "0";
-			}
-
-			nextRook = Long.parseLong(nextRookString, 2);
-			// System.out.println("The next piece is: ");
-			// printBitboard(nextPawn);
-			// System.out.println("With possible moves: ");
-			long bitboardOfMoves = WhitePieces.getRookMoves(nextRook,
-					whitePieces | blackPieces, whitePieces);
-			// printBitboard(bitboardOfMoves);
-
-			possibleStates.addAll(generateNextMoves(nextRook, bitboardOfMoves,
-					copyCurrentBoard(currentBoard)));
-
-			String whiteRooksString = Long.toBinaryString(whiteQueens);
-			// stops String.substring(1) throwing an error
-			if (whiteRooksString.length() == 1) {
-				break;
-			}
-			whiteQueens = Long.parseLong(whiteRooksString.substring(1), 2);
-		}
-
-		while (whiteQueens != 0) {
-
 			long nextQueen;
 			String nextQueenString = "1";
 
@@ -136,11 +116,18 @@ public class MoveGenerator {
 				nextQueenString += "0";
 			}
 
-			nextQueen = Long.parseLong(nextQueenString, 2);
+			if (nextQueenString.length() == 64) {
+				nextQueen = Long.parseLong(nextQueenString.substring(0,
+						nextQueenString.length() - 1), 2);
+			} else {
+
+				nextQueen = Long.parseLong(nextQueenString, 2);
+			}
+
 			// System.out.println("The next piece is: ");
 			// printBitboard(nextPawn);
 			// System.out.println("With possible moves: ");
-			long bitboardOfMoves = WhitePieces.getQueenMoves(nextQueen,
+			long bitboardOfMoves = WhitePieces.getQueenMoves(whiteQueens,
 					whitePieces | blackPieces, whitePieces);
 			// printBitboard(bitboardOfMoves);
 
@@ -155,11 +142,50 @@ public class MoveGenerator {
 			whiteQueens = Long.parseLong(whiteQueensString.substring(1), 2);
 		}
 
+		while (whiteRooks != 0) {
+			long nextRook;
+			String nextRookString = "1";
+
+			for (int i = 0; i < Long.toBinaryString(whiteRooks).length() - 1; i++) {
+				nextRookString += "0";
+			}
+
+			if (nextRookString.length() == 64) {
+
+				nextRook = Long.parseLong(nextRookString.substring(0,
+						nextRookString.length() - 1), 2);
+
+			} else {
+				nextRook = Long.parseLong(nextRookString, 2);
+			}
+			// System.out.println("The next piece is: ");
+			// printBitboard(nextPawn);
+			// System.out.println("With possible moves: ");
+			long bitboardOfMoves = WhitePieces.getQueenMoves(nextRook,
+					whitePieces | blackPieces, whitePieces);
+			// printBitboard(bitboardOfMoves);
+
+			possibleStates.addAll(generateNextMoves(nextRook, bitboardOfMoves,
+					copyCurrentBoard(currentBoard)));
+
+			String whiteRooksString = Long.toBinaryString(whiteRooks);
+			// stops String.substring(1) throwing an error
+			if (whiteRooksString.length() == 1) {
+				break;
+			}
+			whiteRooks = Long.parseLong(whiteRooksString.substring(1), 2);
+		}
+
+		long kingMovesBitboard = WhitePieces.getKingMoves(whiteKing,
+				whitePieces, blackAttackingSquares);
+		possibleStates.addAll(generateNextMoves(whiteKing, kingMovesBitboard,
+				currentBoard));
+
 		if (possibleStates.isEmpty()) {
 			System.out.println("Checkmate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		} else {
 			while (!possibleStates.isEmpty()) {
-				printBoard(possibleStates.firstElement());
+//				printBoard(possibleStates.firstElement());
 				possibleStates.remove(0);
 			}
 		}
@@ -196,11 +222,21 @@ public class MoveGenerator {
 			for (int i = 0; i < Long.toBinaryString(bitboardOfMoves).length() - 1; i++) {
 				nextMoveString += "0";
 			}
-			nextMove = Long.parseLong(nextMoveString, 2);
+
+			if (nextMoveString.length() == 64) {
+				nextMove = Long.parseLong(nextMoveString.substring(0,
+						nextMoveString.length() - 1), 2) * 2;
+			} else {
+
+				nextMove = Long.parseLong(nextMoveString, 2);
+			}
 			// printBitboard(nextMove);
 
 			// removing the leftmost 1 from the possible moves
 			String bitboardOfMovesString = Long.toBinaryString(bitboardOfMoves);
+			if (bitboardOfMovesString.length() == 1) {
+				break;
+			}
 			bitboardOfMoves = Long.parseLong(
 					bitboardOfMovesString.substring(1), 2);
 

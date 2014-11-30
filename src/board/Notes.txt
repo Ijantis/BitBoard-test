@@ -6,26 +6,12 @@ Also to be added is if piece is moved and same king in check then move not allow
 TODO:
 Castling
 En passant
-state checking (draw,checkmate)
-
-
--Added king moves
--Added vertical pawn moves single and double rank
--Added diagonal pawn moves
--Added knight moves
--Added move generation for rooks
--Added move generation for bishops
--Added move generation for queens
--Added method to check if a king is in check
--Added squares under attack.
--Added move generation
--Added a check to disallow moves which put self king in check
-
-CHECK IF GET BISHOP MOVES SUPPORTS MORE THAN ONE BISHOP
-
-To check if a king is in check : if ((KingOccupiedSquare & squaresUnderAttack) != 0) if it doesnt equal zero then king is in check. 
-If it equals 0 then king is not in check
+state checking (draw,checkmate) - partially implemented.
 
 For en passant when a pawn moves two squares set a variable for each square. Bitboard of en passant squares?
 
 For castling if its possible getKingMoves() | getCastleSquares()
+
+
+
+

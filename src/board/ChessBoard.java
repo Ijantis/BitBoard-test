@@ -17,14 +17,14 @@ public class ChessBoard {
 	// Lower case for BLACK
 	// 0,0 is top left 0,7 is top right 7,7 bottom right
 	private String[][] currentBoard = {
-			{ "R", "P", " ", " ", " ", " ", "p", "r" },
-			{ "N", "P", " ", " ", " ", " ", "p", "n" },
-			{ "B", "P", " ", " ", " ", " ", "p", "b" },
-			{ "Q", "P", " ", " ", " ", " ", "p", "q" },
-			{ "K", "P", " ", " ", " ", " ", "p", "k" },
-			{ "B", "P", " ", " ", " ", " ", "p", "b" },
-			{ "N", "P", " ", " ", " ", " ", "p", "n" },
-			{ "R", "P", " ", " ", " ", " ", "p", "r" } };;
+			{ "R", " ", " ", " ", " ", " ", "p", "r" },
+			{ "N", " ", " ", " ", " ", " ", "p", "n" },
+			{ "B", " ", " ", " ", " ", " ", "p", "b" },
+			{ "Q", " ", " ", " ", " ", " ", "p", "q" },
+			{ "K", " ", " ", " ", " ", " ", "p", "k" },
+			{ "B", " ", " ", " ", " ", " ", "p", "b" },
+			{ "N", " ", " ", " ", " ", " ", "p", "n" },
+			{ "R", " ", " ", " ", " ", " ", "p", "r" } };;
 
 	public ChessBoard() {
 		long time = System.currentTimeMillis();
@@ -33,9 +33,15 @@ public class ChessBoard {
 		updateBitboards();
 
 		printBoard();
+		updateBitboards();
+
 		MoveGenerator.generateWhiteLegalMoves(currentBoard, whitePawns,
 				whiteRooks, whiteKnights, whiteBishops, whiteQueens, whiteKing,
 				getBlackPieces(), getWhitePieces(), getBlackAttackingSquares());
+
+//		MoveGenerator.generateBlackLegalMoves(currentBoard, blackPawns,
+//				blackRooks, blackKnights, blackBishops, blackQueens, blackKing,
+//				getWhitePieces(), getBlackPieces(), getWhiteAttackingSquares());
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -110,6 +116,7 @@ public class ChessBoard {
 				isValid = BoardManager.IsSelfCheck(tempBoard, false);
 			}
 
+			// TODO: Add en passant check.
 			if (isValid) {
 				currentBoard = tempBoard;
 				updateBitboards();

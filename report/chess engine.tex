@@ -1,28 +1,163 @@
-\documentclass[12pt]{report}
+\documentclass[11pt]{report}
 \usepackage{indentfirst}
+\usepackage{chessboard}
+\usepackage{skak}
+\usepackage{float}
 \begin{document}
 
 \title{A background research report for a mobile powered chess engine}
 \author{Philip Mosquera Prieto,}
 \maketitle
 
+\renewcommand{\abstractname}{Introduction and Abstract}
+\begin{abstract}
+
+I have elected to create a mobile powered chess application. This background research report will outline the methods I have chosen for my application. The project as a whole is consisted of four main components. The overall project will involve programming a Java application alongside an Android application and will see them merged together. \newline
+
+The core component and the backbone of the entire project is the game logic with which other . This component contains classes and methods for things such as the position of the pieces, calculations on valid and legal moves, and deciding when the game has come to a conclusion by either a player winning or a draw. \newline
+
+Another aspect and the most complicated by far will be the chess engine which will be included in the application. It will be a fully fledged computer opponent which the player can play against with varying levels of difficulty. The engine will be able to evaluate any given board position and make the best possible move with different difficulties allowing it to choose moves which are suboptimal.\newline
+
+The android application or the 'GUI' will be the visual representation of the game board. It will allow a player to start a game either against a local player, against the engine or against a multiplayer opponent should the feature be added.\newline
+
+The least important aspect will be the multiplayer server. This component will allow users to connect to each other and be able to play correspondence games with different time frames. It will be used to keep track of users currently logged in and also implement ranked and non ranked games with an elo rating algorithm so opponents or similar skill levels are found. \newline
+
+\end{abstract}
+
 \tableofcontents
 
-\chapter{Introduction and Abstract}
 
-
-I have elected to create a mobile powered chess application. This background research report will outline the methods I have chosen for my application. The project as a whole is consisted of four main components. \newline
-
-The core component and the backbone of the entire project is the game logic with which other . This component contains classes and methods for things such as the position of the pieces, calculations on valid and legal moves, and deciding when the game has come to a conclusion by either a player winning or a draw.
 
 \chapter{The Game Logic}
 
+The game logic is the core component of the project and what every other component requires to even begin working. It contains the current state of the chess board and can process any move that it is given including validity checks to ensure the rules of the game are being followed. The game logic also contains a move generator for deciding when a king is in checkmate or not. The move generator will also be used by the engine for calculations.\newline
+
 \section{Storing the board}
 
+Deciding on what data structure to use to store the current game state was an important decision. A large number of methodoligies are available.
+
+\subsection{Bitboards}
+
+Bitboards are an extremely efficient way of storing the current state of a chess board. The idea is to use a finite set of bits to represent information on different aspects of the game state. If we number all of the squares on a chess board we can see how a bitboard is used to store information about the current game state. \newline
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+\textbf{56} & \textbf{57} & \textbf{58} & \textbf{59} & \textbf{60} & \textbf{61} & \textbf{62} & \textbf{63} \\ \hline
+\textbf{48} & \textbf{49} & \textbf{50} & \textbf{51} & \textbf{52} & \textbf{53} & \textbf{54} & \textbf{55} \\ \hline
+\textbf{40} & \textbf{41} & \textbf{42} & \textbf{43} & \textbf{44} & \textbf{45} & \textbf{46} & \textbf{47} \\ \hline
+\textbf{32} & \textbf{33} & \textbf{34} & \textbf{35} & \textbf{36} & \textbf{37} & \textbf{38} & \textbf{39} \\ \hline
+\textbf{24} & \textbf{25} & \textbf{26} & \textbf{27} & \textbf{28} & \textbf{29} & \textbf{30} & \textbf{31} \\ \hline
+\textbf{61} & \textbf{17} & \textbf{18} & \textbf{19} & \textbf{20} & \textbf{21} & \textbf{22} & \textbf{23} \\ \hline
+\textbf{8}  & \textbf{9}  & \textbf{10} & \textbf{11} & \textbf{12} & \textbf{13} & \textbf{14} & \textbf{15} \\ \hline
+\textbf{0}  & \textbf{1}  & \textbf{2}  & \textbf{3}  & \textbf{4}  & \textbf{5}  & \textbf{6}  & \textbf{7}  \\ \hline
+\end{tabular}
+\end{table}
+
+We can now visibly see how the squares could be stored in a 64 bit data structure. For storing the board we can use a long which is a 64 bit two's complement integer. If we represent the 64th (63) square as the most significant bit in our long and the 1st square (0) as the least significant bit we end up with an extremely efficient way of storing a state.
+
+\begin{table}[H]
+\begin{tabular}{llllllllll}
+63 & 62 & 61 & .. & .. & .. & 3 & 2  & 1 & 0 \\
+0  & 0  & 0  & .. & .. & .. & 0 & 0 & 0 & 0
+\end{tabular}
+\end{table}
+
+For the first example of how a bitboard can be used in practice I will demonstrate how the bitboard that contains the position of all the white pawns is represented. If we picture a chessboard in initial game state where neither player has yet made a move we have the following position for the white pawns.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|l|l|l|l|}
+\hline
+  &   &   &   &   &   &   &  \\ \hline
+  &   &   &   &   &   &   &  \\ \hline
+  &   &   &   &   &   &   &  \\ \hline
+  &   &   &   &   &   &   &  \\ \hline
+  &   &   &   &   &   &   &  \\ \hline
+  &   &   &   &   &   &   &  \\ \hline
+P & P & P & P & P & P & P & P \\ \hline
+  &   &   &   &   &   &   &  \\ \hline
+\end{tabular}
+\end{table}
+
+If we represent this as a 64 bit integer we end up with the following where a 1 represents the existence of a piece.
+\begin{table}[H]
+\begin{tabular}{cccccccccccccccccccc}
+63 & .. & 16 & 15 & 14 & 13 & 12 & 11 & 10 & 9 & 8 & 7 & 6 & 5 & 4 & 3 & 2 & 1 & 0 &  \\
+0  & .. & 0  & 1  & 1  & 1  & 1  & 1  & 1  & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 
+\end{tabular}
+\end{table}
+
+To represent the position of every piece on the board we need a bitboard for every type of piece on the board which is 6 for white and 6 for black leaving us with 12 bitboards: whitePawns, whiteRooks, whiteBishops, whiteKnights, whiteQueens, whiteKing, blackPawns, blackRooks, blackBishops, blackKnights, blackQueens and blackKing. \newline
+
+Any calculations involving bitboards only require bit-wise operations in order to create more complex bitboards. To calculate the bitboard of all white pieces simply requires an OR statement between all of the 6 bitboards. Compared to having to loop through an array or having to use a piece list to lookup piece coordinates, bitboards offer an extremely fast and efficient way of doing calculations. \newline
+
+Bitboards space requirements are also extremely low. If I'm only using 12 sets of 64 bits to store all pieces on the board 94 bytes is all that is required in order to store the positions. One other huge advantage is in calculating possible moves and squares under attack by a piece. With bitboards this can be done for extremely fast, instead of having to calculate the moves for each white pawn in turn the moves can be calculated for every white pawn simultaneously saving a large amount of time. \newline
+
+Although bitboards seem to be an extremely efficient method of computation for chess positions they do have some drawbacks. Although not performance related, in comparison to other board storage methods, bitboards suffer from requiring a lot more source code in order to replicate the functions of more straightforward solutions thus making the implementation take a lot longer. One example is when trying to find out what piece resides on any given square the bitboard implementation will require creating a bitboard for that coordinate and then checking if any of the piece bitboards share a common bit at that coordinate. \newline
+
+\subsection{Piece Lists}
+
+A piece list is a way of storing every piece on the board alongside its coordinate without having to worry about storing any empty squares. A fixed list of 32 spaces is used with each element storing the coordinate, piece type and colour. Although the piece type being stored may seem unnecessary when the list size will be fixed, if a pawn reaches the 8th or 1st rank it must be promoted and the type of piece being stored will change. \newline
+
+Using the following square numbering system for a board we can see how a piece list methodology could work.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+\textbf{56} & \textbf{57} & \textbf{58} & \textbf{59} & \textbf{60} & \textbf{61} & \textbf{62} & \textbf{63} \\ \hline
+\textbf{48} & \textbf{49} & \textbf{50} & \textbf{51} & \textbf{52} & \textbf{53} & \textbf{54} & \textbf{55} \\ \hline
+\textbf{40} & \textbf{41} & \textbf{42} & \textbf{43} & \textbf{44} & \textbf{45} & \textbf{46} & \textbf{47} \\ \hline
+\textbf{32} & \textbf{33} & \textbf{34} & \textbf{35} & \textbf{36} & \textbf{37} & \textbf{38} & \textbf{39} \\ \hline
+\textbf{24} & \textbf{25} & \textbf{26} & \textbf{27} & \textbf{28} & \textbf{29} & \textbf{30} & \textbf{31} \\ \hline
+\textbf{61} & \textbf{17} & \textbf{18} & \textbf{19} & \textbf{20} & \textbf{21} & \textbf{22} & \textbf{23} \\ \hline
+\textbf{8}  & \textbf{9}  & \textbf{10} & \textbf{11} & \textbf{12} & \textbf{13} & \textbf{14} & \textbf{15} \\ \hline
+\textbf{0}  & \textbf{1}  & \textbf{2}  & \textbf{3}  & \textbf{4}  & \textbf{5}  & \textbf{6}  & \textbf{7}  \\ \hline
+\end{tabular}
+\end{table}
+
+One running the program for the first time we can use a static approach by hard coding the initial state of the board into the piece list: \newline
+
+{\Large \{(0,Rook,White),(1,Knight,White),(2,Bishop,White),.....(63,Rook,Black)\}}
+
+
+
+The drawbacks to this approach will be calculating possible moves. One example is when 
+
+\subsection{8x8 array}
+
+
+
+A major drawback of using an array based approach is move generation where loop inside a loop.
+
+Another drawback of using the 8x8 array is when calculating knight moves. With other pieces loops can all be stopped within the bounds without a problem but with knight pieces which don't require a loop this can become a problem. If we take a knight on the a1 square we see that he has only two possible moves b3 and c2:
+
+\newgame
+\fenboard{8/8/8/8/8/8/8/N7 w - - 0 20}
+\showboard
+
+With an array based solution if we take the knights coordinates which are a1 or (0,0) if using cartesian coordinates, we would then have to check all 8 possible moves around the knight. For the two coordinates b3 (1,2) and c2 2,1 no issues would arise. But to check the other 6 coordinates we would end up going out of bounds. This would have to be taken into account in the implementation.
+
+
+\subsection{My Chosen Solution}
+
 \section{Bitboard operations}
+comment on looping through a 2d array
+\subsection{Piece storage}
+\subsection{Calculating possible moves}
+\subsection{General Purpose Operations}
+\subsection{Checking for check}
+
+\section{Move Generation}
+
+\section{title}
 
 
 \chapter{The Artificial Intelligence}
+
+\section{Step by step implementation}
 
 \section{Evaluating a position}
 
@@ -36,6 +171,8 @@ The core component and the backbone of the entire project is the game logic with
 
 
 \chapter{The Mobile Application}
+
+\section{Game states}
 
 \section{Features}
 

@@ -7,7 +7,7 @@ public class MoveGenerator {
 	/*
 	 * NOTE: Do not return a Vector<String[][]> return squares numbers instead.
 	 */
-	protected static void generateWhiteLegalMoves(String[][] currentBoard,
+	protected static Vector<String[][]> generateWhiteLegalMoves(String[][] currentBoard,
 			long whitePawns, long whiteRooks, long whiteKnights,
 			long whiteBishops, long whiteQueens, long whiteKing,
 			long blackPieces, long whitePieces, long blackAttackingSquares) {
@@ -18,7 +18,7 @@ public class MoveGenerator {
 
 			long nextPawn;
 			String nextPawnString = "1";
-
+			//this string HAS to go....
 			for (int i = 0; i < Long.toBinaryString(whitePawns).length() - 1; i++) {
 				nextPawnString += "0";
 			}
@@ -183,16 +183,11 @@ public class MoveGenerator {
 
 		if (possibleStates.isEmpty()) {
 			System.out.println("Checkmate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		} else {
-			while (!possibleStates.isEmpty()) {
-				printBoard(possibleStates.firstElement());
-				possibleStates.remove(0);
-			}
 		}
-
+		return possibleStates;
 	}
 
-	protected static void generateBlackLegalMoves(String[][] currentBoard,
+	protected static Vector<String[][]> generateBlackLegalMoves(String[][] currentBoard,
 			long blackPawns, long blackRooks, long blackKnights,
 			long blackBishops, long blackQueens, long blackKing,
 			long whitePieces, long blackPieces, long whiteAttackingSquares) {
@@ -367,12 +362,8 @@ public class MoveGenerator {
 
 		if (possibleStates.isEmpty()) {
 			System.out.println("Checkmate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		} else {
-			while (!possibleStates.isEmpty()) {
-				printBoard(possibleStates.firstElement());
-				possibleStates.remove(0);
-			}
 		}
+		return possibleStates;
 
 	}
 

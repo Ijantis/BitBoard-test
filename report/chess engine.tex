@@ -266,13 +266,30 @@ Pawn & Knight & Bishop & Rook & Queen \\
 
 These values give us a starting point in deciding whether a move is good or not. Using this as an evaluation function we can already see the engine understands that sacrificing a queen or rook in order to take the opponents pawn is considered a bad move.\newline
 
-The next things to consider are strong positions for pieces for pieces. The pawn structure for either player can be examined with factors such as doubled, backward or isolated pawns scoring negatively. Having an exposed king can be seen as a huge weakness as it leaves it open to attack and forced moves. Other positional strengths such as fianchettoed bishops, placing rooks on open files, passed pawns and knights placed on outposts can be considered to give a higher evaluation for that particular player.
+The next things to consider are strong positions for pieces for pieces. The pawn structure for either player can be examined with factors such as doubled, backward or isolated pawns scoring negatively. Having an exposed king can be seen as a huge weakness as it leaves it open to attack and forced moves. Other positional strengths such as fianchettoed bishops, placing rooks on open files, passed pawns and knights placed on outposts can be considered to give a higher evaluation for that particular player. \newline
+
+This allows us to create an evaluation function assigning different point values to different positional and material advantages: \newline
+
+{\Large f(P) = 200(K-K') + 9(Q-Q') + 5(R-R') + 3(B-B'+N-N') + (P-P') + 0.5(D-D'+S-S'+I-I') + 0.1(M-M') + ...
+}\footnote{Programming a Computer for Playing Chess By CLAUDE E. SHANNON (1949) p5}
+
+where:
+\begin{enumerate}
+\item K,Q,R,B,N and P refer to the number of Kings,Queens Rooks,Bishops,Knights and Pawns on the board and where a ' refers to a black piece.
+\item D,S and I refer to doubled,backward and isolated pawns.
+\item M refers to mobility or the number of available moves to a player for a given position.
+\end{enumerate}
 
 
+All of the numbers used are rough estimates as to what each positional element is worth for a player whether positive or negative. The 200 value for the King has been given to artificially insert a checkmate into the evaluation so the engine knows when it has won the game. 
 
 \section{Searching possible moves}
 
 \section{Using an opening book}
+
+Using an evaluation function for every state of the game is not ideal. The best example is in the opening where some moves that work very well in theory will not be evaluated very highly by the evaluation function and are therefore very unlikely to be picked. This leads to a stale engine that always plays the same moves. To combat this an opening book can be used to help the engine decide what move to make. \newline
+
+Naturally at lower difficulties where sub optimal moves are chosen this isn't an issue but for when the engine is playing a full strength it will always attempt to pick the best possible move according to its evaluation.
 
 \section{Using an endgame tablebase}
 
@@ -292,9 +309,5 @@ The next things to consider are strong positions for pieces for pieces. The pawn
 \section{Using the server for extra processing power}
 
 \section{Internal Workings}
-
-
-
-
 
 \end{document}

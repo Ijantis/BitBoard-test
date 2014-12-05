@@ -266,7 +266,9 @@ Pawn & Knight & Bishop & Rook & Queen \\
 
 These values give us a starting point in deciding whether a move is good or not. Using this as an evaluation function we can already see the engine understands that sacrificing a queen or rook in order to take the opponents pawn is considered a bad move.\newline
 
-The next things to consider are 
+The next things to consider are strong positions for pieces for pieces. The pawn structure for either player can be examined with factors such as doubled, backward or isolated pawns scoring negatively. Having an exposed king can be seen as a huge weakness as it leaves it open to attack and forced moves. Other positional strengths such as fianchettoed bishops, placing rooks on open files, passed pawns and knights placed on outposts can be considered to give a higher evaluation for that particular player.
+
+
 
 \section{Searching possible moves}
 

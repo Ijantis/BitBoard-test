@@ -14,4 +14,5 @@ For castling if its possible getKingMoves() | getCastleSquares()
 
 
 
-
+http://www.onjava.com/pub/a/onjava/2005/02/02/bitsets.html - Optimisation for bits. 
+Pulling out the leftmost bit instead of creating a string and looping to add 0s to it.

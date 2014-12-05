@@ -3,6 +3,7 @@
 \usepackage{chessboard}
 \usepackage{skak}
 \usepackage{float}
+\setlength{\parindent}{0pt}
 \begin{document}
 
 \title{A background research report for a mobile powered chess engine}
@@ -26,7 +27,11 @@ The least important aspect will be the multiplayer server. This component will a
 
 \tableofcontents
 
+\section{Some Terminology}
 
+\textbf{Sliding Pieces}: Pieces that can move an indefinite amount of squares in their respective direction. (Bishops,Queens,Rooks) \newline
+
+\textbf{Non Sliding Piece:} Pieces that have a fixed move set. (Pawns,Knights,King)
 
 \chapter{The Game Logic}
 
@@ -34,7 +39,7 @@ The game logic is the core component of the project and what every other compone
 
 \section{Storing the board}
 
-Deciding on what data structure to use to store the current game state was an important decision. A large number of methodoligies are available.
+Deciding on what data structure to use to store the current game state was an important decision. A large number of methodoligies were available each having their own advantages and disadvantages.
 
 \subsection{Bitboards}
 
@@ -93,7 +98,7 @@ To represent the position of every piece on the board we need a bitboard for eve
 
 Any calculations involving bitboards only require bit-wise operations in order to create more complex bitboards. To calculate the bitboard of all white pieces simply requires an OR statement between all of the 6 bitboards. Compared to having to loop through an array or having to use a piece list to lookup piece coordinates, bitboards offer an extremely fast and efficient way of doing calculations. \newline
 
-Bitboards space requirements are also extremely low. If I'm only using 12 sets of 64 bits to store all pieces on the board 94 bytes is all that is required in order to store the positions. One other huge advantage is in calculating possible moves and squares under attack by a piece. With bitboards this can be done for extremely fast, instead of having to calculate the moves for each white pawn in turn the moves can be calculated for every white pawn simultaneously saving a large amount of time. \newline
+Bitboard space requirements are also extremely low. If I'm only using 12 sets of 64 bits to store all pieces on the board 94 bytes is all that is required in order to store the positions. One other huge advantage is in calculating possible moves and squares under attack by a piece. With bitboards this can be done for extremely fast, instead of having to calculate the moves for each white pawn in turn the moves can be calculated for every white pawn simultaneously saving a large amount of time. \newline
 
 Although bitboards seem to be an extremely efficient method of computation for chess positions they do have some drawbacks. Although not performance related, in comparison to other board storage methods, bitboards suffer from requiring a lot more source code in order to replicate the functions of more straightforward solutions thus making the implementation take a lot longer. One example is when trying to find out what piece resides on any given square the bitboard implementation will require creating a bitboard for that coordinate and then checking if any of the piece bitboards share a common bit at that coordinate. \newline
 
@@ -116,21 +121,80 @@ Using the following square numbering system for a board we can see how a piece l
 \textbf{8}  & \textbf{9}  & \textbf{10} & \textbf{11} & \textbf{12} & \textbf{13} & \textbf{14} & \textbf{15} \\ \hline
 \textbf{0}  & \textbf{1}  & \textbf{2}  & \textbf{3}  & \textbf{4}  & \textbf{5}  & \textbf{6}  & \textbf{7}  \\ \hline
 \end{tabular}
+\caption{Numbering the squares for a bitboard representation}
 \end{table}
 
-One running the program for the first time we can use a static approach by hard coding the initial state of the board into the piece list: \newline
+When running the program for the first time we can use a static approach by hard coding the initial state of the board into the piece list:
 
-{\Large \{(0,Rook,White),(1,Knight,White),(2,Bishop,White),.....(63,Rook,Black)\}}
+\begin{center}
+{\Large \{(0,"R"),(1,"N"),(2,"B"),.....(63,"r")\}}
+\end{center}
 
-
+To save us having to store the number of the piece in the list we simply use uppercase and lower case
 
 The drawbacks to this approach will be calculating possible moves. One example is when 
 
 \subsection{8x8 array}
 
+A fixed 8x8 array is perhaps the simplest form of representing a chess board. We know already that the size of the chessboard will never change and that pieces will not attempt to move outside of its bounds legally. This leaves us with an extremely easy to understand data structure suited to games that don't require much computation.
+
+As arrays in Java are numbered starting at 0 we treat the bottom left square of a chess board (a,1) as 0,0 and the top right square (h8) as 7,7. \newline
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|l|l|l|l|}
+\hline
+0,7 &     &     &     &     &     &     & 7,7 \\ \hline
+0,6 &     &     &     &     &     & 6,6 &     \\ \hline
+0,5 &     &     &     &     & 5,5 &     &     \\ \hline
+0,4 &     &     &     & 4,4 &     &     &     \\ \hline
+0,3 &     &     & 3,3 &     &     &     &     \\ \hline
+0,2 &     & 2,2 &     &     &     &     &     \\ \hline
+0,1 & 1,1 &     &     &     &     &     &     \\ \hline
+0,0 & 0,1 & 0,2 & 0,3 & 0,4 & 0,5 & 0,6 & 0,7 \\ \hline
+\end{tabular}
+\caption{Coordinate system used for an array}
+\end{table}
 
 
-A major drawback of using an array based approach is move generation where loop inside a loop.
+\subsubsection{Pros}
+
+The implementation is extremely easy. The data structure is incredibly easy to understand and moving a piece from one location to another only requires two lines of code assuming checks for move legality have already been made:
+
+\begin{flushleft}
+{\large currentBoard[toX][toY] = currentBoard[fromX][fromY];\newline
+currentBoard[fromX][fromY] = " ";}
+\end{flushleft}
+
+Move generation for non sliding pieces is also trivial as we can use a static approach and don't require a loop. If we take the king as an example we only have to check 8 fixed coordinates around the king to see if they are either occupied by white pieces or under attack by an enemy piece.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+(x-1,y+1) & (x,y+1)        & (x+1,y+1) \\ \hline
+(x-1,y)   & \textbf{(x,y)} & (x+1,y)   \\ \hline
+(x-1,y-1) & (x,y-1         & (x+1,y-1) \\ \hline
+\end{tabular}
+\caption{Showing the coordinate moves around the king}
+\end{table}
+
+The code only requires a single line for each coordinate around the king (x,y) to generate each possible move for the king.
+
+\begin{flushleft}
+..\newline
+..\newline
+{\Large if currentBoard[x][y+1] is not under attack AND is empty \newline
+//move is valid \newline
+else \newline
+     //move is not valid}
+..
+etc..
+\end{flushleft}
+
+
+\subsubsection{Cons}
+
+A major drawback of using an array based approach is move generation. In Java when declaring a two dimensional array it isn't really two dimensional. What happens is that you create an array of n length and at every index another array of length m is created. This can cause major performance issues when attempting evaluate a large number of positions
 
 Another drawback of using the 8x8 array is when calculating knight moves. With other pieces loops can all be stopped within the bounds without a problem but with knight pieces which don't require a loop this can become a problem. If we take a knight on the a1 square we see that he has only two possible moves b3 and c2:
 
@@ -138,13 +202,36 @@ Another drawback of using the 8x8 array is when calculating knight moves. With o
 \fenboard{8/8/8/8/8/8/8/N7 w - - 0 20}
 \showboard
 
-With an array based solution if we take the knights coordinates which are a1 or (0,0) if using cartesian coordinates, we would then have to check all 8 possible moves around the knight. For the two coordinates b3 (1,2) and c2 2,1 no issues would arise. But to check the other 6 coordinates we would end up going out of bounds. This would have to be taken into account in the implementation.
+With an array based solution if we take the knights coordinates which are a1, or (0,0) if using cartesian coordinates, we would then have to check all 8 possible moves around the knight. For the two coordinates b3 (1,2) and c2 2,1 no issues would arise. But to check the other 6 coordinates we would end up going out of bounds. This would have to be taken into account in the implementation.
 
 
 \subsection{My Chosen Solution}
 
+For the actual implementation I have chosen to use a hybrid solution encompassing the simplicity of an array based solution while still maintaining the fast calculation speed that a bitboard has to offer. For the storing the current state of the board I use a two dimensional array which is initialised with the starting position of the chess board:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+r   & n & b & q & k & b & n & r \\ \hline
+p   & p & p & p & p & p & p & p \\ \hline
+    &   &   &   &   &   &   &   \\ \hline
+    &   &   &   &   &   &   &   \\ \hline
+    &   &   &   &   &   &   &   \\ \hline
+    &   &   &   &   &   &   &   \\ \hline
+  P & P & P & P & P & P & P & P \\ \hline
+R   & N & B & Q & K & B & N & R \\ \hline
+\end{tabular}
+\caption{Array representation of the board}
+\end{table}
+
+The bottom left square being (0,0) and the top right square being (7,7) makes it very easy move a piece from one square to another. Lower case characters are used to represent black pieces while upper case are for white. Empty squares are represent by a string with a single white space. Once the array storing the state of the board has been created the bitboards containing information on piece locations are created. \newline
+
+
 \section{Bitboard operations}
-comment on looping through a 2d array
+
+For every single bitboard operation we only need the same twelve bitboards that each represent the position of the pieces. Once created every other calculation becomes trivial due to the speed of bitboards.
+
 \subsection{Piece storage}
 \subsection{Calculating possible moves}
 \subsection{General Purpose Operations}
@@ -157,9 +244,29 @@ comment on looping through a 2d array
 
 \chapter{The Artificial Intelligence}
 
+The artificial intelligence or engine will provide the player a means of playing against a computer opponent of varying difficulty.
+
 \section{Step by step implementation}
 
 \section{Evaluating a position}
+
+The most challenging part of the engine is perhaps the position evaluation. This is not due to implementation but rather that in practice the exact value of a position cannot really be quantified accurately. For the evaluation of a position a NegaMax function will be used with a positive evaluation for white and a negative evaluation for black.\newline
+
+
+The easiest place to start is with the piece values beginner players are told to assign pieces.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ccccc}
+Pawn & Knight & Bishop & Rook & Queen \\
+1    & 3      & 3      & 5    & 9    
+\end{tabular}
+\caption{Piece values in chess}
+\end{table}
+
+These values give us a starting point in deciding whether a move is good or not. Using this as an evaluation function we can already see the engine understands that sacrificing a queen or rook in order to take the opponents pawn is considered a bad move.\newline
+
+The next things to consider are 
 
 \section{Searching possible moves}
 

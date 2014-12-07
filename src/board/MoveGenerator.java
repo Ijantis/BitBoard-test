@@ -4,26 +4,22 @@ import java.util.Vector;
 
 public class MoveGenerator {
 
+	public static int count = 0;
+
 	/*
 	 * NOTE: Do not return a Vector<String[][]> return squares numbers instead.
 	 */
-	protected static Vector<String[][]> generateWhiteLegalMoves(String[][] currentBoard,
-			long whitePawns, long whiteRooks, long whiteKnights,
-			long whiteBishops, long whiteQueens, long whiteKing,
-			long blackPieces, long whitePieces, long blackAttackingSquares) {
+	protected static Vector<String[][]> generateWhiteLegalMoves(
+			String[][] currentBoard, long whitePawns, long whiteRooks,
+			long whiteKnights, long whiteBishops, long whiteQueens,
+			long whiteKing, long blackPieces, long whitePieces,
+			long blackAttackingSquares) {
 
 		Vector<String[][]> possibleStates = new Vector<String[][]>(20, 20);
 
 		while (whitePawns != 0) {
 
-			long nextPawn;
-			String nextPawnString = "1";
-			//this string HAS to go....
-			for (int i = 0; i < Long.toBinaryString(whitePawns).length() - 1; i++) {
-				nextPawnString += "0";
-			}
-
-			nextPawn = Long.parseLong(nextPawnString, 2);
+			long nextPawn = Long.highestOneBit(whitePawns);
 			// System.out.println("The next piece is: ");
 			// printBitboard(nextPawn);
 			// System.out.println("With possible moves: ");
@@ -44,19 +40,7 @@ public class MoveGenerator {
 
 		while (whiteKnights != 0) {
 
-			long nextKnight;
-			String nextKnightString = "1";
-
-			for (int i = 0; i < Long.toBinaryString(whiteKnights).length() - 1; i++) {
-				nextKnightString += "0";
-			}
-
-			if (nextKnightString.length() == 64) {
-				nextKnight = Long.parseLong(nextKnightString.substring(0,
-						nextKnightString.length() - 1), 2);
-			}
-
-			nextKnight = Long.parseLong(nextKnightString, 2);
+			long nextKnight = Long.highestOneBit(whiteKnights);
 			// System.out.println("The next piece is: ");
 			// printBitboard(nextPawn);
 			// System.out.println("With possible moves: ");
@@ -76,20 +60,7 @@ public class MoveGenerator {
 		}
 
 		while (whiteBishops != 0) {
-			long nextBishop;
-			String nextBishopString = "1";
-
-			for (int i = 0; i < Long.toBinaryString(whiteBishops).length() - 1; i++) {
-				nextBishopString += "0";
-			}
-
-			if (nextBishopString.length() == 64) {
-				nextBishop = Long.parseLong(nextBishopString.substring(0,
-						nextBishopString.length() - 1), 2);
-			} else {
-				nextBishop = Long.parseLong(nextBishopString, 2);
-			}
-
+			long nextBishop = Long.highestOneBit(whiteBishops);
 			// System.out.println("The next piece is: ");
 			// printBitboard(nextPawn);
 			// System.out.println("With possible moves: ");
@@ -109,21 +80,7 @@ public class MoveGenerator {
 		}
 
 		while (whiteQueens != 0) {
-			long nextQueen;
-			String nextQueenString = "1";
-
-			for (int i = 0; i < Long.toBinaryString(whiteQueens).length() - 1; i++) {
-				nextQueenString += "0";
-			}
-
-			if (nextQueenString.length() == 64) {
-				nextQueen = Long.parseLong(nextQueenString.substring(0,
-						nextQueenString.length() - 1), 2);
-			} else {
-
-				nextQueen = Long.parseLong(nextQueenString, 2);
-			}
-
+			long nextQueen = Long.highestOneBit(whiteQueens);
 			// System.out.println("The next piece is: ");
 			// printBitboard(nextPawn);
 			// System.out.println("With possible moves: ");
@@ -143,21 +100,7 @@ public class MoveGenerator {
 		}
 
 		while (whiteRooks != 0) {
-			long nextRook;
-			String nextRookString = "1";
-
-			for (int i = 0; i < Long.toBinaryString(whiteRooks).length() - 1; i++) {
-				nextRookString += "0";
-			}
-
-			if (nextRookString.length() == 64) {
-
-				nextRook = Long.parseLong(nextRookString.substring(0,
-						nextRookString.length() - 1), 2);
-
-			} else {
-				nextRook = Long.parseLong(nextRookString, 2);
-			}
+			long nextRook = Long.highestOneBit(whiteRooks);
 			// System.out.println("The next piece is: ");
 			// printBitboard(nextPawn);
 			// System.out.println("With possible moves: ");
@@ -187,22 +130,16 @@ public class MoveGenerator {
 		return possibleStates;
 	}
 
-	protected static Vector<String[][]> generateBlackLegalMoves(String[][] currentBoard,
-			long blackPawns, long blackRooks, long blackKnights,
-			long blackBishops, long blackQueens, long blackKing,
-			long whitePieces, long blackPieces, long whiteAttackingSquares) {
+	protected static Vector<String[][]> generateBlackLegalMoves(
+			String[][] currentBoard, long blackPawns, long blackRooks,
+			long blackKnights, long blackBishops, long blackQueens,
+			long blackKing, long whitePieces, long blackPieces,
+			long whiteAttackingSquares) {
 
 		Vector<String[][]> possibleStates = new Vector<String[][]>(20, 20);
 
 		while (blackPawns != 0) {
-			long nextPawn;
-			String nextPawnString = "1";
-
-			for (int i = 0; i < Long.toBinaryString(blackPawns).length() - 1; i++) {
-				nextPawnString += "0";
-			}
-
-			nextPawn = Long.parseLong(nextPawnString, 2);
+			long nextPawn = Long.highestOneBit(blackPawns);
 			// System.out.println("The next piece is: ");
 			// printBitboard(nextPawn);
 			// System.out.println("With possible moves: ");
@@ -223,19 +160,7 @@ public class MoveGenerator {
 
 		while (blackKnights != 0) {
 
-			long nextKnight;
-			String nextKnightString = "1";
-
-			for (int i = 0; i < Long.toBinaryString(blackKnights).length() - 1; i++) {
-				nextKnightString += "0";
-			}
-
-			if (nextKnightString.length() == 64) {
-				nextKnight = Long.parseLong(nextKnightString.substring(0,
-						nextKnightString.length() - 1), 2);
-			}
-
-			nextKnight = Long.parseLong(nextKnightString, 2);
+			long nextKnight = Long.highestOneBit(blackKnights);
 			// System.out.println("The next piece is: ");
 			// printBitboard(nextPawn);
 			// System.out.println("With possible moves: ");
@@ -255,20 +180,7 @@ public class MoveGenerator {
 		}
 
 		while (blackBishops != 0) {
-			long nextBishop;
-			String nextBishopString = "1";
-
-			for (int i = 0; i < Long.toBinaryString(blackBishops).length() - 1; i++) {
-				nextBishopString += "0";
-			}
-
-			if (nextBishopString.length() == 64) {
-				nextBishop = Long.parseLong(nextBishopString.substring(0,
-						nextBishopString.length() - 1), 2);
-			} else {
-				nextBishop = Long.parseLong(nextBishopString, 2);
-			}
-
+			long nextBishop = Long.highestOneBit(blackBishops);
 			// System.out.println("The next piece is: ");
 			// printBitboard(nextPawn);
 			// System.out.println("With possible moves: ");
@@ -288,21 +200,7 @@ public class MoveGenerator {
 		}
 
 		while (blackQueens != 0) {
-			long nextQueen;
-			String nextQueenString = "1";
-
-			for (int i = 0; i < Long.toBinaryString(blackQueens).length() - 1; i++) {
-				nextQueenString += "0";
-			}
-
-			if (nextQueenString.length() == 64) {
-				nextQueen = Long.parseLong(nextQueenString.substring(0,
-						nextQueenString.length() - 1), 2);
-			} else {
-
-				nextQueen = Long.parseLong(nextQueenString, 2);
-			}
-
+			long nextQueen = Long.highestOneBit(blackQueens);
 			// System.out.println("The next piece is: ");
 			// printBitboard(nextPawn);
 			// System.out.println("With possible moves: ");
@@ -322,21 +220,7 @@ public class MoveGenerator {
 		}
 
 		while (blackRooks != 0) {
-			long nextRook;
-			String nextRookString = "1";
-
-			for (int i = 0; i < Long.toBinaryString(blackRooks).length() - 1; i++) {
-				nextRookString += "0";
-			}
-
-			if (nextRookString.length() == 64) {
-
-				nextRook = Long.parseLong(nextRookString.substring(0,
-						nextRookString.length() - 1), 2);
-
-			} else {
-				nextRook = Long.parseLong(nextRookString, 2);
-			}
+			long nextRook = Long.highestOneBit(blackRooks);
 			// System.out.println("The next piece is: ");
 			// printBitboard(nextPawn);
 			// System.out.println("With possible moves: ");
@@ -383,28 +267,14 @@ public class MoveGenerator {
 	 */
 	private static Vector<String[][]> generateNextMoves(long nextPieceBitboard,
 			long bitboardOfMoves, String[][] currentBoard) {
-
+		count++;
 		// System.out.println("generating possible states here");
 		Vector<String[][]> listOfMoves = new Vector<String[][]>(20, 10);
 
 		// working through each bit
 		while (bitboardOfMoves != 0) {
 			String[][] tempBoard = copyCurrentBoard(currentBoard);
-			long nextMove;
-			String nextMoveString = "1";
-
-			// building a bitboard for the next move
-			for (int i = 0; i < Long.toBinaryString(bitboardOfMoves).length() - 1; i++) {
-				nextMoveString += "0";
-			}
-
-			if (nextMoveString.length() == 64) {
-				nextMove = Long.parseLong(nextMoveString.substring(0,
-						nextMoveString.length() - 1), 2) * 2;
-			} else {
-
-				nextMove = Long.parseLong(nextMoveString, 2);
-			}
+			long nextMove = Long.highestOneBit(bitboardOfMoves);
 			// printBitboard(nextMove);
 
 			// removing the leftmost 1 from the possible moves
@@ -489,5 +359,8 @@ public class MoveGenerator {
 			System.out.println();
 		}
 		System.out.println();
+	}
+	public static void printCount() {
+		System.out.println(count);
 	}
 }

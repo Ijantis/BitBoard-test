@@ -1,5 +1,7 @@
 package board;
 
+import java.util.Vector;
+
 public class ChessBoard {
 
 	public static void main(String[] args) {
@@ -17,14 +19,14 @@ public class ChessBoard {
 	// Lower case for BLACK
 	// 0,0 is top left 0,7 is top right 7,7 bottom right
 	private String[][] currentBoard = {
-			{ "R", " ", " ", " ", " ", " ", "p", "r" },
-			{ "N", " ", " ", " ", " ", " ", "p", "n" },
-			{ "B", " ", " ", " ", " ", " ", "p", "b" },
-			{ "Q", " ", " ", " ", " ", " ", "p", "q" },
-			{ "K", " ", " ", " ", " ", " ", "p", "k" },
-			{ "B", " ", " ", " ", " ", " ", "p", "b" },
-			{ "N", " ", " ", " ", " ", " ", "p", "n" },
-			{ "R", " ", " ", " ", " ", " ", "p", "r" } };;
+			{ "R", "P", " ", " ", " ", " ", "p", "r" },
+			{ "N", "P", " ", " ", " ", " ", "p", "n" },
+			{ "B", "P", " ", " ", " ", " ", "p", "b" },
+			{ "Q", "P", " ", " ", " ", " ", "p", "q" },
+			{ "K", "P", " ", " ", " ", " ", "p", "k" },
+			{ "B", "P", " ", " ", " ", " ", "p", "b" },
+			{ "N", "P", " ", " ", " ", " ", "p", "n" },
+			{ "R", "P", " ", " ", " ", " ", "p", "r" } };;
 
 	public ChessBoard() {
 		long time = System.currentTimeMillis();
@@ -32,16 +34,49 @@ public class ChessBoard {
 
 		updateBitboards();
 
-		printBoard();
-		updateBitboards();
+		Vector<String[][]> temp = MoveGenerator.generateWhiteLegalMoves(
+				currentBoard, whitePawns, whiteRooks, whiteKnights,
+				whiteBishops, whiteQueens, whiteKing, getBlackPieces(),
+				getWhitePieces(), getBlackAttackingSquares());
+		Vector<String[][]> temp1 = new Vector<>();
 
-		MoveGenerator.generateWhiteLegalMoves(currentBoard, whitePawns,
-				whiteRooks, whiteKnights, whiteBishops, whiteQueens, whiteKing,
-				getBlackPieces(), getWhitePieces(), getBlackAttackingSquares());
+		while (!temp.isEmpty()) {
+			currentBoard = temp.get(0);
+			temp.remove(0);
+			updateBitboards();
+			temp1.addAll(MoveGenerator.generateBlackLegalMoves(currentBoard,
+					blackPawns, blackRooks, blackKnights, blackBishops,
+					blackQueens, blackKing, getWhitePieces(), getBlackPieces(),
+					getWhiteAttackingSquares()));
+		}
 
-//		MoveGenerator.generateBlackLegalMoves(currentBoard, blackPawns,
-//				blackRooks, blackKnights, blackBishops, blackQueens, blackKing,
-//				getWhitePieces(), getBlackPieces(), getWhiteAttackingSquares());
+		Vector<String[][]> temp2 = new Vector<>();
+		while (!temp1.isEmpty()) {
+			currentBoard = temp1.get(0);
+			temp1.remove(0);
+			updateBitboards();
+			temp2.addAll(MoveGenerator.generateWhiteLegalMoves(currentBoard,
+					whitePawns, whiteRooks, whiteKnights, whiteBishops,
+					whiteQueens, whiteKing, getBlackPieces(), getWhitePieces(),
+					getBlackAttackingSquares()));
+		}
+
+		Vector<String[][]> temp3 = new Vector<>();
+		while (!temp2.isEmpty()) {
+//			printBoard(temp2.get(0));
+			temp2.remove(0);
+			temp3
+			.addAll(MoveGenerator.generateBlackLegalMoves(currentBoard,
+					blackPawns, blackRooks, blackKnights, blackBishops,
+					blackQueens, blackKing, getWhitePieces(), getBlackPieces(),
+					getWhiteAttackingSquares()));
+		}
+		
+		
+		while (!temp3.isEmpty()) {
+			printBoard(temp3.get(0));
+			temp3.remove(0);
+		}
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");

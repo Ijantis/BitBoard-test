@@ -67,18 +67,18 @@ public class ChessBoard {
 
 		System.out.println(temp2.size());
 
-		int count = 0;
-		String[][] nextBoard;
-		while (!temp2.isEmpty()) {
-			nextBoard = temp2.remove(0);
-			for (int i = 0; i < temp2.size(); i++) {
-				if (areEqual(nextBoard,temp2.get(i))) {
-					count++;
-					System.out.println(count);
-				}
-			}
-		}
-		System.out.println("count " + count);
+//		int count = 0;
+//		String[][] nextBoard;
+//		while (!temp2.isEmpty()) {
+//			nextBoard = temp2.remove(0);
+//			for (int i = 0; i < temp2.size(); i++) {
+//				if (areEqual(nextBoard,temp2.get(i))) {
+//					count++;
+//					System.out.println(count);
+//				}
+//			}
+//		}
+//		System.out.println("count " + count);
 
 		Vector<String[][]> temp3 = new Vector<>();
 		while (!temp2.isEmpty()) {

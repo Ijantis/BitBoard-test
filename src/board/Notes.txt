@@ -16,3 +16,51 @@ For castling if its possible getKingMoves() | getCastleSquares()
 
 http://www.onjava.com/pub/a/onjava/2005/02/02/bitsets.html - Optimisation for bits. 
 Pulling out the leftmost bit instead of creating a string and looping to add 0s to it.
+
+
+
+22463
+22755
+21877
+
+after:
+
+20986
+20922
+20719
+
+after again
+
+20083
+20219
+20248
+
+after for white
+
+13406
+11954
+13586
+
+after for black
+10614
+
+Update bitboards
+10700
+10968
+
+Update bitboards 2
+9110
+9143
+7596 - outlier?
+7447
+7377
+7631
+
+knight moves
+7100
+7450
+
+
+Possible moves:
+73112
+94160

@@ -21,57 +21,49 @@ public class BoardManager {
 
 	private static void updateBitboards(String[][] boardToCheck) {
 		resetBitboards();
-		String binaryLong;
-		int currentIndex;
-		for (int y = 7; y >= 0; y--) {
-			for (int x = 0; x < 8; x++) {
-				// 64 bits and currentIndex is the square being looked at
-				binaryLong = "0000000000000000000000000000000000000000000000000000000000000000";
-				currentIndex = (y * 8) + x;
-				binaryLong = binaryLong.substring(currentIndex,
-						binaryLong.length() - 1)
-						+ "1" + binaryLong.substring(0, currentIndex);
-				switch (boardToCheck[x][y]) {
-				case "P":
-					whitePawns += convertStringToBinary(binaryLong);
-					break;
-				case "R":
-					whiteRooks += convertStringToBinary(binaryLong);
-					break;
-				case "N":
-					whiteKnights += convertStringToBinary(binaryLong);
-					break;
-				case "B":
-					whiteBishops += convertStringToBinary(binaryLong);
-					break;
-				case "Q":
-					whiteQueens += convertStringToBinary(binaryLong);
-					break;
-				case "K":
-					whiteKing += convertStringToBinary(binaryLong);
-					break;
-				case "p":
-					blackPawns += convertStringToBinary(binaryLong);
-					break;
-				case "r":
-					blackRooks += convertStringToBinary(binaryLong);
-					break;
-				case "n":
-					blackKnights += convertStringToBinary(binaryLong);
-					break;
-				case "b":
-					blackBishops += convertStringToBinary(binaryLong);
-					break;
-				case "q":
-					blackQueens += convertStringToBinary(binaryLong);
-					break;
-				case "k":
-					blackKing += convertStringToBinary(binaryLong);
-					break;
-				default:
-					break;
-				}
+		long currentPiece = 1;
+		for (int i = 0; i < 64; i++) {
+			switch (boardToCheck[i % 8][i / 8]) {
+			case "P":
+				whitePawns = whitePawns | currentPiece;
+				break;
+			case "R":
+				whiteRooks = whiteRooks | currentPiece;
+				break;
+			case "N":
+				whiteKnights = whiteKnights | currentPiece;
+				break;
+			case "B":
+				whiteBishops = whiteBishops | currentPiece;
+				break;
+			case "Q":
+				whiteQueens = whiteQueens | currentPiece;
+				break;
+			case "K":
+				whiteKing = whiteKing | currentPiece;
+				break;
+			case "p":
+				blackPawns = blackPawns | currentPiece;
+				break;
+			case "r":
+				blackRooks = blackRooks | currentPiece;
+				break;
+			case "n":
+				blackKnights = blackKnights | currentPiece;
+				break;
+			case "b":
+				blackBishops = blackBishops | currentPiece;
+				break;
+			case "q":
+				blackQueens = blackQueens | currentPiece;
+				break;
+			case "k":
+				blackKing = blackKing | currentPiece;
+				break;
+			default:
+				break;
 			}
+			currentPiece = currentPiece << 1;
 		}
 	}
 
@@ -88,14 +80,6 @@ public class BoardManager {
 		blackBishops = 0L;
 		blackQueens = 0L;
 		blackKing = 0L;
-	}
-
-	private static long convertStringToBinary(String binaryLong) {
-		if (binaryLong.charAt(0) == '0') {
-			return Long.parseLong(binaryLong, 2);
-		} else {
-			return Long.parseLong("1" + binaryLong.substring(2), 2) * 2;
-		}
 	}
 
 	private static void printBitboard(long bitBoard) {

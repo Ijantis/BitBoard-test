@@ -26,12 +26,7 @@ public class MoveGenerator {
 			possibleStates.addAll(generateNextMoves(nextPawn, bitboardOfMoves,
 					copyCurrentBoard(currentBoard)));
 
-			String whitePawnsString = Long.toBinaryString(whitePawns);
-			// stops String.substring(1) throwing an error
-			if (whitePawnsString.length() == 1) {
-				break;
-			}
-			whitePawns = Long.parseLong(whitePawnsString.substring(1), 2);
+			whitePawns = (Long.highestOneBit(whitePawns) - 1) & whitePawns;
 		}
 
 		while (whiteKnights != 0) {
@@ -43,12 +38,8 @@ public class MoveGenerator {
 			possibleStates.addAll(generateNextMoves(nextKnight,
 					bitboardOfMoves, copyCurrentBoard(currentBoard)));
 
-			String whiteKnightsString = Long.toBinaryString(whiteKnights);
-			// stops String.substring(1) throwing an error
-			if (whiteKnightsString.length() == 1) {
-				break;
-			}
-			whiteKnights = Long.parseLong(whiteKnightsString.substring(1), 2);
+			whiteKnights = (Long.highestOneBit(whiteKnights) - 1)
+					& whiteKnights;
 		}
 
 		while (whiteBishops != 0) {
@@ -59,12 +50,8 @@ public class MoveGenerator {
 			possibleStates.addAll(generateNextMoves(nextBishop,
 					bitboardOfMoves, copyCurrentBoard(currentBoard)));
 
-			String whiteBishopsString = Long.toBinaryString(whiteBishops);
-			// stops String.substring(1) throwing an error
-			if (whiteBishopsString.length() == 1) {
-				break;
-			}
-			whiteBishops = Long.parseLong(whiteBishopsString.substring(1), 2);
+			whiteBishops = (Long.highestOneBit(whiteBishops) - 1)
+					& whiteBishops;
 		}
 
 		while (whiteQueens != 0) {
@@ -75,12 +62,7 @@ public class MoveGenerator {
 			possibleStates.addAll(generateNextMoves(nextQueen, bitboardOfMoves,
 					copyCurrentBoard(currentBoard)));
 
-			String whiteQueensString = Long.toBinaryString(whiteQueens);
-			// stops String.substring(1) throwing an error
-			if (whiteQueensString.length() == 1) {
-				break;
-			}
-			whiteQueens = Long.parseLong(whiteQueensString.substring(1), 2);
+			whiteQueens = (Long.highestOneBit(whiteQueens) - 1) & whiteQueens;
 		}
 
 		while (whiteRooks != 0) {
@@ -92,12 +74,7 @@ public class MoveGenerator {
 			possibleStates.addAll(generateNextMoves(nextRook, bitboardOfMoves,
 					copyCurrentBoard(currentBoard)));
 
-			String whiteRooksString = Long.toBinaryString(whiteRooks);
-			// stops String.substring(1) throwing an error
-			if (whiteRooksString.length() == 1) {
-				break;
-			}
-			whiteRooks = Long.parseLong(whiteRooksString.substring(1), 2);
+			whiteRooks = (Long.highestOneBit(whiteRooks) - 1) & whiteRooks;
 		}
 
 		long kingMovesBitboard = WhitePieces.getKingMoves(whiteKing,
@@ -107,6 +84,7 @@ public class MoveGenerator {
 
 		if (possibleStates.isEmpty()) {
 			System.out.println("Checkmate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			printBoard(currentBoard);
 		}
 		return possibleStates;
 	}
@@ -127,12 +105,7 @@ public class MoveGenerator {
 			possibleStates.addAll(generateNextMoves(nextPawn, bitboardOfMoves,
 					copyCurrentBoard(currentBoard)));
 
-			String blackPawnsString = Long.toBinaryString(blackPawns);
-			// stops String.substring(1) throwing an error
-			if (blackPawnsString.length() == 1) {
-				break;
-			}
-			blackPawns = Long.parseLong(blackPawnsString.substring(1), 2);
+			blackPawns = (Long.highestOneBit(blackPawns) - 1) & blackPawns;
 		}
 
 		while (blackKnights != 0) {
@@ -144,12 +117,8 @@ public class MoveGenerator {
 			possibleStates.addAll(generateNextMoves(nextKnight,
 					bitboardOfMoves, copyCurrentBoard(currentBoard)));
 
-			String blackKnightsString = Long.toBinaryString(blackKnights);
-			// stops String.substring(1) throwing an error
-			if (blackKnightsString.length() == 1) {
-				break;
-			}
-			blackKnights = Long.parseLong(blackKnightsString.substring(1), 2);
+			blackKnights = (Long.highestOneBit(blackKnights) - 1)
+					& blackKnights;
 		}
 
 		while (blackBishops != 0) {
@@ -160,12 +129,8 @@ public class MoveGenerator {
 			possibleStates.addAll(generateNextMoves(nextBishop,
 					bitboardOfMoves, copyCurrentBoard(currentBoard)));
 
-			String blackBishopsString = Long.toBinaryString(blackBishops);
-			// stops String.substring(1) throwing an error
-			if (blackBishopsString.length() == 1) {
-				break;
-			}
-			blackBishops = Long.parseLong(blackBishopsString.substring(1), 2);
+			blackBishops = (Long.highestOneBit(blackBishops) - 1)
+					& blackBishops;
 		}
 
 		while (blackQueens != 0) {
@@ -176,12 +141,7 @@ public class MoveGenerator {
 			possibleStates.addAll(generateNextMoves(nextQueen, bitboardOfMoves,
 					copyCurrentBoard(currentBoard)));
 
-			String blackQueensString = Long.toBinaryString(blackQueens);
-			// stops String.substring(1) throwing an error
-			if (blackQueensString.length() == 1) {
-				break;
-			}
-			blackQueens = Long.parseLong(blackQueensString.substring(1), 2);
+			blackQueens = (Long.highestOneBit(blackQueens) - 1) & blackQueens;
 		}
 
 		while (blackRooks != 0) {
@@ -192,12 +152,7 @@ public class MoveGenerator {
 			possibleStates.addAll(generateNextMoves(nextRook, bitboardOfMoves,
 					copyCurrentBoard(currentBoard)));
 
-			String blackRooksString = Long.toBinaryString(blackRooks);
-			// stops String.substring(1) throwing an error
-			if (blackRooksString.length() == 1) {
-				break;
-			}
-			blackRooks = Long.parseLong(blackRooksString.substring(1), 2);
+			blackRooks = (Long.highestOneBit(blackRooks) - 1) & blackRooks;
 		}
 
 		long kingMovesBitboard = BlackPieces.getKingMoves(blackKing,
@@ -207,6 +162,7 @@ public class MoveGenerator {
 
 		if (possibleStates.isEmpty()) {
 			System.out.println("Checkmate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			printBoard(currentBoard);
 		}
 		return possibleStates;
 
@@ -228,7 +184,6 @@ public class MoveGenerator {
 	 */
 	private static Vector<String[][]> generateNextMoves(long nextPieceBitboard,
 			long bitboardOfMoves, String[][] currentBoard) {
-		count++;
 		// System.out.println("generating possible states here");
 		Vector<String[][]> listOfMoves = new Vector<String[][]>(20, 10);
 
@@ -321,6 +276,7 @@ public class MoveGenerator {
 		}
 		System.out.println();
 	}
+
 	public static void printCount() {
 		System.out.println(count);
 	}

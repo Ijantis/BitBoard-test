@@ -63,25 +63,27 @@ public class ChessBoard {
 
 		Vector<String[][]> temp3 = new Vector<>();
 		while (!temp2.isEmpty()) {
-//			printBoard(temp2.get(0));
+			// printBoard(temp2.get(0));
 			temp2.remove(0);
-			temp3
-			.addAll(MoveGenerator.generateBlackLegalMoves(currentBoard,
+			temp3.addAll(MoveGenerator.generateBlackLegalMoves(currentBoard,
 					blackPawns, blackRooks, blackKnights, blackBishops,
 					blackQueens, blackKing, getWhitePieces(), getBlackPieces(),
 					getWhiteAttackingSquares()));
 		}
-		
-		
+
+		System.out.println(temp3.size());
 		while (!temp3.isEmpty()) {
-			printBoard(temp3.get(0));
+			// printBoard(temp3.get(0));
 			temp3.remove(0);
 		}
+
+		MoveGenerator.printCount();
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
 		System.out.println("That took :"
 				+ ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
+
 	}
 
 	public void newGame() {
@@ -289,57 +291,49 @@ public class ChessBoard {
 
 	private void updateBitboards() {
 		resetBitboards();
-		String binaryLong;
-		int currentIndex;
-		for (int y = 7; y >= 0; y--) {
-			for (int x = 0; x < 8; x++) {
-				// 64 bits and currentIndex is the square being looked at
-				binaryLong = "0000000000000000000000000000000000000000000000000000000000000000";
-				currentIndex = (y * 8) + x;
-				binaryLong = binaryLong.substring(currentIndex,
-						binaryLong.length() - 1)
-						+ "1" + binaryLong.substring(0, currentIndex);
-				switch (currentBoard[x][y]) {
-				case "P":
-					whitePawns += convertStringToBinary(binaryLong);
-					break;
-				case "R":
-					whiteRooks += convertStringToBinary(binaryLong);
-					break;
-				case "N":
-					whiteKnights += convertStringToBinary(binaryLong);
-					break;
-				case "B":
-					whiteBishops += convertStringToBinary(binaryLong);
-					break;
-				case "Q":
-					whiteQueens += convertStringToBinary(binaryLong);
-					break;
-				case "K":
-					whiteKing += convertStringToBinary(binaryLong);
-					break;
-				case "p":
-					blackPawns += convertStringToBinary(binaryLong);
-					break;
-				case "r":
-					blackRooks += convertStringToBinary(binaryLong);
-					break;
-				case "n":
-					blackKnights += convertStringToBinary(binaryLong);
-					break;
-				case "b":
-					blackBishops += convertStringToBinary(binaryLong);
-					break;
-				case "q":
-					blackQueens += convertStringToBinary(binaryLong);
-					break;
-				case "k":
-					blackKing += convertStringToBinary(binaryLong);
-					break;
-				default:
-					break;
-				}
+		long currentPiece = 1;
+		for (int i = 0; i < 64; i++) {
+			switch (currentBoard[i % 8][i / 8]) {
+			case "P":
+				whitePawns = whitePawns | currentPiece;
+				break;
+			case "R":
+				whiteRooks = whiteRooks | currentPiece;
+				break;
+			case "N":
+				whiteKnights = whiteKnights | currentPiece;
+				break;
+			case "B":
+				whiteBishops = whiteBishops | currentPiece;
+				break;
+			case "Q":
+				whiteQueens = whiteQueens | currentPiece;
+				break;
+			case "K":
+				whiteKing = whiteKing | currentPiece;
+				break;
+			case "p":
+				blackPawns = blackPawns | currentPiece;
+				break;
+			case "r":
+				blackRooks = blackRooks | currentPiece;
+				break;
+			case "n":
+				blackKnights = blackKnights | currentPiece;
+				break;
+			case "b":
+				blackBishops = blackBishops | currentPiece;
+				break;
+			case "q":
+				blackQueens = blackQueens | currentPiece;
+				break;
+			case "k":
+				blackKing = blackKing | currentPiece;
+				break;
+			default:
+				break;
 			}
+			currentPiece = currentPiece << 1;
 		}
 	}
 
@@ -356,14 +350,6 @@ public class ChessBoard {
 		blackBishops = 0L;
 		blackQueens = 0L;
 		blackKing = 0L;
-	}
-
-	private long convertStringToBinary(String binaryLong) {
-		if (binaryLong.charAt(0) == '0') {
-			return Long.parseLong(binaryLong, 2);
-		} else {
-			return Long.parseLong("1" + binaryLong.substring(2), 2) * 2;
-		}
 	}
 
 	/*
@@ -449,19 +435,30 @@ public class ChessBoard {
 	}
 
 	private void printAllBitboards() {
-
+		System.out.println("White Pawns");
 		printBitboard(whitePawns);
+		System.out.println("White Knights");
 		printBitboard(whiteKnights);
+		System.out.println("White Rooks");
 		printBitboard(whiteRooks);
+		System.out.println("White Bishops");
 		printBitboard(whiteBishops);
+		System.out.println("White Queens");
 		printBitboard(whiteQueens);
+		System.out.println("White King");
 		printBitboard(whiteKing);
 
+		System.out.println("Black Pawns");
 		printBitboard(blackPawns);
+		System.out.println("Black Knights");
 		printBitboard(blackKnights);
+		System.out.println("Black Rooks");
 		printBitboard(blackRooks);
+		System.out.println("Black Bishops");
 		printBitboard(blackBishops);
+		System.out.println("Black Queens");
 		printBitboard(blackQueens);
+		System.out.println("Black King");
 		printBitboard(blackKing);
 
 	}

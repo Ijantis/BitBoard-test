@@ -20,12 +20,8 @@ public class MoveGenerator {
 		while (whitePawns != 0) {
 
 			long nextPawn = Long.highestOneBit(whitePawns);
-			// System.out.println("The next piece is: ");
-			// printBitboard(nextPawn);
-			// System.out.println("With possible moves: ");
 			long bitboardOfMoves = WhitePieces.getPawnMoves(nextPawn,
 					whitePieces | blackPieces, blackPieces);
-			// printBitboard(bitboardOfMoves);
 
 			possibleStates.addAll(generateNextMoves(nextPawn, bitboardOfMoves,
 					copyCurrentBoard(currentBoard)));
@@ -41,12 +37,8 @@ public class MoveGenerator {
 		while (whiteKnights != 0) {
 
 			long nextKnight = Long.highestOneBit(whiteKnights);
-			// System.out.println("The next piece is: ");
-			// printBitboard(nextPawn);
-			// System.out.println("With possible moves: ");
 			long bitboardOfMoves = WhitePieces.getKnightMoves(nextKnight,
 					whitePieces);
-			// printBitboard(bitboardOfMoves);
 
 			possibleStates.addAll(generateNextMoves(nextKnight,
 					bitboardOfMoves, copyCurrentBoard(currentBoard)));
@@ -61,12 +53,8 @@ public class MoveGenerator {
 
 		while (whiteBishops != 0) {
 			long nextBishop = Long.highestOneBit(whiteBishops);
-			// System.out.println("The next piece is: ");
-			// printBitboard(nextPawn);
-			// System.out.println("With possible moves: ");
 			long bitboardOfMoves = WhitePieces.getBishopMoves(nextBishop,
 					whitePieces | blackPieces, whitePieces);
-			// printBitboard(bitboardOfMoves);
 
 			possibleStates.addAll(generateNextMoves(nextBishop,
 					bitboardOfMoves, copyCurrentBoard(currentBoard)));
@@ -81,12 +69,8 @@ public class MoveGenerator {
 
 		while (whiteQueens != 0) {
 			long nextQueen = Long.highestOneBit(whiteQueens);
-			// System.out.println("The next piece is: ");
-			// printBitboard(nextPawn);
-			// System.out.println("With possible moves: ");
 			long bitboardOfMoves = WhitePieces.getQueenMoves(whiteQueens,
 					whitePieces | blackPieces, whitePieces);
-			// printBitboard(bitboardOfMoves);
 
 			possibleStates.addAll(generateNextMoves(nextQueen, bitboardOfMoves,
 					copyCurrentBoard(currentBoard)));
@@ -101,9 +85,6 @@ public class MoveGenerator {
 
 		while (whiteRooks != 0) {
 			long nextRook = Long.highestOneBit(whiteRooks);
-			// System.out.println("The next piece is: ");
-			// printBitboard(nextPawn);
-			// System.out.println("With possible moves: ");
 			long bitboardOfMoves = WhitePieces.getQueenMoves(nextRook,
 					whitePieces | blackPieces, whitePieces);
 			// printBitboard(bitboardOfMoves);
@@ -140,12 +121,8 @@ public class MoveGenerator {
 
 		while (blackPawns != 0) {
 			long nextPawn = Long.highestOneBit(blackPawns);
-			// System.out.println("The next piece is: ");
-			// printBitboard(nextPawn);
-			// System.out.println("With possible moves: ");
 			long bitboardOfMoves = BlackPieces.getPawnMoves(nextPawn,
 					blackPieces | whitePieces, whitePieces);
-			// printBitboard(bitboardOfMoves);
 
 			possibleStates.addAll(generateNextMoves(nextPawn, bitboardOfMoves,
 					copyCurrentBoard(currentBoard)));
@@ -161,12 +138,8 @@ public class MoveGenerator {
 		while (blackKnights != 0) {
 
 			long nextKnight = Long.highestOneBit(blackKnights);
-			// System.out.println("The next piece is: ");
-			// printBitboard(nextPawn);
-			// System.out.println("With possible moves: ");
 			long bitboardOfMoves = BlackPieces.getKnightMoves(nextKnight,
 					blackPieces);
-			// printBitboard(bitboardOfMoves);
 
 			possibleStates.addAll(generateNextMoves(nextKnight,
 					bitboardOfMoves, copyCurrentBoard(currentBoard)));
@@ -181,12 +154,8 @@ public class MoveGenerator {
 
 		while (blackBishops != 0) {
 			long nextBishop = Long.highestOneBit(blackBishops);
-			// System.out.println("The next piece is: ");
-			// printBitboard(nextPawn);
-			// System.out.println("With possible moves: ");
 			long bitboardOfMoves = BlackPieces.getBishopMoves(nextBishop,
 					blackPieces | whitePieces, blackPieces);
-			// printBitboard(bitboardOfMoves);
 
 			possibleStates.addAll(generateNextMoves(nextBishop,
 					bitboardOfMoves, copyCurrentBoard(currentBoard)));
@@ -201,12 +170,8 @@ public class MoveGenerator {
 
 		while (blackQueens != 0) {
 			long nextQueen = Long.highestOneBit(blackQueens);
-			// System.out.println("The next piece is: ");
-			// printBitboard(nextPawn);
-			// System.out.println("With possible moves: ");
 			long bitboardOfMoves = BlackPieces.getQueenMoves(blackQueens,
 					blackPieces | whitePieces, blackPieces);
-			// printBitboard(bitboardOfMoves);
 
 			possibleStates.addAll(generateNextMoves(nextQueen, bitboardOfMoves,
 					copyCurrentBoard(currentBoard)));
@@ -221,12 +186,8 @@ public class MoveGenerator {
 
 		while (blackRooks != 0) {
 			long nextRook = Long.highestOneBit(blackRooks);
-			// System.out.println("The next piece is: ");
-			// printBitboard(nextPawn);
-			// System.out.println("With possible moves: ");
 			long bitboardOfMoves = BlackPieces.getRookMoves(nextRook,
 					blackPieces | whitePieces, blackPieces);
-			// printBitboard(bitboardOfMoves);
 
 			possibleStates.addAll(generateNextMoves(nextRook, bitboardOfMoves,
 					copyCurrentBoard(currentBoard)));

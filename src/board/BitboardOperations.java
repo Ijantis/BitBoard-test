@@ -129,9 +129,14 @@ public class BitboardOperations {
 
 		for (int i = 1; i < 9; i++) {
 			currentRank = bitboard & maskRank(i);
-			for (int j = 1; j < 8; j++) {
-				temp = temp | currentRank << j;
+			// optimising
+			if (currentRank == 0) {
+				continue;
 			}
+			temp = temp | currentRank << 1 | currentRank << 2
+					| currentRank << 3 | currentRank << 4 | currentRank << 5
+					| currentRank << 6 | currentRank << 7;
+
 			temp = temp & maskRank(i);
 			rightSquares = rightSquares | temp;
 			temp = 0L;
@@ -151,9 +156,12 @@ public class BitboardOperations {
 
 		for (int i = 1; i < 9; i++) {
 			currentRank = bitboard & maskRank(i);
-			for (int j = 1; j < 8; j++) {
-				temp = temp | currentRank >>> j;
+			if (currentRank == 0) {
+				continue;
 			}
+			temp = temp | currentRank >>> 1 | currentRank >>> 2
+					| currentRank >>> 3 | currentRank >>> 4 | currentRank >>> 5
+					| currentRank >>> 6 | currentRank >>> 7;
 			temp = temp & maskRank(i);
 			leftSquares = leftSquares | temp;
 			temp = 0L;
@@ -171,6 +179,9 @@ public class BitboardOperations {
 
 		for (int i = 1; i < 9; i++) {
 			currentFile = bitboard & maskFile(i);
+			if (currentFile == 0) {
+				continue;
+			}
 			for (int j = 8; j < 57; j += 8) {
 				temp = temp | currentFile << j;
 			}
@@ -189,12 +200,34 @@ public class BitboardOperations {
 
 		for (int i = 1; i < 9; i++) {
 			currentFile = bitboard & maskFile(i);
+			if (currentFile == 0) {
+				continue;
+			}
 			for (int j = 8; j < 57; j += 8) {
 				temp = temp | currentFile >>> j;
 			}
 			downSquares = downSquares | temp;
 		}
 		return downSquares;
+	}
+
+	private static void printBitboard(long bitBoard) {
+		String stringBitBoard = Long.toBinaryString(bitBoard);
+		System.out.println("Value : " + stringBitBoard);
+		while (stringBitBoard.length() != 64) {
+			stringBitBoard = "0" + stringBitBoard;
+		}
+
+		for (int i = 0; i < 8; i++) {
+			StringBuilder stringReverser = new StringBuilder(
+					stringBitBoard.substring(i * 8, ((i + 1) * 8)));
+			stringReverser.reverse();
+			for (int j = 0; j < stringReverser.toString().length(); j++) {
+				System.out.print(stringReverser.toString().charAt(j) + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
 	}
 
 }

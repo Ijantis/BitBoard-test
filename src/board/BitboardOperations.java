@@ -210,24 +210,4 @@ public class BitboardOperations {
 		}
 		return downSquares;
 	}
-
-	private static void printBitboard(long bitBoard) {
-		String stringBitBoard = Long.toBinaryString(bitBoard);
-		System.out.println("Value : " + stringBitBoard);
-		while (stringBitBoard.length() != 64) {
-			stringBitBoard = "0" + stringBitBoard;
-		}
-
-		for (int i = 0; i < 8; i++) {
-			StringBuilder stringReverser = new StringBuilder(
-					stringBitBoard.substring(i * 8, ((i + 1) * 8)));
-			stringReverser.reverse();
-			for (int j = 0; j < stringReverser.toString().length(); j++) {
-				System.out.print(stringReverser.toString().charAt(j) + " ");
-			}
-			System.out.println();
-		}
-		System.out.println();
-	}
-
 }

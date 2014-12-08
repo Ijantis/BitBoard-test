@@ -7,79 +7,32 @@ public class BoardManager {
 	private static long blackPawns, blackRooks, blackKnights, blackBishops,
 			blackQueens, blackKing;
 
-	protected static boolean IsSelfCheck(String[][] boardToCheck,
-			boolean checkForWhite) {
+	protected static boolean IsSelfCheck(long whitePawns, long whiteRooks,
+			long whiteKnights, long whiteBishops, long whiteQueens,
+			long whiteKing, long blackPawns, long blackRooks,
+			long blackKnights, long blackBishops, long blackQueens,
+			long blackKing, boolean checkForWhite) {
 
-		updateBitboards(boardToCheck);
+		BoardManager.whitePawns = whitePawns;
+		BoardManager.whiteRooks = whiteRooks;
+		BoardManager.whiteKnights = whiteKnights;
+		BoardManager.whiteBishops = whiteBishops;
+		BoardManager.whiteQueens = whiteQueens;
+		BoardManager.whiteKing = whiteKing;
 
+		BoardManager.blackPawns = blackPawns;
+		BoardManager.blackRooks = blackRooks;
+		BoardManager.blackKnights = blackKnights;
+		BoardManager.blackBishops = blackBishops;
+		BoardManager.blackQueens = blackQueens;
+		BoardManager.blackKing = blackKing;
+		
 		if (checkForWhite) {
 			return (whiteKing & getBlackAttackingSquares()) == 0;
 		} else {
 			return (blackKing & getWhiteAttackingSquares()) == 0;
 		}
-	}
 
-	private static void updateBitboards(String[][] boardToCheck) {
-		resetBitboards();
-		long currentPiece = 1;
-		for (int i = 0; i < 64; i++) {
-			switch (boardToCheck[i % 8][i / 8]) {
-			case "P":
-				whitePawns = whitePawns | currentPiece;
-				break;
-			case "R":
-				whiteRooks = whiteRooks | currentPiece;
-				break;
-			case "N":
-				whiteKnights = whiteKnights | currentPiece;
-				break;
-			case "B":
-				whiteBishops = whiteBishops | currentPiece;
-				break;
-			case "Q":
-				whiteQueens = whiteQueens | currentPiece;
-				break;
-			case "K":
-				whiteKing = whiteKing | currentPiece;
-				break;
-			case "p":
-				blackPawns = blackPawns | currentPiece;
-				break;
-			case "r":
-				blackRooks = blackRooks | currentPiece;
-				break;
-			case "n":
-				blackKnights = blackKnights | currentPiece;
-				break;
-			case "b":
-				blackBishops = blackBishops | currentPiece;
-				break;
-			case "q":
-				blackQueens = blackQueens | currentPiece;
-				break;
-			case "k":
-				blackKing = blackKing | currentPiece;
-				break;
-			default:
-				break;
-			}
-			currentPiece = currentPiece << 1;
-		}
-	}
-
-	private static void resetBitboards() {
-		whitePawns = 0L;
-		whiteRooks = 0L;
-		whiteKnights = 0L;
-		whiteBishops = 0L;
-		whiteQueens = 0L;
-		whiteKing = 0L;
-		blackPawns = 0L;
-		blackRooks = 0L;
-		blackKnights = 0L;
-		blackBishops = 0L;
-		blackQueens = 0L;
-		blackKing = 0L;
 	}
 
 	private static void printBitboard(long bitBoard) {

@@ -37,18 +37,21 @@ public class ChessBoard {
 		Vector<String[][]> temp = MoveGenerator.generateWhiteLegalMoves(
 				currentBoard, whitePawns, whiteRooks, whiteKnights,
 				whiteBishops, whiteQueens, whiteKing, getBlackPieces(),
-				getWhitePieces(), getBlackAttackingSquares());
+				getWhitePieces(), getBlackAttackingSquares(), blackPawns,
+				blackRooks, blackKnights, blackBishops, blackQueens, blackKing);
 		Vector<String[][]> temp1 = new Vector<>();
-
+		System.out.println(temp.size());
 		while (!temp.isEmpty()) {
 			currentBoard = temp.get(0);
 			temp.remove(0);
 			updateBitboards();
 			temp1.addAll(MoveGenerator.generateBlackLegalMoves(currentBoard,
-					blackPawns, blackRooks, blackKnights, blackBishops,
-					blackQueens, blackKing, getWhitePieces(), getBlackPieces(),
-					getWhiteAttackingSquares()));
+					whitePawns, whiteRooks, whiteKnights, whiteBishops,
+					whiteQueens, whiteKing, getBlackPieces(), getWhitePieces(),
+					getWhiteAttackingSquares(), blackPawns, blackRooks,
+					blackKnights, blackBishops, blackQueens, blackKing));
 		}
+		System.out.println(temp1.size());
 
 		Vector<String[][]> temp2 = new Vector<>();
 		while (!temp1.isEmpty()) {
@@ -58,24 +61,41 @@ public class ChessBoard {
 			temp2.addAll(MoveGenerator.generateWhiteLegalMoves(currentBoard,
 					whitePawns, whiteRooks, whiteKnights, whiteBishops,
 					whiteQueens, whiteKing, getBlackPieces(), getWhitePieces(),
-					getBlackAttackingSquares()));
+					getBlackAttackingSquares(), blackPawns, blackRooks,
+					blackKnights, blackBishops, blackQueens, blackKing));
 		}
+
+		System.out.println(temp2.size());
+
+		int count = 0;
+		String[][] nextBoard;
+		while (!temp2.isEmpty()) {
+			nextBoard = temp2.remove(0);
+			for (int i = 0; i < temp2.size(); i++) {
+				if (areEqual(nextBoard,temp2.get(i))) {
+					count++;
+					System.out.println(count);
+				}
+			}
+		}
+		System.out.println("count " + count);
 
 		Vector<String[][]> temp3 = new Vector<>();
 		while (!temp2.isEmpty()) {
 			// printBoard(temp2.get(0));
 			temp2.remove(0);
 			temp3.addAll(MoveGenerator.generateBlackLegalMoves(currentBoard,
-					blackPawns, blackRooks, blackKnights, blackBishops,
-					blackQueens, blackKing, getWhitePieces(), getBlackPieces(),
-					getWhiteAttackingSquares()));
+					whitePawns, whiteRooks, whiteKnights, whiteBishops,
+					whiteQueens, whiteKing, getBlackPieces(), getWhitePieces(),
+					getWhiteAttackingSquares(), blackPawns, blackRooks,
+					blackKnights, blackBishops, blackQueens, blackKing));
 		}
 
 		System.out.println(temp3.size());
-		while (!temp3.isEmpty()) {
-			// printBoard(temp3.get(0));
-			temp3.remove(0);
-		}
+		// while (!temp3.isEmpty()) {
+		// printBoard(temp3.get(0));
+		// temp3.remove(0);
+		// }
 
 		MoveGenerator.printCount();
 
@@ -83,6 +103,22 @@ public class ChessBoard {
 				+ "ms");
 		System.out.println("That took :"
 				+ ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
+
+	}
+
+	private boolean areEqual(String[][] board1, String[][] board2) {
+
+		for (int i = 0; i < board2.length; i++) {
+			if (!board1[i % 8][i / 8].equals(board2[i % 8][i / 8])) {
+				System.out.println("Comparing");
+				System.out.println(board1[i % 8][i / 8] + " ");
+				System.out.print(board2[i % 8][i / 8]);
+				return false;
+			}
+		}
+		printBoard(board1);
+		printBoard(board2);
+		return true;
 
 	}
 
@@ -148,21 +184,21 @@ public class ChessBoard {
 			// if its all good then currentBoard = tempBoard;
 			boolean isValid;
 			if (tempBoard[x][y].toUpperCase().equals(tempBoard[x][y])) {
-				isValid = BoardManager.IsSelfCheck(tempBoard, true);
+				// isValid = BoardManager.IsSelfCheck(tempBoard, true);
 			} else {
-				isValid = BoardManager.IsSelfCheck(tempBoard, false);
+				// isValid = BoardManager.IsSelfCheck(tempBoard, false);
 			}
 
 			// TODO: Add en passant check.
-			if (isValid) {
-				currentBoard = tempBoard;
-				updateBitboards();
-				return true;
-				// return isValid;
-			} else {
-				return false;
-				// return isValid;
-			}
+			// if (isValid) {
+			// currentBoard = tempBoard;
+			// updateBitboards();
+			// return true;
+			// // return isValid;
+			// } else {
+			// return false;
+			// // return isValid;
+			// }
 		}
 
 		return false;

@@ -48,21 +48,22 @@ public class WhitePieces {
 	protected static long getKnightAttackingSquares(long whiteKnights) {
 		// variable names are first direction then second direction
 
-		long upRight = (whiteKnights & BitboardOperations.clearFile(8)) << 17;
-		long upLeft = (whiteKnights & BitboardOperations.clearFile(1)) << 15;
+		long firstFile = BitboardOperations.clearFile(1);
+		long secondFile = BitboardOperations.clearFile(2);
+		long seventhFile = BitboardOperations.clearFile(7);
+		long eigthFile = BitboardOperations.clearFile(8);
 
-		long rightUp = (BitboardOperations.clearFile(8)
-				& BitboardOperations.clearFile(7) & whiteKnights) << 10;
-		long rightDown = (BitboardOperations.clearFile(8)
-				& BitboardOperations.clearFile(7) & whiteKnights) >>> 6;
+		long upRight = (whiteKnights & eigthFile) << 17;
+		long upLeft = (whiteKnights & firstFile) << 15;
 
-		long downRight = (whiteKnights & BitboardOperations.clearFile(8)) >>> 15;
-		long downLeft = (whiteKnights & BitboardOperations.clearFile(1)) >>> 17;
+		long rightUp = (BitboardOperations.clearFile(8) & seventhFile & whiteKnights) << 10;
+		long rightDown = (BitboardOperations.clearFile(8) & seventhFile & whiteKnights) >>> 6;
 
-		long leftUp = (BitboardOperations.clearFile(1)
-				& BitboardOperations.clearFile(2) & whiteKnights) << 6;
-		long leftDown = (BitboardOperations.clearFile(1)
-				& BitboardOperations.clearFile(2) & whiteKnights) >>> 10;
+		long downRight = (whiteKnights & eigthFile) >>> 15;
+		long downLeft = (whiteKnights & firstFile) >>> 17;
+
+		long leftUp = (firstFile & secondFile & whiteKnights) << 6;
+		long leftDown = (firstFile & secondFile & whiteKnights) >>> 10;
 
 		long possibleMoves = upRight | upLeft | rightUp | rightDown | downRight
 				| downLeft | leftUp | leftDown;
@@ -221,15 +222,18 @@ public class WhitePieces {
 		long up = whiteKing << 8;
 		long down = whiteKing >>> 8;
 
+		long firstFile = BitboardOperations.clearFile(1);
+		long eigthFile = BitboardOperations.clearFile(8);
+
 		// clear file stops move generation to the left if on the 1st file
-		long left = ((whiteKing & BitboardOperations.clearFile(1)) >>> 1);
-		long upLeft = (whiteKing & BitboardOperations.clearFile(1)) << 7;
-		long downLeft = (whiteKing & BitboardOperations.clearFile(1)) >>> 9;
+		long left = ((whiteKing & firstFile) >>> 1);
+		long upLeft = (whiteKing & firstFile) << 7;
+		long downLeft = (whiteKing & firstFile) >>> 9;
 
 		// clear file stops move generation to the right if on the 8th file
-		long right = ((whiteKing & BitboardOperations.clearFile(8)) << 1);
-		long upRight = ((whiteKing & BitboardOperations.clearFile(8)) << 9);
-		long downRight = ((whiteKing & BitboardOperations.clearFile(8)) >>> 7);
+		long right = ((whiteKing & eigthFile) << 1);
+		long upRight = ((whiteKing & eigthFile) << 9);
+		long downRight = ((whiteKing & eigthFile) >>> 7);
 
 		long possibleMoves = (up | down | left | right | upRight | downRight
 				| upLeft | downLeft);

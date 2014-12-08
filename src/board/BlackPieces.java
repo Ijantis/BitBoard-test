@@ -102,27 +102,16 @@ public class BlackPieces {
 		long allRookMoves = 0L;
 
 		while (rookBitboardToCalculate != 0) {
-			nextRook = Long.parseLong("1", 2);
-			for (int i = 0; i < Long.toBinaryString(rookBitboardToCalculate)
-					.length() - 1; i++) {
-				if (Long.toBinaryString(nextRook).length() == 63) {
-					nextRook = nextRook * 2;
-				} else {
-					nextRook = Long.parseLong(Long.toBinaryString(nextRook)
-							+ "0", 2);
-				}
-			}
-			if (rookBitboardToCalculate == 1) {
-				allRookMoves = allRookMoves
-						| getSingleRookMove(nextRook, occupiedSquares);
+			nextRook = Long.highestOneBit(rookBitboardToCalculate);
+			allRookMoves = allRookMoves
+					| getSingleRookMove(nextRook, occupiedSquares);
+
+			String rookBitboard = Long.toBinaryString(rookBitboardToCalculate);
+			if (rookBitboard.length() == 1) {
 				break;
-			} else {
-				rookBitboardToCalculate = Long.parseLong(
-						Long.toBinaryString(rookBitboardToCalculate).substring(
-								1), 2);
-				allRookMoves = allRookMoves
-						| getSingleRookMove(nextRook, occupiedSquares);
 			}
+			rookBitboardToCalculate = Long.parseLong(rookBitboard.substring(1),
+					2);
 		}
 		return allRookMoves;
 	}
@@ -140,42 +129,40 @@ public class BlackPieces {
 	 */
 	private static long getSingleRookMove(long rookToMove, long occupiedSquares) {
 
-		long right_moves = BitboardOperations.getRightSquares(rookToMove)
-				& occupiedSquares;
+		long rightSquares = BitboardOperations.getRightSquares(rookToMove);
+		long right_moves = rightSquares & occupiedSquares;
 		right_moves = (right_moves << 1) | (right_moves << 2)
 				| (right_moves << 3) | (right_moves << 4) | (right_moves << 5)
 				| (right_moves << 6);
-		right_moves = right_moves
-				& BitboardOperations.getRightSquares(rookToMove);
-		right_moves = right_moves
-				^ BitboardOperations.getRightSquares(rookToMove);
-		// right_moves = right_moves & ~blackPieces;
+		right_moves = right_moves & rightSquares;
+		right_moves = right_moves ^ rightSquares;
+		// right_moves = right_moves & ~whitePieces;
 
-		long left_moves = BitboardOperations.getLeftSquares(rookToMove)
-				& occupiedSquares;
+		long leftSquares = BitboardOperations.getLeftSquares(rookToMove);
+		long left_moves = leftSquares & occupiedSquares;
 		left_moves = (left_moves >>> 1) | (left_moves >>> 2)
 				| (left_moves >>> 3) | (left_moves >>> 4) | (left_moves >>> 5)
 				| (left_moves >>> 6);
-		left_moves = left_moves & BitboardOperations.getLeftSquares(rookToMove);
-		left_moves = left_moves ^ BitboardOperations.getLeftSquares(rookToMove);
-		// left_moves = left_moves & ~blackPieces;
+		left_moves = left_moves & leftSquares;
+		left_moves = left_moves ^ leftSquares;
+		// left_moves = left_moves & ~whitePieces;
 
-		long up_moves = BitboardOperations.getUpSquares(rookToMove)
-				& occupiedSquares;
+		long upSquares = BitboardOperations.getUpSquares(rookToMove);
+		long up_moves = upSquares & occupiedSquares;
 		up_moves = (up_moves << 8) | (up_moves << 16) | (up_moves << 24)
 				| (up_moves << 32) | (up_moves << 40) | (up_moves << 48);
-		up_moves = up_moves & BitboardOperations.getUpSquares(rookToMove);
-		up_moves = up_moves ^ BitboardOperations.getUpSquares(rookToMove);
-		// up_moves = up_moves & ~blackPieces;
+		up_moves = up_moves & upSquares;
+		up_moves = up_moves ^ upSquares;
+		// up_moves = up_moves & ~whitePieces;
 
-		long down_moves = BitboardOperations.getDownSquares(rookToMove)
-				& occupiedSquares;
+		long downSquares = BitboardOperations.getDownSquares(rookToMove);
+		long down_moves = downSquares & occupiedSquares;
 		down_moves = (down_moves >>> 8) | (down_moves >>> 16)
 				| (down_moves >>> 24) | (down_moves >>> 32)
 				| (down_moves >>> 40) | (down_moves >>> 48);
-		down_moves = down_moves & BitboardOperations.getDownSquares(rookToMove);
-		down_moves = down_moves ^ BitboardOperations.getDownSquares(rookToMove);
-		// down_moves = down_moves & ~blackPieces;
+		down_moves = down_moves & downSquares;
+		down_moves = down_moves ^ downSquares;
+		// down_moves = down_moves & ~whitePieces;
 
 		return left_moves | right_moves | up_moves | down_moves;
 	}
@@ -190,45 +177,39 @@ public class BlackPieces {
 	protected static long getBishopAttackingSquares(long blackBishops,
 			long occupiedSquares) {
 
-		long topRight = BitboardOperations.getTopRightSquares(blackBishops)
-				& occupiedSquares;
+		long topRightSquares = BitboardOperations
+				.getTopRightSquares(blackBishops);
+		long topRight = topRightSquares & occupiedSquares;
 		topRight = (topRight << 9) | (topRight << 18) | (topRight << 27)
 				| (topRight << 36) | (topRight << 45) | (topRight << 54);
-		topRight = topRight
-				& BitboardOperations.getTopRightSquares(blackBishops);
-		topRight = topRight
-				^ BitboardOperations.getTopRightSquares(blackBishops);
-		// topRight = topRight & ~getblackPieces();
+		topRight = topRight & topRightSquares;
+		topRight = topRight ^ topRightSquares;
 
-		long bottomLeft = BitboardOperations.getBottomLeftSquares(blackBishops)
-				& occupiedSquares;
+		long bottomLeftSquares = BitboardOperations
+				.getBottomLeftSquares(blackBishops);
+		long bottomLeft = bottomLeftSquares & occupiedSquares;
 		bottomLeft = (bottomLeft >>> 9) | (bottomLeft >>> 18)
 				| (bottomLeft >>> 27) | (bottomLeft >>> 36)
 				| (bottomLeft >>> 45) | (bottomLeft >>> 54);
-		bottomLeft = bottomLeft
-				& BitboardOperations.getBottomLeftSquares(blackBishops);
-		bottomLeft = bottomLeft
-				^ BitboardOperations.getBottomLeftSquares(blackBishops);
-		// bottomLeft = bottomLeft & ~getblackPieces();
+		bottomLeft = bottomLeft & bottomLeftSquares;
+		bottomLeft = bottomLeft ^ bottomLeftSquares;
 
-		long bottomRight = BitboardOperations
-				.getBottomRightSquares(blackBishops) & occupiedSquares;
+		long bottomRightSquares = BitboardOperations
+				.getBottomRightSquares(blackBishops);
+		long bottomRight = bottomRightSquares & occupiedSquares;
 		bottomRight = (bottomRight >>> 7) | (bottomRight >>> 14)
 				| (bottomRight >>> 21) | (bottomRight >>> 28)
 				| (bottomRight >>> 35) | (bottomRight >>> 42);
-		bottomRight = bottomRight
-				& BitboardOperations.getBottomRightSquares(blackBishops);
-		bottomRight = bottomRight
-				^ BitboardOperations.getBottomRightSquares(blackBishops);
-		// bottomRight = bottomRight & ~getblackPieces();
+		bottomRight = bottomRight & bottomRightSquares;
+		bottomRight = bottomRight ^ bottomRightSquares;
 
-		long topLeft = BitboardOperations.getTopLeftSquares(blackBishops)
-				& occupiedSquares;
+		long topLeftSquares = BitboardOperations
+				.getTopLeftSquares(blackBishops);
+		long topLeft = topLeftSquares & occupiedSquares;
 		topLeft = (topLeft << 7) | (topLeft << 14) | (topLeft << 21)
 				| (topLeft << 28) | (topLeft << 35) | (topLeft << 42);
-		topLeft = topLeft & BitboardOperations.getTopLeftSquares(blackBishops);
-		topLeft = topLeft ^ BitboardOperations.getTopLeftSquares(blackBishops);
-		// topLeft = topLeft & ~getblackPieces();
+		topLeft = topLeft & topLeftSquares;
+		topLeft = topLeft ^ topLeftSquares;
 
 		return topRight | topLeft | bottomRight | bottomLeft;
 	}

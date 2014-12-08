@@ -13,10 +13,9 @@ public class BlackPieces {
 
 		// Vertical single rank
 		long upOne = (blackPawns >>> 8) & ~occupiedSquares;
-
 		// Moving up 2 spaces from 2nd rank
 		long seventhRankPawns = blackPawns & BitboardOperations.maskRank(7);
-		long pawnsNotBlocked = (((seventhRankPawns << 8) & ~occupiedSquares) << 8);
+		long pawnsNotBlocked = (((seventhRankPawns >>> 8) & ~occupiedSquares) << 8);
 		long upTwo = pawnsNotBlocked >>> 16 & ~occupiedSquares;
 
 		return upOne | upTwo;

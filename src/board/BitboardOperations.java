@@ -5,7 +5,7 @@ public class BitboardOperations {
 	/*
 	 * Returns a bitboard for a coordinate
 	 */
-	protected static long getPositionBitboard(long position) {
+	public static long getPositionBitboard(long position) {
 
 		String temp = "1";
 
@@ -22,7 +22,7 @@ public class BitboardOperations {
 
 	}
 
-	protected static long getBottomRightSquares(long bitboard) {
+	public static long getBottomRightSquares(long bitboard) {
 		long currentFile = 0L;
 		long bottomRightSquares = 0L;
 
@@ -40,7 +40,7 @@ public class BitboardOperations {
 		return bottomRightSquares & ~bitboard;
 	}
 
-	protected static long getTopRightSquares(long bitboard) {
+	public static long getTopRightSquares(long bitboard) {
 		long currentFile = 0L;
 		long topRightSquares = 0L;
 
@@ -59,7 +59,7 @@ public class BitboardOperations {
 
 	}
 
-	protected static long getBottomLeftSquares(long bitboard) {
+	public static long getBottomLeftSquares(long bitboard) {
 		long currentFile = 0L;
 		long bottomLeftSquares = 0L;
 
@@ -77,7 +77,7 @@ public class BitboardOperations {
 		return bottomLeftSquares & ~bitboard;
 	}
 
-	protected static long getTopLeftSquares(long bitboard) {
+	public static long getTopLeftSquares(long bitboard) {
 		long currentFile = 0L;
 		long topLeftSquares = 0L;
 
@@ -95,22 +95,22 @@ public class BitboardOperations {
 		return topLeftSquares & ~bitboard;
 	}
 
-	protected static long clearRank(int rankToClear) {
+	public static long clearRank(int rankToClear) {
 		return ~maskRank(rankToClear);
 	}
 
-	protected static long clearFile(int fileToClear) {
+	public static long clearFile(int fileToClear) {
 		return ~maskFile(fileToClear);
 	}
 
-	protected static long maskRank(int rankToMask) {
+	public static long maskRank(int rankToMask) {
 		String temp = "0000000000000000000000000000000000000000000000000000000011111111";
 		long maskedRank = Long.parseLong(temp, 2);
 		maskedRank = maskedRank << (8 * (rankToMask - 1));
 		return maskedRank;
 	}
 
-	protected static long maskFile(int fileToMask) {
+	public static long maskFile(int fileToMask) {
 
 		String temp = "0000000100000001000000010000000100000001000000010000000100000001";
 		long maskedFile = Long.parseLong(temp, 2);
@@ -121,7 +121,7 @@ public class BitboardOperations {
 	/*
 	 * Returns all squares to the right of a possible bitboard.
 	 */
-	protected static long getRightSquares(long bitboard) {
+	public static long getRightSquares(long bitboard) {
 
 		long rightSquares = 0L;
 		long currentRank = 0L;
@@ -148,7 +148,7 @@ public class BitboardOperations {
 	/*
 	 * Returns all squares to the left of a possible bitboard
 	 */
-	protected static long getLeftSquares(long bitboard) {
+	public static long getLeftSquares(long bitboard) {
 
 		long leftSquares = 0L;
 		long currentRank = 0L;
@@ -172,7 +172,7 @@ public class BitboardOperations {
 	/*
 	 * Returns all squares above the possible bitboard
 	 */
-	protected static long getUpSquares(long bitboard) {
+	public static long getUpSquares(long bitboard) {
 		long upSquares = 0L;
 		long currentFile = 0L;
 		long temp = 0L;
@@ -193,7 +193,7 @@ public class BitboardOperations {
 	/*
 	 * Returns all squares below the possible bitboard
 	 */
-	protected static long getDownSquares(long bitboard) {
+	public static long getDownSquares(long bitboard) {
 		long downSquares = 0L;
 		long currentFile = 0L;
 		long temp = 0L;

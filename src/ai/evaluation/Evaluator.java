@@ -21,8 +21,8 @@ public class Evaluator {
 		System.out.println("white score " + whiteScore);
 		System.out.println("black score " + blackScore);
 		
-		whiteScore -= evaluateDoubledPawns(whitePawns);
-		blackScore -= evaluateDoubledPawns(blackPawns);
+		whiteScore += evaluateDoubledPawns(whitePawns);
+		blackScore += evaluateDoubledPawns(blackPawns);
 		
 		System.out.println("white score " + whiteScore);
 		System.out.println("black score " + blackScore);

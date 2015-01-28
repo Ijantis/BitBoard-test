@@ -2,7 +2,6 @@ package board;
 
 import java.util.Collection;
 import java.util.Vector;
-import java.util.function.LongConsumer;
 
 public class MoveGenerator {
 
@@ -33,8 +32,6 @@ public class MoveGenerator {
 					whiteQueens, blackPawns, blackRooks, blackKnights,
 					blackBishops, blackQueens, whiteKing, blackKing,
 					currentBoard));
-			// possibleStates.addAll(generateNextMoves(nextPawn,
-			// bitboardOfMoves));
 
 			temp = (Long.highestOneBit(temp) - 1) & temp;
 		}
@@ -64,8 +61,6 @@ public class MoveGenerator {
 					whiteQueens, blackPawns, blackRooks, blackKnights,
 					blackBishops, blackQueens, whiteKing, blackKing,
 					currentBoard));
-			// possibleStates.addAll(generateNextMoves(nextBishop,
-			// bitboardOfMoves));
 
 			temp = (Long.highestOneBit(temp) - 1) & temp;
 		}
@@ -80,8 +75,6 @@ public class MoveGenerator {
 					whiteQueens, blackPawns, blackRooks, blackKnights,
 					blackBishops, blackQueens, whiteKing, blackKing,
 					currentBoard));
-			// possibleStates.addAll(generateNextMoves(nextQueen,
-			// bitboardOfMoves));
 
 			temp = (Long.highestOneBit(whiteQueens) - 1) & temp;
 		}
@@ -89,30 +82,79 @@ public class MoveGenerator {
 		temp = whiteRooks;
 		while (temp != 0) {
 			long nextRook = Long.highestOneBit(temp);
-			long bitboardOfMoves = WhitePieces.getQueenMoves(nextRook,
+			long bitboardOfMoves = WhitePieces.getRookMoves(nextRook,
 					whitePieces | blackPieces, whitePieces);
 			possibleStates.addAll(whiteRookMoves(nextRook, bitboardOfMoves,
 					whitePawns, whiteRooks, whiteKnights, whiteBishops,
 					whiteQueens, blackPawns, blackRooks, blackKnights,
 					blackBishops, blackQueens, whiteKing, blackKing,
 					currentBoard));
-			// printBitboard(bitboardOfMoves);
-
-			// possibleStates.addAll(generateNextMoves(nextRook,
-			// bitboardOfMoves));
 
 			temp = (Long.highestOneBit(temp) - 1) & temp;
 		}
 
 		long kingMovesBitboard = WhitePieces.getKingMoves(whiteKing,
 				whitePieces, blackAttackingSquares);
-		// possibleStates.addAll(generateNextMoves(whiteKing,
-		// kingMovesBitboard));
+		possibleStates.addAll(whiteKingMoves(whiteKing, kingMovesBitboard,
+				whitePawns, whiteRooks, whiteKnights, whiteBishops,
+				whiteQueens, blackPawns, blackRooks, blackKnights,
+				blackBishops, blackQueens, whiteKing, blackKing, currentBoard));
 
 		if (possibleStates.isEmpty()) {
 			System.out.println("Checkmate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		}
 		return possibleStates;
+	}
+
+	protected static Vector<String[][]> whiteKingMoves(long nextKingBitboard,
+			long possibleMovesBitboard, long whitePawns, long whiteRooks,
+			long whiteKnights, long whiteBishops, long whiteQueens,
+			long blackPawns, long blackRooks, long blackKnights,
+			long blackBishops, long blackQueens, long whiteKing,
+			long blackKing, String[][] currentBoard) {
+		Vector<String[][]> listOfMoves = new Vector<String[][]>(20, 10);
+
+		// System.out.println("NEXT PIECE ");
+		// printBitboard(nextKnightBitboard);
+		// System.out.println("POSSIBLE MOVES");
+		// printBitboard(possibleMovesBitboard);
+
+		long nextMove;
+		while (possibleMovesBitboard != 0) {
+			nextMove = Long.highestOneBit(possibleMovesBitboard);
+			// System.out.println("NEXT MOVE");
+			// printBitboard(nextMove);
+
+			// this is the bitboard after having moved the knight to the next
+			// move
+			long potentialStateBitboard = (nextKingBitboard ^ nextMove)
+					^ whiteKing;
+			boolean isValid = BoardManager.IsSelfCheck(whitePawns, whiteRooks,
+					whiteKnights, whiteBishops, whiteQueens,
+					potentialStateBitboard,
+					(blackPawns ^ potentialStateBitboard) & blackPawns,
+					(blackRooks ^ potentialStateBitboard) & blackRooks,
+					(blackKnights ^ potentialStateBitboard) & blackKnights,
+					(blackBishops ^ potentialStateBitboard) & blackBishops,
+					(blackQueens ^ potentialStateBitboard) & blackQueens,
+					blackKing, true);
+			if (isValid) {
+				String[][] temp = copyCurrentBoard(currentBoard);
+				int fromCoord = Long.toBinaryString(nextKingBitboard).length() - 1;
+				int toCoord = Long.toBinaryString(nextMove).length() - 1;
+
+				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
+				temp[fromCoord % 8][fromCoord / 8] = " ";
+
+				listOfMoves.add(temp);
+
+			}
+
+			// printBitboard((nextKnightBitboard ^ nextMove) ^ whiteKnights);
+			possibleMovesBitboard = Long.highestOneBit(possibleMovesBitboard)
+					- 1 & possibleMovesBitboard;
+		}
+		return listOfMoves;
 	}
 
 	protected static Vector<String[][]> whitePawnMoves(long nextPawnBitboard,
@@ -150,8 +192,7 @@ public class MoveGenerator {
 			if (isValid) {
 				String[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextPawnBitboard).length() - 1;
-				int toCoord = Long.toBinaryString(nextMove)
-						.length() - 1;
+				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = " ";
@@ -205,8 +246,7 @@ public class MoveGenerator {
 				String[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextKnightBitboard)
 						.length() - 1;
-				int toCoord = Long.toBinaryString(nextMove)
-						.length() - 1;
+				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = " ";
@@ -260,8 +300,7 @@ public class MoveGenerator {
 				String[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextBishopBitboard)
 						.length() - 1;
-				int toCoord = Long.toBinaryString(nextMove)
-						.length() - 1;
+				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = " ";
@@ -313,8 +352,7 @@ public class MoveGenerator {
 			if (isValid) {
 				String[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextQueenBitboard).length() - 1;
-				int toCoord = Long.toBinaryString(nextMove)
-						.length() - 1;
+				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = " ";
@@ -366,8 +404,7 @@ public class MoveGenerator {
 			if (isValid) {
 				String[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextRookBitboard).length() - 1;
-				int toCoord = Long.toBinaryString(nextMove)
-						.length() - 1;
+				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = " ";
@@ -509,8 +546,7 @@ public class MoveGenerator {
 				String[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextKnightBitboard)
 						.length() - 1;
-				int toCoord = Long.toBinaryString(nextMove)
-						.length() - 1;
+				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = " ";
@@ -563,8 +599,7 @@ public class MoveGenerator {
 				String[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextBishopBitboard)
 						.length() - 1;
-				int toCoord = Long.toBinaryString(nextMove)
-						.length() - 1;
+				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = " ";
@@ -616,8 +651,7 @@ public class MoveGenerator {
 			if (isValid) {
 				String[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextQueenBitboard).length() - 1;
-				int toCoord = Long.toBinaryString(nextMove)
-						.length() - 1;
+				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = " ";
@@ -669,8 +703,7 @@ public class MoveGenerator {
 			if (isValid) {
 				String[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextRookBitboard).length() - 1;
-				int toCoord = Long.toBinaryString(nextMove)
-						.length() - 1;
+				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = " ";
@@ -695,10 +728,10 @@ public class MoveGenerator {
 			long blackKing, String[][] currentBoard) {
 		Vector<String[][]> listOfMoves = new Vector<String[][]>(20, 10);
 
-//		 System.out.println("NEXT PIECE ");
-//		 printBitboard(nextPawnBitboard);
-//		 System.out.println("POSSIBLE MOVES");
-//		 printBitboard(possibleMovesBitboard);
+		// System.out.println("NEXT PIECE ");
+		// printBitboard(nextPawnBitboard);
+		// System.out.println("POSSIBLE MOVES");
+		// printBitboard(possibleMovesBitboard);
 
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
@@ -722,20 +755,85 @@ public class MoveGenerator {
 			if (isValid) {
 				String[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextPawnBitboard).length() - 1;
-				int toCoord = Long.toBinaryString(nextMove)
-						.length() - 1;
-//				printBitboard(potentialStateBitboard);
-//				System.out.println("current board");
-//				printBoard(currentBoard);
-//				System.out.println("From: " + temp[fromCoord % 8][fromCoord / 8]);
-//				System.out.println("x : " + (fromCoord % 8) + " y : " + (fromCoord / 8));
-//				System.out.println("To " + temp[toCoord % 8][toCoord / 8]);
-//				System.out.println("x : " + (toCoord % 8) + " y : " + (toCoord / 8));
-//				System.out.println("Printing temp board before change");
-//				printBoard(temp);
+				int toCoord = Long.toBinaryString(nextMove).length() - 1;
+				// printBitboard(potentialStateBitboard);
+				// System.out.println("current board");
+				// printBoard(currentBoard);
+				// System.out.println("From: " + temp[fromCoord % 8][fromCoord /
+				// 8]);
+				// System.out.println("x : " + (fromCoord % 8) + " y : " +
+				// (fromCoord / 8));
+				// System.out.println("To " + temp[toCoord % 8][toCoord / 8]);
+				// System.out.println("x : " + (toCoord % 8) + " y : " +
+				// (toCoord / 8));
+				// System.out.println("Printing temp board before change");
+				// printBoard(temp);
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = " ";
-//				System.out.println("printing temp board after change");
+				// System.out.println("printing temp board after change");
+				listOfMoves.add(temp);
+
+			}
+
+			// printBitboard((nextKnightBitboard ^ nextMove) ^ whiteKnights);
+			possibleMovesBitboard = Long.highestOneBit(possibleMovesBitboard)
+					- 1 & possibleMovesBitboard;
+		}
+
+		return listOfMoves;
+	}
+
+	private static Vector<String[][]> blackKingMoves(long nextKingBitboard,
+			long possibleMovesBitboard, long whitePawns, long whiteRooks,
+			long whiteKnights, long whiteBishops, long whiteQueens,
+			long blackPawns, long blackRooks, long blackKnights,
+			long blackBishops, long blackQueens, long whiteKing,
+			long blackKing, String[][] currentBoard) {
+		Vector<String[][]> listOfMoves = new Vector<String[][]>(20, 10);
+
+		// System.out.println("NEXT PIECE ");
+		// printBitboard(nextPawnBitboard);
+		// System.out.println("POSSIBLE MOVES");
+		// printBitboard(possibleMovesBitboard);
+
+		long nextMove;
+		while (possibleMovesBitboard != 0) {
+			nextMove = Long.highestOneBit(possibleMovesBitboard);
+			// System.out.println("NEXT MOVE");
+			// printBitboard(nextMove);
+
+			// this is the bitboard after having moved the knight to the next
+			// move
+			long potentialStateBitboard = (nextKingBitboard ^ nextMove)
+					^ blackKing;
+			boolean isValid = BoardManager.IsSelfCheck(blackPawns, blackRooks,
+					blackKnights, blackBishops, blackQueens,
+					potentialStateBitboard,
+					(whitePawns ^ potentialStateBitboard) & whitePawns,
+					(whiteRooks ^ potentialStateBitboard) & whiteRooks,
+					(whiteKnights ^ potentialStateBitboard) & whiteKnights,
+					(whiteBishops ^ potentialStateBitboard) & whiteBishops,
+					(whiteQueens ^ potentialStateBitboard) & whiteQueens,
+					whiteKing, false);
+			if (isValid) {
+				String[][] temp = copyCurrentBoard(currentBoard);
+				int fromCoord = Long.toBinaryString(nextKingBitboard).length() - 1;
+				int toCoord = Long.toBinaryString(nextMove).length() - 1;
+				// printBitboard(potentialStateBitboard);
+				// System.out.println("current board");
+				// printBoard(currentBoard);
+				// System.out.println("From: " + temp[fromCoord % 8][fromCoord /
+				// 8]);
+				// System.out.println("x : " + (fromCoord % 8) + " y : " +
+				// (fromCoord / 8));
+				// System.out.println("To " + temp[toCoord % 8][toCoord / 8]);
+				// System.out.println("x : " + (toCoord % 8) + " y : " +
+				// (toCoord / 8));
+				// System.out.println("Printing temp board before change");
+				// printBoard(temp);
+				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
+				temp[fromCoord % 8][fromCoord / 8] = " ";
+				// System.out.println("printing temp board after change");
 				listOfMoves.add(temp);
 
 			}

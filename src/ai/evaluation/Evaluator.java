@@ -1,5 +1,7 @@
 package ai.evaluation;
 
+import board.BitboardOperations;
+
 public class Evaluator {
 
 	public static double evaluatePosition(long whitePawns, long whiteRooks,
@@ -11,41 +13,48 @@ public class Evaluator {
 		double whiteScore = 0;
 		double blackScore = 0;
 
-		whiteScore += evaluateWhiteMaterial(whitePawns, whiteRooks,
+		whiteScore += evaluateMaterial(whitePawns, whiteRooks,
 				whiteKnights, whiteBishops, whiteQueens, whiteKing);
-		blackScore += evaluateBlackMaterial(blackPawns, blackRooks,
+		blackScore += evaluateMaterial(blackPawns, blackRooks,
 				blackKnights, blackBishops, blackQueens, blackKing);
 
-		return whiteScore - blackScore;
+		System.out.println("white score " + whiteScore);
+		System.out.println("black score " + blackScore);
+		
+		whiteScore -= evaluateDoubledPawns(whitePawns);
+		blackScore -= evaluateDoubledPawns(blackPawns);
+		
+		System.out.println("white score " + whiteScore);
+		System.out.println("black score " + blackScore);
+		
+		// problems with precision so this is needed
+		return Math.round((whiteScore - blackScore) * 100) / 100d;
 	}
 
-	private static double evaluateBlackMaterial(long blackPawns,
-			long blackRooks, long blackKnights, long blackBishops,
-			long blackQueens, long blackKing) {
-
-		int score = 0;
-
-		score += Long.bitCount(blackPawns);
-		score += Long.bitCount(blackRooks) * 5;
-		score += Long.bitCount(blackBishops) * 3;
-		score += Long.bitCount(blackKnights) * 3;
-		score += Long.bitCount(blackQueens) * 9;
-
+	private static double evaluateDoubledPawns(long pawns) {
+		double score = 0;
+		for (int file = 1; file < 9; file++) {
+			int pawnsInFile = 0;
+			pawnsInFile = Long.bitCount(pawns & BitboardOperations.maskFile(file));
+			System.out.println("Found " + pawnsInFile + " in file " + file);
+			if (pawnsInFile > 1) {
+				score -= (pawnsInFile * 0.2) * (pawnsInFile - 1);
+			}
+			System.out.println("Score is " + score);
+		}
 		return score;
 	}
+	
+	private static double evaluateMaterial(long pawns, long rooks,
+			long knights, long bishops, long queens, long king) {
 
-	private static double evaluateWhiteMaterial(long whitePawns,
-			long whiteRooks, long whiteKnights, long whiteBishops,
-			long whiteQueens, long whiteKing) {
-		int score = 0;
+		double score = 0;
 
-		score += Long.bitCount(whitePawns);
-		score += Long.bitCount(whiteRooks) * 5;
-		score += Long.bitCount(whiteBishops) * 3;
-		score += Long.bitCount(whiteKnights) * 3;
-		score += Long.bitCount(whiteQueens) * 9;
-
+		score += Long.bitCount(pawns);
+		score += Long.bitCount(rooks) * 5;
+		score += Long.bitCount(bishops) * 3;
+		score += Long.bitCount(knights) * 3;
+		score += Long.bitCount(queens) * 9;
 		return score;
 	}
-
 }

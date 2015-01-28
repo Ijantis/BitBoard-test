@@ -2,6 +2,8 @@ package board;
 
 import java.util.Vector;
 
+import ai.evaluation.Evaluator;
+
 public class ChessBoard {
 
 	public static void main(String[] args) {
@@ -33,77 +35,36 @@ public class ChessBoard {
 		long timeNano = System.nanoTime();
 
 		updateBitboards();
+		printAllBitboards();
 
-		Vector<String[][]> temp = MoveGenerator.generateWhiteLegalMoves(
-				currentBoard, whitePawns, whiteRooks, whiteKnights,
-				whiteBishops, whiteQueens, whiteKing, getBlackPieces(),
-				getWhitePieces(), getBlackAttackingSquares(), blackPawns,
-				blackRooks, blackKnights, blackBishops, blackQueens, blackKing);
-		Vector<String[][]> temp1 = new Vector<>();
-		System.out.println(temp.size());
-		while (!temp.isEmpty()) {
-			currentBoard = temp.get(0);
-			temp.remove(0);
-			updateBitboards();
-			temp1.addAll(MoveGenerator.generateBlackLegalMoves(currentBoard,
-					whitePawns, whiteRooks, whiteKnights, whiteBishops,
-					whiteQueens, whiteKing, getBlackPieces(), getWhitePieces(),
-					getWhiteAttackingSquares(), blackPawns, blackRooks,
-					blackKnights, blackBishops, blackQueens, blackKing));
-		}
-		System.out.println(temp1.size());
-
-		Vector<String[][]> temp2 = new Vector<>();
-		while (!temp1.isEmpty()) {
-			currentBoard = temp1.get(0);
-			temp1.remove(0);
-			updateBitboards();
-			temp2.addAll(MoveGenerator.generateWhiteLegalMoves(currentBoard,
-					whitePawns, whiteRooks, whiteKnights, whiteBishops,
-					whiteQueens, whiteKing, getBlackPieces(), getWhitePieces(),
-					getBlackAttackingSquares(), blackPawns, blackRooks,
-					blackKnights, blackBishops, blackQueens, blackKing));
-		}
-
-		System.out.println(temp2.size());
-
-//		int count = 0;
-//		String[][] nextBoard;
-//		while (!temp2.isEmpty()) {
-//			nextBoard = temp2.remove(0);
-//			for (int i = 0; i < temp2.size(); i++) {
-//				if (areEqual(nextBoard,temp2.get(i))) {
-//					count++;
-//					System.out.println(count);
-//				}
-//			}
-//		}
-//		System.out.println("count " + count);
-
-		Vector<String[][]> temp3 = new Vector<>();
-		while (!temp2.isEmpty()) {
-			// printBoard(temp2.get(0));
-			temp2.remove(0);
-			temp3.addAll(MoveGenerator.generateBlackLegalMoves(currentBoard,
-					whitePawns, whiteRooks, whiteKnights, whiteBishops,
-					whiteQueens, whiteKing, getBlackPieces(), getWhitePieces(),
-					getWhiteAttackingSquares(), blackPawns, blackRooks,
-					blackKnights, blackBishops, blackQueens, blackKing));
-		}
-
-		System.out.println(temp3.size());
-		// while (!temp3.isEmpty()) {
-		// printBoard(temp3.get(0));
-		// temp3.remove(0);
-		// }
-
-		MoveGenerator.printCount();
+		System.out
+				.println(Evaluator.evaluatePosition(whitePawns, whiteRooks,
+						whiteKnights, whiteBishops, whiteQueens, whiteKing,
+						blackPawns, blackRooks, blackKnights, blackBishops,
+						blackQueens, blackKing));
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
 		System.out.println("That took :"
 				+ ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
 
+	}
+
+	private Vector<String[][]> generateWhiteLegalMoves() {
+
+		return MoveGenerator.generateWhiteLegalMoves(currentBoard, whitePawns,
+				whiteRooks, whiteKnights, whiteBishops, whiteQueens, whiteKing,
+				getBlackPieces(), getWhitePieces(), getBlackAttackingSquares(),
+				blackPawns, blackRooks, blackKnights, blackBishops,
+				blackQueens, blackKing);
+	}
+
+	private Vector<String[][]> generateBlackLegalMoves() {
+		return MoveGenerator.generateBlackLegalMoves(currentBoard, whitePawns,
+				whiteRooks, whiteKnights, whiteBishops, whiteQueens, whiteKing,
+				getBlackPieces(), getWhitePieces(), getWhiteAttackingSquares(),
+				blackPawns, blackRooks, blackKnights, blackBishops,
+				blackQueens, blackKing);
 	}
 
 	private boolean areEqual(String[][] board1, String[][] board2) {

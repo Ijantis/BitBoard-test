@@ -8,17 +8,17 @@ public class MoveGenerator {
 	public static int count = 0;
 
 	/*
-	 * NOTE: Do not return a Vector<String[][]> return squares numbers instead.
+	 * NOTE: Do not return a Vector<char[][]> return squares numbers instead.
 	 */
-	protected static Vector<String[][]> generateWhiteLegalMoves(
-			String[][] currentBoard, long whitePawns, long whiteRooks,
+	public static Vector<char[][]> generateWhiteLegalMoves(
+			char[][] currentBoard, long whitePawns, long whiteRooks,
 			long whiteKnights, long whiteBishops, long whiteQueens,
 			long whiteKing, long blackPieces, long whitePieces,
 			long blackAttackingSquares, long blackPawns, long blackRooks,
 			long blackKnights, long blackBishops, long blackQueens,
 			long blackKing) {
 
-		Vector<String[][]> possibleStates = new Vector<String[][]>(20, 20);
+		Vector<char[][]> possibleStates = new Vector<char[][]>(20, 20);
 		long temp;
 
 		temp = whitePawns;
@@ -33,7 +33,7 @@ public class MoveGenerator {
 					blackBishops, blackQueens, whiteKing, blackKing,
 					currentBoard));
 
-			temp = (Long.highestOneBit(temp) - 1) & temp;
+			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
 		temp = whiteKnights;
@@ -48,7 +48,7 @@ public class MoveGenerator {
 					blackBishops, blackQueens, whiteKing, blackKing,
 					currentBoard));
 
-			temp = (Long.highestOneBit(temp) - 1) & temp;
+			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
 		temp = whiteBishops;
@@ -62,7 +62,7 @@ public class MoveGenerator {
 					blackBishops, blackQueens, whiteKing, blackKing,
 					currentBoard));
 
-			temp = (Long.highestOneBit(temp) - 1) & temp;
+			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
 		temp = whiteQueens;
@@ -90,7 +90,7 @@ public class MoveGenerator {
 					blackBishops, blackQueens, whiteKing, blackKing,
 					currentBoard));
 
-			temp = (Long.highestOneBit(temp) - 1) & temp;
+			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
 		long kingMovesBitboard = WhitePieces.getKingMoves(whiteKing,
@@ -106,13 +106,13 @@ public class MoveGenerator {
 		return possibleStates;
 	}
 
-	protected static Vector<String[][]> whiteKingMoves(long nextKingBitboard,
+	protected static Vector<char[][]> whiteKingMoves(long nextKingBitboard,
 			long possibleMovesBitboard, long whitePawns, long whiteRooks,
 			long whiteKnights, long whiteBishops, long whiteQueens,
 			long blackPawns, long blackRooks, long blackKnights,
 			long blackBishops, long blackQueens, long whiteKing,
-			long blackKing, String[][] currentBoard) {
-		Vector<String[][]> listOfMoves = new Vector<String[][]>(20, 10);
+			long blackKing, char[][] currentBoard) {
+		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
 		// System.out.println("NEXT PIECE ");
 		// printBitboard(nextKnightBitboard);
@@ -139,12 +139,12 @@ public class MoveGenerator {
 					(blackQueens ^ potentialStateBitboard) & blackQueens,
 					blackKing, true);
 			if (isValid) {
-				String[][] temp = copyCurrentBoard(currentBoard);
+				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextKingBitboard).length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
-				temp[fromCoord % 8][fromCoord / 8] = " ";
+				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
 				listOfMoves.add(temp);
 
@@ -157,13 +157,13 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	protected static Vector<String[][]> whitePawnMoves(long nextPawnBitboard,
+	protected static Vector<char[][]> whitePawnMoves(long nextPawnBitboard,
 			long possibleMovesBitboard, long whitePawns, long whiteRooks,
 			long whiteKnights, long whiteBishops, long whiteQueens,
 			long blackPawns, long blackRooks, long blackKnights,
 			long blackBishops, long blackQueens, long whiteKing,
-			long blackKing, String[][] currentBoard) {
-		Vector<String[][]> listOfMoves = new Vector<String[][]>(20, 10);
+			long blackKing, char[][] currentBoard) {
+		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
 		// System.out.println("NEXT PIECE ");
 		// printBitboard(nextKnightBitboard);
@@ -190,12 +190,12 @@ public class MoveGenerator {
 					(blackQueens ^ potentialStateBitboard) & blackQueens,
 					blackKing, true);
 			if (isValid) {
-				String[][] temp = copyCurrentBoard(currentBoard);
+				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextPawnBitboard).length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
-				temp[fromCoord % 8][fromCoord / 8] = " ";
+				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
 				listOfMoves.add(temp);
 
@@ -209,14 +209,14 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	protected static Vector<String[][]> whiteKnightMoves(
+	protected static Vector<char[][]> whiteKnightMoves(
 			long nextKnightBitboard, long possibleMovesBitboard,
 			long whitePawns, long whiteRooks, long whiteKnights,
 			long whiteBishops, long whiteQueens, long blackPawns,
 			long blackRooks, long blackKnights, long blackBishops,
 			long blackQueens, long whiteKing, long blackKing,
-			String[][] currentBoard) {
-		Vector<String[][]> listOfMoves = new Vector<String[][]>(20, 10);
+			char[][] currentBoard) {
+		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
 		// System.out.println("NEXT PIECE ");
 		// printBitboard(nextKnightBitboard);
@@ -243,13 +243,13 @@ public class MoveGenerator {
 					(blackQueens ^ potentialStateBitboard) & blackQueens,
 					blackKing, true);
 			if (isValid) {
-				String[][] temp = copyCurrentBoard(currentBoard);
+				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextKnightBitboard)
 						.length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
-				temp[fromCoord % 8][fromCoord / 8] = " ";
+				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
 				listOfMoves.add(temp);
 
@@ -263,14 +263,14 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	protected static Vector<String[][]> whiteBishopMoves(
+	protected static Vector<char[][]> whiteBishopMoves(
 			long nextBishopBitboard, long possibleMovesBitboard,
 			long whitePawns, long whiteRooks, long whiteKnights,
 			long whiteBishops, long whiteQueens, long blackPawns,
 			long blackRooks, long blackKnights, long blackBishops,
 			long blackQueens, long whiteKing, long blackKing,
-			String[][] currentBoard) {
-		Vector<String[][]> listOfMoves = new Vector<String[][]>(20, 10);
+			char[][] currentBoard) {
+		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
 		// System.out.println("NEXT PIECE ");
 		// printBitboard(nextKnightBitboard);
@@ -297,13 +297,13 @@ public class MoveGenerator {
 					(blackQueens ^ potentialStateBitboard) & blackQueens,
 					blackKing, true);
 			if (isValid) {
-				String[][] temp = copyCurrentBoard(currentBoard);
+				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextBishopBitboard)
 						.length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
-				temp[fromCoord % 8][fromCoord / 8] = " ";
+				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
 				listOfMoves.add(temp);
 
@@ -317,13 +317,13 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	protected static Vector<String[][]> whiteQueenMoves(long nextQueenBitboard,
+	protected static Vector<char[][]> whiteQueenMoves(long nextQueenBitboard,
 			long possibleMovesBitboard, long whitePawns, long whiteRooks,
 			long whiteKnights, long whiteBishops, long whiteQueens,
 			long blackPawns, long blackRooks, long blackKnights,
 			long blackBishops, long blackQueens, long whiteKing,
-			long blackKing, String[][] currentBoard) {
-		Vector<String[][]> listOfMoves = new Vector<String[][]>(20, 10);
+			long blackKing, char[][] currentBoard) {
+		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
 		// System.out.println("NEXT PIECE ");
 		// printBitboard(nextKnightBitboard);
@@ -350,12 +350,12 @@ public class MoveGenerator {
 					(blackQueens ^ potentialStateBitboard) & blackQueens,
 					blackKing, true);
 			if (isValid) {
-				String[][] temp = copyCurrentBoard(currentBoard);
+				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextQueenBitboard).length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
-				temp[fromCoord % 8][fromCoord / 8] = " ";
+				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
 				listOfMoves.add(temp);
 
@@ -369,13 +369,13 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	protected static Vector<String[][]> whiteRookMoves(long nextRookBitboard,
+	protected static Vector<char[][]> whiteRookMoves(long nextRookBitboard,
 			long possibleMovesBitboard, long whitePawns, long whiteRooks,
 			long whiteKnights, long whiteBishops, long whiteQueens,
 			long blackPawns, long blackRooks, long blackKnights,
 			long blackBishops, long blackQueens, long whiteKing,
-			long blackKing, String[][] currentBoard) {
-		Vector<String[][]> listOfMoves = new Vector<String[][]>(20, 10);
+			long blackKing, char[][] currentBoard) {
+		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
 		// System.out.println("NEXT PIECE ");
 		// printBitboard(nextKnightBitboard);
@@ -402,12 +402,12 @@ public class MoveGenerator {
 					(blackQueens ^ potentialStateBitboard) & blackQueens,
 					blackKing, true);
 			if (isValid) {
-				String[][] temp = copyCurrentBoard(currentBoard);
+				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextRookBitboard).length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
-				temp[fromCoord % 8][fromCoord / 8] = " ";
+				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
 				listOfMoves.add(temp);
 
@@ -421,15 +421,15 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	protected static Vector<String[][]> generateBlackLegalMoves(
-			String[][] currentBoard, long whitePawns, long whiteRooks,
+	public static Vector<char[][]> generateBlackLegalMoves(
+			char[][] currentBoard, long whitePawns, long whiteRooks,
 			long whiteKnights, long whiteBishops, long whiteQueens,
 			long whiteKing, long blackPieces, long whitePieces,
 			long whiteAttackingSquares, long blackPawns, long blackRooks,
 			long blackKnights, long blackBishops, long blackQueens,
 			long blackKing) {
 
-		Vector<String[][]> possibleStates = new Vector<String[][]>(20, 20);
+		Vector<char[][]> possibleStates = new Vector<char[][]>(20, 20);
 		long temp;
 
 		temp = blackPawns;
@@ -443,7 +443,7 @@ public class MoveGenerator {
 					blackBishops, blackQueens, whiteKing, blackKing,
 					currentBoard));
 
-			temp = (Long.highestOneBit(temp) - 1) & temp;
+			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
 		temp = blackKnights;
@@ -457,7 +457,7 @@ public class MoveGenerator {
 					whiteQueens, blackPawns, blackRooks, blackKnights,
 					blackBishops, blackQueens, whiteKing, blackKing,
 					currentBoard));
-			temp = (Long.highestOneBit(temp) - 1) & temp;
+			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
 		temp = blackBishops;
@@ -470,7 +470,7 @@ public class MoveGenerator {
 					whiteQueens, blackPawns, blackRooks, blackKnights,
 					blackBishops, blackQueens, whiteKing, blackKing,
 					currentBoard));
-			temp = (Long.highestOneBit(temp) - 1) & temp;
+			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
 		temp = blackQueens;
@@ -483,7 +483,7 @@ public class MoveGenerator {
 					whiteQueens, blackPawns, blackRooks, blackKnights,
 					blackBishops, blackQueens, whiteKing, blackKing,
 					currentBoard));
-			temp = (Long.highestOneBit(temp) - 1) & temp;
+			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
 		temp = blackRooks;
@@ -496,7 +496,7 @@ public class MoveGenerator {
 					whiteQueens, blackPawns, blackRooks, blackKnights,
 					blackBishops, blackQueens, whiteKing, blackKing,
 					currentBoard));
-			temp = (Long.highestOneBit(temp) - 1) & temp;
+			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
 		long kingMovesBitboard = BlackPieces.getKingMoves(blackKing,
@@ -510,13 +510,13 @@ public class MoveGenerator {
 
 	}
 
-	private static Vector<String[][]> blackKnightMoves(long nextKnightBitboard,
+	private static Vector<char[][]> blackKnightMoves(long nextKnightBitboard,
 			long possibleMovesBitboard, long whitePawns, long whiteRooks,
 			long whiteKnights, long whiteBishops, long whiteQueens,
 			long blackPawns, long blackRooks, long blackKnights,
 			long blackBishops, long blackQueens, long whiteKing,
-			long blackKing, String[][] currentBoard) {
-		Vector<String[][]> listOfMoves = new Vector<String[][]>(20, 10);
+			long blackKing, char[][] currentBoard) {
+		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
 		// System.out.println("NEXT PIECE ");
 		// printBitboard(nextKnightBitboard);
@@ -543,13 +543,13 @@ public class MoveGenerator {
 					(whiteQueens ^ potentialStateBitboard) & whiteQueens,
 					whiteKing, false);
 			if (isValid) {
-				String[][] temp = copyCurrentBoard(currentBoard);
+				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextKnightBitboard)
 						.length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
-				temp[fromCoord % 8][fromCoord / 8] = " ";
+				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
 				listOfMoves.add(temp);
 
@@ -563,13 +563,13 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	private static Vector<String[][]> blackBishopMoves(long nextBishopBitboard,
+	private static Vector<char[][]> blackBishopMoves(long nextBishopBitboard,
 			long possibleMovesBitboard, long whitePawns, long whiteRooks,
 			long whiteKnights, long whiteBishops, long whiteQueens,
 			long blackPawns, long blackRooks, long blackKnights,
 			long blackBishops, long blackQueens, long whiteKing,
-			long blackKing, String[][] currentBoard) {
-		Vector<String[][]> listOfMoves = new Vector<String[][]>(20, 10);
+			long blackKing, char[][] currentBoard) {
+		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
 		// System.out.println("NEXT PIECE ");
 		// printBitboard(nextKnightBitboard);
@@ -596,13 +596,13 @@ public class MoveGenerator {
 					(whiteQueens ^ potentialStateBitboard) & whiteQueens,
 					whiteKing, false);
 			if (isValid) {
-				String[][] temp = copyCurrentBoard(currentBoard);
+				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextBishopBitboard)
 						.length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
-				temp[fromCoord % 8][fromCoord / 8] = " ";
+				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
 				listOfMoves.add(temp);
 
@@ -616,13 +616,13 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	private static Vector<String[][]> blackQueenMoves(long nextQueenBitboard,
+	private static Vector<char[][]> blackQueenMoves(long nextQueenBitboard,
 			long possibleMovesBitboard, long whitePawns, long whiteRooks,
 			long whiteKnights, long whiteBishops, long whiteQueens,
 			long blackPawns, long blackRooks, long blackKnights,
 			long blackBishops, long blackQueens, long whiteKing,
-			long blackKing, String[][] currentBoard) {
-		Vector<String[][]> listOfMoves = new Vector<String[][]>(20, 10);
+			long blackKing, char[][] currentBoard) {
+		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
 		// System.out.println("NEXT PIECE ");
 		// printBitboard(nextKnightBitboard);
@@ -649,12 +649,12 @@ public class MoveGenerator {
 					(whiteQueens ^ potentialStateBitboard) & whiteQueens,
 					whiteKing, false);
 			if (isValid) {
-				String[][] temp = copyCurrentBoard(currentBoard);
+				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextQueenBitboard).length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
-				temp[fromCoord % 8][fromCoord / 8] = " ";
+				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
 				listOfMoves.add(temp);
 
@@ -668,13 +668,13 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	private static Vector<String[][]> blackRookMoves(long nextRookBitboard,
+	private static Vector<char[][]> blackRookMoves(long nextRookBitboard,
 			long possibleMovesBitboard, long whitePawns, long whiteRooks,
 			long whiteKnights, long whiteBishops, long whiteQueens,
 			long blackPawns, long blackRooks, long blackKnights,
 			long blackBishops, long blackQueens, long whiteKing,
-			long blackKing, String[][] currentBoard) {
-		Vector<String[][]> listOfMoves = new Vector<String[][]>(20, 10);
+			long blackKing, char[][] currentBoard) {
+		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
 		// System.out.println("NEXT PIECE ");
 		// printBitboard(nextKnightBitboard);
@@ -701,12 +701,12 @@ public class MoveGenerator {
 					(whiteQueens ^ potentialStateBitboard) & whiteQueens,
 					whiteKing, false);
 			if (isValid) {
-				String[][] temp = copyCurrentBoard(currentBoard);
+				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextRookBitboard).length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
-				temp[fromCoord % 8][fromCoord / 8] = " ";
+				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
 				listOfMoves.add(temp);
 
@@ -720,13 +720,13 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	private static Vector<String[][]> blackPawnMoves(long nextPawnBitboard,
+	private static Vector<char[][]> blackPawnMoves(long nextPawnBitboard,
 			long possibleMovesBitboard, long whitePawns, long whiteRooks,
 			long whiteKnights, long whiteBishops, long whiteQueens,
 			long blackPawns, long blackRooks, long blackKnights,
 			long blackBishops, long blackQueens, long whiteKing,
-			long blackKing, String[][] currentBoard) {
-		Vector<String[][]> listOfMoves = new Vector<String[][]>(20, 10);
+			long blackKing, char[][] currentBoard) {
+		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
 		// System.out.println("NEXT PIECE ");
 		// printBitboard(nextPawnBitboard);
@@ -753,7 +753,7 @@ public class MoveGenerator {
 					(whiteQueens ^ potentialStateBitboard) & whiteQueens,
 					whiteKing, false);
 			if (isValid) {
-				String[][] temp = copyCurrentBoard(currentBoard);
+				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextPawnBitboard).length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 				// printBitboard(potentialStateBitboard);
@@ -769,7 +769,7 @@ public class MoveGenerator {
 				// System.out.println("Printing temp board before change");
 				// printBoard(temp);
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
-				temp[fromCoord % 8][fromCoord / 8] = " ";
+				temp[fromCoord % 8][fromCoord / 8] = ' ';
 				// System.out.println("printing temp board after change");
 				listOfMoves.add(temp);
 
@@ -783,13 +783,13 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	private static Vector<String[][]> blackKingMoves(long nextKingBitboard,
+	private static Vector<char[][]> blackKingMoves(long nextKingBitboard,
 			long possibleMovesBitboard, long whitePawns, long whiteRooks,
 			long whiteKnights, long whiteBishops, long whiteQueens,
 			long blackPawns, long blackRooks, long blackKnights,
 			long blackBishops, long blackQueens, long whiteKing,
-			long blackKing, String[][] currentBoard) {
-		Vector<String[][]> listOfMoves = new Vector<String[][]>(20, 10);
+			long blackKing, char[][] currentBoard) {
+		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
 		// System.out.println("NEXT PIECE ");
 		// printBitboard(nextPawnBitboard);
@@ -816,7 +816,7 @@ public class MoveGenerator {
 					(whiteQueens ^ potentialStateBitboard) & whiteQueens,
 					whiteKing, false);
 			if (isValid) {
-				String[][] temp = copyCurrentBoard(currentBoard);
+				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextKingBitboard).length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 				// printBitboard(potentialStateBitboard);
@@ -832,7 +832,7 @@ public class MoveGenerator {
 				// System.out.println("Printing temp board before change");
 				// printBoard(temp);
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
-				temp[fromCoord % 8][fromCoord / 8] = " ";
+				temp[fromCoord % 8][fromCoord / 8] = ' ';
 				// System.out.println("printing temp board after change");
 				listOfMoves.add(temp);
 
@@ -846,12 +846,12 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	private static String[][] copyCurrentBoard(String[][] currentBoard) {
-		String[][] temp = new String[currentBoard.length][currentBoard.length];
+	private static char[][] copyCurrentBoard(char[][] currentBoard) {
+		char[][] temp = new char[currentBoard.length][currentBoard.length];
 
 		for (int x = 0; x < temp.length; x++) {
 			for (int y = 0; y < temp.length; y++) {
-				temp[x][y] = new String(currentBoard[x][y]);
+				temp[x][y] = currentBoard[x][y];
 			}
 		}
 		return temp;
@@ -869,7 +869,7 @@ public class MoveGenerator {
 					stringBitBoard.substring(i * 8, ((i + 1) * 8)));
 			stringReverser.reverse();
 			for (int j = 0; j < stringReverser.toString().length(); j++) {
-				System.out.print(stringReverser.toString().charAt(j) + " ");
+				System.out.print(stringReverser.toString().charAt(j) + ' ');
 			}
 			System.out.println();
 		}
@@ -880,14 +880,14 @@ public class MoveGenerator {
 	 * Temporary class for printing out the current state of the board wihout
 	 * relying on a gui.
 	 */
-	public static void printBoard(String[][] board) {
+	public static void printBoard(char[][] board) {
 		for (int y = 7; y >= 0; y--) {
 			for (int x = 0; x < board.length; x++) {
-				String temp = board[x][y];
-				if (temp.equals(" ")) {
+				char temp = board[x][y];
+				if (temp == ' ') {
 					System.out.print(", ");
 				} else {
-					System.out.print(board[x][y] + " ");
+					System.out.print(board[x][y] + ' ');
 				}
 			}
 			System.out.println();

@@ -35,13 +35,11 @@ public class ChessBoard {
 		long timeNano = System.nanoTime();
 
 		updateBitboards();
-		printAllBitboards();
+		printBoard();
 
-		System.out
-				.println(Evaluator.evaluatePosition(whitePawns, whiteRooks,
-						whiteKnights, whiteBishops, whiteQueens, whiteKing,
-						blackPawns, blackRooks, blackKnights, blackBishops,
-						blackQueens, blackKing));
+		System.out.println(Evaluator.evaluatePosition(whitePawns, whiteRooks, whiteKnights,
+				whiteBishops, whiteQueens, whiteKing, blackPawns, blackRooks,
+				blackKnights, blackBishops, blackQueens, blackKing));
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -145,11 +143,12 @@ public class ChessBoard {
 			// if its all good then currentBoard = tempBoard;
 			boolean isValid;
 			if (tempBoard[x][y].toUpperCase().equals(tempBoard[x][y])) {
-				// isValid = BoardManager.IsSelfCheck(tempBoard, true);
+				isValid = BoardManager.IsSelfCheck(tempBoard, true);
 			} else {
-				// isValid = BoardManager.IsSelfCheck(tempBoard, false);
+				isValid = BoardManager.IsSelfCheck(tempBoard, false);
 			}
 
+			return isValid;
 			// TODO: Add en passant check.
 			// if (isValid) {
 			// currentBoard = tempBoard;

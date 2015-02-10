@@ -26,11 +26,72 @@ public class BoardManager {
 		BoardManager.blackBishops = blackBishops;
 		BoardManager.blackQueens = blackQueens;
 		BoardManager.blackKing = blackKing;
-		
+
 		if (checkForWhite) {
 			return (whiteKing & getBlackAttackingSquares()) == 0;
 		} else {
 			return (blackKing & getWhiteAttackingSquares()) == 0;
+		}
+
+	}
+
+	protected static boolean IsSelfCheck(String[][] boardToCheck,
+			boolean checkForWhite) {
+
+		generateBitBoards(boardToCheck);
+
+		if (checkForWhite) {
+			return (whiteKing & getBlackAttackingSquares()) == 0;
+		} else {
+			return (blackKing & getWhiteAttackingSquares()) == 0;
+		}
+
+	}
+
+	private static void generateBitBoards(String[][] boardToCheck) {
+		long currentPiece = 1;
+		for (int i = 0; i < 64; i++) {
+			switch (boardToCheck[i % 8][i / 8]) {
+			case "P":
+				whitePawns = whitePawns | currentPiece;
+				break;
+			case "R":
+				whiteRooks = whiteRooks | currentPiece;
+				break;
+			case "N":
+				whiteKnights = whiteKnights | currentPiece;
+				break;
+			case "B":
+				whiteBishops = whiteBishops | currentPiece;
+				break;
+			case "Q":
+				whiteQueens = whiteQueens | currentPiece;
+				break;
+			case "K":
+				whiteKing = whiteKing | currentPiece;
+				break;
+			case "p":
+				blackPawns = blackPawns | currentPiece;
+				break;
+			case "r":
+				blackRooks = blackRooks | currentPiece;
+				break;
+			case "n":
+				blackKnights = blackKnights | currentPiece;
+				break;
+			case "b":
+				blackBishops = blackBishops | currentPiece;
+				break;
+			case "q":
+				blackQueens = blackQueens | currentPiece;
+				break;
+			case "k":
+				blackKing = blackKing | currentPiece;
+				break;
+			default:
+				break;
+			}
+			currentPiece = currentPiece << 1;
 		}
 
 	}

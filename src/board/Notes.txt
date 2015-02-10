@@ -64,3 +64,5 @@ knight moves
 Possible moves:
 73112
 94160
+
+Using char array instead of String array gave me a small speedup from 13000ms to 11500ms from inital position to four moves in.

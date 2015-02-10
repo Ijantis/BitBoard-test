@@ -1,6 +1,9 @@
 package ai.evaluation;
 
+import java.util.Vector;
+
 import board.BitboardOperations;
+import board.MoveGenerator;
 
 public class Evaluator {
 
@@ -8,7 +11,8 @@ public class Evaluator {
 			long whiteKnights, long whiteBishops, long whiteQueens,
 			long whiteKing, long blackPawns, long blackRooks,
 			long blackKnights, long blackBishops, long blackQueens,
-			long blackKing) {
+			long blackKing, char[][] currentBoard, long whiteAttackingSquares,
+			long blackAttackingSquares) {
 
 		double whiteScore = 0;
 		double blackScore = 0;
@@ -18,17 +22,41 @@ public class Evaluator {
 		blackScore += evaluateMaterial(blackPawns, blackRooks, blackKnights,
 				blackBishops, blackQueens, blackKing);
 
-		System.out.println("white score " + whiteScore);
-		System.out.println("black score " + blackScore);
-
 		whiteScore += evaluateDoubledPawns(whitePawns);
 		blackScore += evaluateDoubledPawns(blackPawns);
 
-		System.out.println("white score " + whiteScore);
-		System.out.println("black score " + blackScore);
-		
 		whiteScore += evaluateIsolatedPawns(whitePawns);
 		blackScore += evaluateIsolatedPawns(blackPawns);
+
+		whiteScore += MoveGenerator.generateWhiteLegalMoves(
+				currentBoard,
+				whitePawns,
+				whiteRooks,
+				whiteKnights,
+				whiteBishops,
+				whiteQueens,
+				whiteKing,
+				(blackBishops | blackKing | blackKnights | blackPawns
+						| blackQueens | blackRooks),
+				(whiteBishops | whiteKing | whiteKnights | whitePawns
+						| whiteQueens | whiteRooks), blackAttackingSquares,
+				blackPawns, blackRooks, blackKnights, blackBishops,
+				blackQueens, blackKing).size() * 0.04;
+
+		blackScore += MoveGenerator.generateBlackLegalMoves(
+				currentBoard,
+				whitePawns,
+				whiteRooks,
+				whiteKnights,
+				whiteBishops,
+				whiteQueens,
+				whiteKing,
+				(blackBishops | blackKing | blackKnights | blackPawns
+						| blackQueens | blackRooks),
+				(whiteBishops | whiteKing | whiteKnights | whitePawns
+						| whiteQueens | whiteRooks), whiteAttackingSquares,
+				blackPawns, blackRooks, blackKnights, blackBishops,
+				blackQueens, blackKing).size() * 0.04;
 
 		// problems with precision so this is needed
 		return Math.round((whiteScore - blackScore) * 100) / 100d;
@@ -94,4 +122,5 @@ public class Evaluator {
 		score += Long.bitCount(queens) * 9;
 		return score;
 	}
+
 }

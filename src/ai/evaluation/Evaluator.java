@@ -28,6 +28,13 @@ public class Evaluator {
 		whiteScore += evaluateIsolatedPawns(whitePawns);
 		blackScore += evaluateIsolatedPawns(blackPawns);
 
+		whiteScore += evaluateHangingPieces(whitePawns | whiteRooks
+				| whiteKnights | whiteBishops | whiteQueens,
+				whiteAttackingSquares);
+		blackScore += evaluateHangingPieces(blackPawns | blackRooks
+				| blackKnights | blackBishops | blackQueens,
+				blackAttackingSquares);
+
 		whiteScore += MoveGenerator.generateWhiteLegalMoves(
 				currentBoard,
 				whitePawns,
@@ -41,7 +48,7 @@ public class Evaluator {
 				(whiteBishops | whiteKing | whiteKnights | whitePawns
 						| whiteQueens | whiteRooks), blackAttackingSquares,
 				blackPawns, blackRooks, blackKnights, blackBishops,
-				blackQueens, blackKing).size() * 0.04;
+				blackQueens, blackKing).size() * 0.1;
 
 		blackScore += MoveGenerator.generateBlackLegalMoves(
 				currentBoard,
@@ -56,10 +63,28 @@ public class Evaluator {
 				(whiteBishops | whiteKing | whiteKnights | whitePawns
 						| whiteQueens | whiteRooks), whiteAttackingSquares,
 				blackPawns, blackRooks, blackKnights, blackBishops,
-				blackQueens, blackKing).size() * 0.04;
+				blackQueens, blackKing).size() * 0.1;
 
 		// problems with precision so this is needed
 		return Math.round((whiteScore - blackScore) * 100) / 100d;
+	}
+
+	/*
+	 * Make this stronger. Count number of rooks etc. and evaluate based on
+	 * worth of the piece. Hanging queen worse than hanging pawn.
+	 */
+	private static double evaluateHangingPieces(long pieces,
+			long attackingSquares) {
+
+		long protectedPieces = pieces & attackingSquares;
+		long hangingPieces = protectedPieces ^ pieces;
+
+		double score = 0;
+
+		score += Long.bitCount(protectedPieces) * 0.1;
+		score -= Long.bitCount(hangingPieces) * 0.2;
+
+		return score;
 	}
 
 	// maybe use an array to keep track of the masked files
@@ -121,6 +146,25 @@ public class Evaluator {
 		score += Long.bitCount(knights) * 3;
 		score += Long.bitCount(queens) * 9;
 		return score;
+	}
+
+	private static void printBitboard(long bitBoard) {
+		String stringBitBoard = Long.toBinaryString(bitBoard);
+		System.out.println("Value : " + stringBitBoard);
+		while (stringBitBoard.length() != 64) {
+			stringBitBoard = "0" + stringBitBoard;
+		}
+
+		for (int i = 0; i < 8; i++) {
+			StringBuilder stringReverser = new StringBuilder(
+					stringBitBoard.substring(i * 8, ((i + 1) * 8)));
+			stringReverser.reverse();
+			for (int j = 0; j < stringReverser.toString().length(); j++) {
+				System.out.print(stringReverser.toString().charAt(j) + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
 	}
 
 }

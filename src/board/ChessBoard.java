@@ -20,15 +20,25 @@ public class ChessBoard {
 	// Upper case for WHITE
 	// Lower case for BLACK
 	// 0,0 is top left 0,7 is top right 7,7 bottom right
-	private String[][] currentBoard = {
-			{ "R", "P", " ", " ", " ", " ", "p", "r" },
-			{ "N", "P", " ", " ", " ", " ", "p", "n" },
-			{ "B", "P", " ", " ", " ", " ", "p", "b" },
-			{ "Q", "P", " ", " ", " ", " ", "p", "q" },
-			{ "K", "P", " ", " ", " ", " ", "p", "k" },
-			{ "B", "P", " ", " ", " ", " ", "p", "b" },
-			{ "N", "P", " ", " ", " ", " ", "p", "n" },
-			{ "R", "P", " ", " ", " ", " ", "p", "r" } };;
+	// private char[][] currentBoard = {
+	// { 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' },
+	// { 'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n' },
+	// { 'B', 'P', ' ', ' ', ' ', ' ', 'p', 'b' },
+	// { 'Q', 'P', ' ', ' ', ' ', ' ', 'p', 'q' },
+	// { 'K', 'P', ' ', ' ', ' ', ' ', 'p', 'k' },
+	// { 'B', 'P', ' ', ' ', ' ', ' ', 'p', 'b' },
+	// { 'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n' },
+	// { 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' } };;
+
+	private char[][] currentBoard = {
+			{ 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' },
+			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', 'n' },
+			{ ' ', 'P', 'N', ' ', ' ', ' ', 'p', 'b' },
+			{ 'Q', ' ', 'B', 'P', ' ', ' ', 'p', 'q' },
+			{ 'K', ' ', 'B', 'P', ' ', ' ', 'p', 'k' },
+			{ ' ', 'P', 'N', ' ', ' ', ' ', 'p', 'b' },
+			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', 'n' },
+			{ 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' } };;
 
 	public ChessBoard() {
 		long time = System.currentTimeMillis();
@@ -37,9 +47,9 @@ public class ChessBoard {
 		updateBitboards();
 		printBoard();
 
-		System.out.println(Evaluator.evaluatePosition(whitePawns, whiteRooks, whiteKnights,
-				whiteBishops, whiteQueens, whiteKing, blackPawns, blackRooks,
-				blackKnights, blackBishops, blackQueens, blackKing));
+		System.out.println(evaluatePosition());
+		
+		testMethod();
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -48,7 +58,15 @@ public class ChessBoard {
 
 	}
 
-	private Vector<String[][]> generateWhiteLegalMoves() {
+	private double evaluatePosition() {
+		return Evaluator.evaluatePosition(whitePawns, whiteRooks, whiteKnights,
+				whiteBishops, whiteQueens, whiteKing, blackPawns, blackRooks,
+				blackKnights, blackBishops, blackQueens, blackKing,
+				currentBoard, getWhiteAttackingSquares(),
+				getBlackAttackingSquares());
+	}
+
+	private Vector<char[][]> generateWhiteLegalMoves() {
 
 		return MoveGenerator.generateWhiteLegalMoves(currentBoard, whitePawns,
 				whiteRooks, whiteKnights, whiteBishops, whiteQueens, whiteKing,
@@ -57,7 +75,7 @@ public class ChessBoard {
 				blackQueens, blackKing);
 	}
 
-	private Vector<String[][]> generateBlackLegalMoves() {
+	private Vector<char[][]> generateBlackLegalMoves() {
 		return MoveGenerator.generateBlackLegalMoves(currentBoard, whitePawns,
 				whiteRooks, whiteKnights, whiteBishops, whiteQueens, whiteKing,
 				getBlackPieces(), getWhitePieces(), getWhiteAttackingSquares(),
@@ -83,35 +101,35 @@ public class ChessBoard {
 
 	public void newGame() {
 
-		currentBoard[0][0] = "R";
-		currentBoard[1][0] = "N";
-		currentBoard[2][0] = "B";
-		currentBoard[3][0] = "Q";
-		currentBoard[4][0] = "K";
-		currentBoard[5][0] = "B";
-		currentBoard[6][0] = "N";
-		currentBoard[7][0] = "R";
+		currentBoard[0][0] = 'R';
+		currentBoard[1][0] = 'N';
+		currentBoard[2][0] = 'B';
+		currentBoard[3][0] = 'Q';
+		currentBoard[4][0] = 'K';
+		currentBoard[5][0] = 'B';
+		currentBoard[6][0] = 'N';
+		currentBoard[7][0] = 'R';
 
-		currentBoard[0][7] = "r";
-		currentBoard[1][7] = "n";
-		currentBoard[2][7] = "b";
-		currentBoard[3][7] = "q";
-		currentBoard[4][7] = "k";
-		currentBoard[5][7] = "b";
-		currentBoard[6][7] = "n";
-		currentBoard[7][7] = "r";
+		currentBoard[0][7] = 'r';
+		currentBoard[1][7] = 'n';
+		currentBoard[2][7] = 'b';
+		currentBoard[3][7] = 'q';
+		currentBoard[4][7] = 'k';
+		currentBoard[5][7] = 'b';
+		currentBoard[6][7] = 'n';
+		currentBoard[7][7] = 'r';
 
 		for (int x = 0; x < 7; x++) {
-			currentBoard[x][1] = "P";
+			currentBoard[x][1] = 'P';
 		}
 
 		for (int x = 0; x < 7; x++) {
-			currentBoard[x][6] = "p";
+			currentBoard[x][6] = 'p';
 		}
 
 		for (int y = 2; y < 6; y++) {
 			for (int x = 0; x < 8; x++) {
-				currentBoard[x][y] = " ";
+				currentBoard[x][y] = ' ';
 			}
 		}
 
@@ -129,7 +147,7 @@ public class ChessBoard {
 
 		long fromBitboard = BitboardOperations.getPositionBitboard(fromSquare);
 		long toBitboard = BitboardOperations.getPositionBitboard(toSquare);
-		String[][] tempBoard = copyCurrentBoard();
+		char[][] tempBoard = copyCurrentBoard();
 
 		// check to see if a piece exists at the from coordinate
 		// check to see if the piece has a move possible
@@ -137,12 +155,12 @@ public class ChessBoard {
 
 			// move the piece on the temporary board
 			tempBoard[(int) toSquare % 8][(int) toSquare / 8] = tempBoard[(int) x][(int) y];
-			tempBoard[x][y] = " ";
+			tempBoard[x][y] = ' ';
 
 			// next check if tempBoard puts the same colour king in check and
 			// if its all good then currentBoard = tempBoard;
 			boolean isValid;
-			if (tempBoard[x][y].toUpperCase().equals(tempBoard[x][y])) {
+			if (Character.isUpperCase(tempBoard[x][y])) {
 				isValid = BoardManager.IsSelfCheck(tempBoard, true);
 			} else {
 				isValid = BoardManager.IsSelfCheck(tempBoard, false);
@@ -202,38 +220,38 @@ public class ChessBoard {
 	 */
 	private long generatePieceMoves(long fromSquare, long fromBitboard) {
 		switch (currentBoard[(int) fromSquare % 8][(int) fromSquare / 8]) {
-		case "P":
+		case 'P':
 			return WhitePieces.getPawnMoves(fromBitboard, getOccupiedSquares(),
 					getBlackPieces());
-		case "R":
+		case 'R':
 			return WhitePieces.getRookMoves(fromBitboard, getOccupiedSquares(),
 					getWhitePieces());
-		case "N":
+		case 'N':
 			return WhitePieces.getKnightMoves(fromBitboard, getWhitePieces());
-		case "B":
+		case 'B':
 			return WhitePieces.getBishopMoves(fromBitboard,
 					getOccupiedSquares(), getWhitePieces());
-		case "Q":
+		case 'Q':
 			return WhitePieces.getQueenMoves(fromBitboard,
 					getOccupiedSquares(), getWhitePieces());
-		case "K":
+		case 'K':
 			return WhitePieces.getKingMoves(fromBitboard, getWhitePieces(),
 					getBlackAttackingSquares());
-		case "p":
+		case 'p':
 			return BlackPieces.getPawnMoves(fromBitboard, getOccupiedSquares(),
 					getWhitePieces());
-		case "r":
+		case 'r':
 			return BlackPieces.getRookMoves(fromBitboard, getOccupiedSquares(),
 					getBlackPieces());
-		case "n":
+		case 'n':
 			return BlackPieces.getKnightMoves(fromSquare, getBlackPieces());
-		case "b":
+		case 'b':
 			return BlackPieces.getBishopMoves(fromBitboard,
 					getOccupiedSquares(), getBlackPieces());
-		case "q":
+		case 'q':
 			return BlackPieces.getQueenMoves(fromBitboard,
 					getOccupiedSquares(), getBlackPieces());
-		case "k":
+		case 'k':
 			return BlackPieces.getKingMoves(fromBitboard, getBlackPieces(),
 					getWhiteAttackingSquares());
 		}
@@ -280,7 +298,7 @@ public class ChessBoard {
 	private void clearChessBoard() {
 		for (int y = 0; y < 8; y++) {
 			for (int x = 0; x < 8; x++) {
-				currentBoard[x][y] = " ";
+				currentBoard[x][y] = ' ';
 			}
 		}
 	}
@@ -290,40 +308,40 @@ public class ChessBoard {
 		long currentPiece = 1;
 		for (int i = 0; i < 64; i++) {
 			switch (currentBoard[i % 8][i / 8]) {
-			case "P":
+			case 'P':
 				whitePawns = whitePawns | currentPiece;
 				break;
-			case "R":
+			case 'R':
 				whiteRooks = whiteRooks | currentPiece;
 				break;
-			case "N":
+			case 'N':
 				whiteKnights = whiteKnights | currentPiece;
 				break;
-			case "B":
+			case 'B':
 				whiteBishops = whiteBishops | currentPiece;
 				break;
-			case "Q":
+			case 'Q':
 				whiteQueens = whiteQueens | currentPiece;
 				break;
-			case "K":
+			case 'K':
 				whiteKing = whiteKing | currentPiece;
 				break;
-			case "p":
+			case 'p':
 				blackPawns = blackPawns | currentPiece;
 				break;
-			case "r":
+			case 'r':
 				blackRooks = blackRooks | currentPiece;
 				break;
-			case "n":
+			case 'n':
 				blackKnights = blackKnights | currentPiece;
 				break;
-			case "b":
+			case 'b':
 				blackBishops = blackBishops | currentPiece;
 				break;
-			case "q":
+			case 'q':
 				blackQueens = blackQueens | currentPiece;
 				break;
-			case "k":
+			case 'k':
 				blackKing = blackKing | currentPiece;
 				break;
 			default:
@@ -374,8 +392,8 @@ public class ChessBoard {
 	public void printBoard() {
 		for (int y = 7; y >= 0; y--) {
 			for (int x = 0; x < currentBoard.length; x++) {
-				String temp = currentBoard[x][y];
-				if (temp.equals(" ")) {
+				char temp = currentBoard[x][y];
+				if (temp == ' ') {
 					System.out.print(", ");
 				} else {
 					System.out.print(currentBoard[x][y] + " ");
@@ -419,12 +437,12 @@ public class ChessBoard {
 		System.out.println();
 	}
 
-	private String[][] copyCurrentBoard() {
-		String[][] temp = new String[currentBoard.length][currentBoard.length];
+	private char[][] copyCurrentBoard() {
+		char[][] temp = new char[currentBoard.length][currentBoard.length];
 
 		for (int x = 0; x < temp.length; x++) {
 			for (int y = 0; y < temp.length; y++) {
-				temp[x][y] = new String(currentBoard[x][y]);
+				temp[x][y] = currentBoard[x][y];
 			}
 		}
 		return temp;
@@ -457,6 +475,57 @@ public class ChessBoard {
 		System.out.println("Black King");
 		printBitboard(blackKing);
 
+	}
+
+	private void testMethod() {
+		Vector<char[][]> firstMove = generateWhiteLegalMoves();
+		Vector<char[][]> secondMove = new Vector<char[][]>();
+		Vector<char[][]> thirdMove = new Vector<char[][]>();
+		Vector<char[][]> fourthMove = new Vector<char[][]>();
+
+		// int firstSize, secondSize, thirdSize, fourthSize;
+		//
+		// firstSize = firstMove.size();
+		// while (!firstMove.isEmpty()) {
+		// currentBoard = firstMove.get(0);
+		// updateBitboards();
+		// printBoard();
+		// System.out.println(evaluatePosition());
+		// System.out.println();
+		// System.out.println();
+		// firstMove.remove(0);
+		// }
+
+		// secondSize = secondMove.size();
+		// while (!secondMove.isEmpty()) {
+		// currentBoard = secondMove.get(0);
+		// thirdMove.addAll(generateWhiteLegalMoves());
+		// updateBitboards();
+		// printBoard();
+		// System.out.println(evaluatePosition());
+		// secondMove.remove(0);
+		// }
+		//
+		// thirdSize = thirdMove.size();
+		// while (!thirdMove.isEmpty()) {
+		// currentBoard = thirdMove.get(0);
+		// fourthMove.addAll(generateBlackLegalMoves());
+		// updateBitboards();
+		// // printBoard();
+		// thirdMove.remove(0);
+		// }
+		//
+		// fourthSize = fourthMove.size();
+		// while (!fourthMove.isEmpty()) {
+		// currentBoard = fourthMove.get(0);
+		// updateBitboards();
+		// // printBoard();
+		// fourthMove.remove(0);
+		// }
+		// System.out.println(firstSize);
+		// System.out.println(secondSize);
+		// System.out.println(thirdSize);
+		// System.out.println(fourthSize);
 	}
 
 }

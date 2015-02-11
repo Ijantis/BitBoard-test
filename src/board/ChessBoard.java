@@ -1,5 +1,6 @@
 package board;
 
+import java.util.Scanner;
 import java.util.Vector;
 
 import ai.evaluation.Evaluator;
@@ -46,10 +47,6 @@ public class ChessBoard {
 
 		updateBitboards();
 		printBoard();
-
-		System.out.println(evaluatePosition());
-		
-		testMethod();
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -370,11 +367,11 @@ public class ChessBoard {
 	 * Temporary class for printing out the current state of the board wihout
 	 * relying on a gui.
 	 */
-	public void printBoard(String[][] board) {
+	public void printBoard(char[][] board) {
 		for (int y = 7; y >= 0; y--) {
 			for (int x = 0; x < board.length; x++) {
-				String temp = board[x][y];
-				if (temp.equals(" ")) {
+				char temp = board[x][y];
+				if (temp == ' ') {
 					System.out.print(", ");
 				} else {
 					System.out.print(board[x][y] + " ");
@@ -483,18 +480,18 @@ public class ChessBoard {
 		Vector<char[][]> thirdMove = new Vector<char[][]>();
 		Vector<char[][]> fourthMove = new Vector<char[][]>();
 
-		// int firstSize, secondSize, thirdSize, fourthSize;
-		//
-		// firstSize = firstMove.size();
-		// while (!firstMove.isEmpty()) {
-		// currentBoard = firstMove.get(0);
-		// updateBitboards();
-		// printBoard();
-		// System.out.println(evaluatePosition());
-		// System.out.println();
-		// System.out.println();
-		// firstMove.remove(0);
-		// }
+		int firstSize, secondSize, thirdSize, fourthSize;
+
+		firstSize = firstMove.size();
+		while (!firstMove.isEmpty()) {
+			currentBoard = firstMove.get(0);
+			updateBitboards();
+			printBoard();
+			evaluatePosition();
+			System.out.println();
+			System.out.println();
+			firstMove.remove(0);
+		}
 
 		// secondSize = secondMove.size();
 		// while (!secondMove.isEmpty()) {
@@ -526,6 +523,19 @@ public class ChessBoard {
 		// System.out.println(secondSize);
 		// System.out.println(thirdSize);
 		// System.out.println(fourthSize);
+	}
+
+	/*
+	 * 1. Piece placement 2. Active colour 3. Castling 4. En passant 5. Halfmove
+	 * clock 6. Full move number
+	 */
+	public void newGameFromFEN(String FENString) {
+
+		Scanner fenScanner = new Scanner(FENString);
+		fenScanner.useDelimiter(" ");
+
+		currentBoard = FENLoader.createPieceArrayFromFEN(fenScanner.next());
+
 	}
 
 }

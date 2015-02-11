@@ -848,7 +848,7 @@ public class MoveGenerator {
 
 	private static char[][] copyCurrentBoard(char[][] currentBoard) {
 		char[][] temp = new char[currentBoard.length][currentBoard.length];
-
+		
 		for (int x = 0; x < temp.length; x++) {
 			for (int y = 0; y < temp.length; y++) {
 				temp[x][y] = currentBoard[x][y];

@@ -3,15 +3,10 @@ package board;
 import java.util.Scanner;
 import java.util.Vector;
 
+import other.FENLoader;
 import ai.evaluation.Evaluator;
 
 public class ChessBoard {
-
-	public static void main(String[] args) {
-
-		new ChessBoard();
-
-	}
 
 	private long whitePawns, whiteRooks, whiteKnights, whiteBishops,
 			whiteQueens, whiteKing;
@@ -535,6 +530,8 @@ public class ChessBoard {
 		fenScanner.useDelimiter(" ");
 
 		currentBoard = FENLoader.createPieceArrayFromFEN(fenScanner.next());
+		updateBitboards();
+		printBoard();
 
 	}
 

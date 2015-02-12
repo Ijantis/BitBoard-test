@@ -12,6 +12,13 @@ public class ChessBoard {
 			whiteQueens, whiteKing;
 	private long blackPawns, blackRooks, blackKnights, blackBishops,
 			blackQueens, blackKing;
+	private boolean whiteToMove = true;
+	private boolean whiteCastleKing = true;
+	private boolean whiteCastleQueen = true;
+	private boolean blackCastleKing = true;
+	private boolean blackCastleQueen = true;
+	private int numberOfFullMoves = 1;
+	private int numberOfHalfMoves = 0;
 
 	// Upper case for WHITE
 	// Lower case for BLACK
@@ -73,22 +80,6 @@ public class ChessBoard {
 				getBlackPieces(), getWhitePieces(), getWhiteAttackingSquares(),
 				blackPawns, blackRooks, blackKnights, blackBishops,
 				blackQueens, blackKing);
-	}
-
-	private boolean areEqual(String[][] board1, String[][] board2) {
-
-		for (int i = 0; i < board2.length; i++) {
-			if (!board1[i % 8][i / 8].equals(board2[i % 8][i / 8])) {
-				System.out.println("Comparing");
-				System.out.println(board1[i % 8][i / 8] + " ");
-				System.out.print(board2[i % 8][i / 8]);
-				return false;
-			}
-		}
-		printBoard(board1);
-		printBoard(board2);
-		return true;
-
 	}
 
 	public void newGame() {
@@ -530,6 +521,21 @@ public class ChessBoard {
 		fenScanner.useDelimiter(" ");
 
 		currentBoard = FENLoader.createPieceArrayFromFEN(fenScanner.next());
+		whiteToMove = FENLoader.getActiveColour(fenScanner.next());
+
+		boolean[] castlingPermissions = FENLoader
+				.getCastlingPermissions(fenScanner.next());
+		whiteCastleKing = castlingPermissions[0];
+		whiteCastleQueen = castlingPermissions[1];
+		blackCastleKing = castlingPermissions[2];
+		blackCastleQueen = castlingPermissions[3];
+
+		// TODO: implement en passant
+		fenScanner.next();
+
+		numberOfHalfMoves = FENLoader.getHalfMoves(fenScanner.next());
+		numberOfFullMoves = FENLoader.getFullMoves(fenScanner.next());
+
 		updateBitboards();
 		printBoard();
 

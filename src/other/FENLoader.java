@@ -96,4 +96,51 @@ public class FENLoader {
 
 		return currentBoard;
 	}
+
+	public static boolean getActiveColour(String next) {
+		return next.equals("w");
+	}
+
+	/*
+	 * whiteK whiteQ blackK blackQ
+	 */
+	public static boolean[] getCastlingPermissions(String next) {
+
+		boolean[] permissions = new boolean[] {false,false,false,false};
+		if (next.equals("-")) {
+			return permissions;
+		}
+
+		while (next.length() != 0) {
+			switch (next.charAt(0)) {
+			case 'K':
+				permissions[0] = true;
+				System.out.println("WK");
+				break;
+			case 'Q':
+				permissions[1] = true;
+				System.out.println("WQ");
+				break;
+			case 'k':
+				permissions[2] = true;
+				System.out.println("bk");
+				break;
+			case 'q':
+				permissions[3] = true;
+				System.out.println("bq");
+				break;
+			}
+			next = next.substring(1);
+		}
+
+		return permissions;
+	}
+
+	public static int getHalfMoves(String string) {
+		return Integer.parseInt(string);
+	}
+
+	public static int getFullMoves(String string) {
+		return Integer.parseInt(string);
+	}
 }

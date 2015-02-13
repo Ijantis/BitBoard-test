@@ -9,8 +9,6 @@ import board.BoardManager;
 
 public class MoveGenerator {
 
-	public static int count = 0;
-
 	/*
 	 * NOTE: Do not return a Vector<char[][]> return squares numbers instead.
 	 */
@@ -506,6 +504,11 @@ public class MoveGenerator {
 		long kingMovesBitboard = BlackPieces.getKingMoves(blackKing,
 				blackPieces, whiteAttackingSquares);
 
+		possibleStates.addAll(blackKingMoves(blackKing, kingMovesBitboard,
+				whitePawns, whiteRooks, whiteKnights, whiteBishops,
+				whiteQueens, blackPawns, blackRooks, blackKnights,
+				blackBishops, blackQueens, whiteKing, blackKing, currentBoard));
+		
 		if (possibleStates.isEmpty()) {
 			System.out.println("Checkmate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			printBoard(currentBoard);
@@ -891,7 +894,7 @@ public class MoveGenerator {
 				if (temp == ' ') {
 					System.out.print(", ");
 				} else {
-					System.out.print(board[x][y] + ' ');
+					System.out.print(board[x][y] + " ");
 				}
 			}
 			System.out.println();

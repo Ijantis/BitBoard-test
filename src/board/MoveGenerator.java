@@ -127,16 +127,16 @@ public class MoveGenerator {
 
 			// this is the bitboard after having moved the knight to the next
 			// move
-			long potentialStateBitboard = (nextKingBitboard ^ nextMove)
+			long possiblePieceMoveBitboard = (nextKingBitboard ^ nextMove)
 					^ whiteKing;
 			boolean isValid = BoardManager.IsSelfCheck(whitePawns, whiteRooks,
 					whiteKnights, whiteBishops, whiteQueens,
-					potentialStateBitboard,
-					(blackPawns ^ potentialStateBitboard) & blackPawns,
-					(blackRooks ^ potentialStateBitboard) & blackRooks,
-					(blackKnights ^ potentialStateBitboard) & blackKnights,
-					(blackBishops ^ potentialStateBitboard) & blackBishops,
-					(blackQueens ^ potentialStateBitboard) & blackQueens,
+					possiblePieceMoveBitboard,
+					(blackPawns ^ possiblePieceMoveBitboard) & blackPawns,
+					(blackRooks ^ possiblePieceMoveBitboard) & blackRooks,
+					(blackKnights ^ possiblePieceMoveBitboard) & blackKnights,
+					(blackBishops ^ possiblePieceMoveBitboard) & blackBishops,
+					(blackQueens ^ possiblePieceMoveBitboard) & blackQueens,
 					blackKing, true);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(currentBoard);
@@ -178,16 +178,16 @@ public class MoveGenerator {
 
 			// this is the bitboard after having moved the knight to the next
 			// move
-			long potentialStateBitboard = (nextPawnBitboard ^ nextMove)
+			long possiblePieceMoveBitboard = (nextPawnBitboard ^ nextMove)
 					^ whitePawns;
-			boolean isValid = BoardManager.IsSelfCheck(potentialStateBitboard,
+			boolean isValid = BoardManager.IsSelfCheck(possiblePieceMoveBitboard,
 					whiteRooks, whiteKnights, whiteBishops, whiteQueens,
-					whiteKing, (blackPawns ^ potentialStateBitboard)
-							& blackPawns, (blackRooks ^ potentialStateBitboard)
+					whiteKing, (blackPawns ^ possiblePieceMoveBitboard)
+							& blackPawns, (blackRooks ^ possiblePieceMoveBitboard)
 							& blackRooks,
-					(blackKnights ^ potentialStateBitboard) & blackKnights,
-					(blackBishops ^ potentialStateBitboard) & blackBishops,
-					(blackQueens ^ potentialStateBitboard) & blackQueens,
+					(blackKnights ^ possiblePieceMoveBitboard) & blackKnights,
+					(blackBishops ^ possiblePieceMoveBitboard) & blackBishops,
+					(blackQueens ^ possiblePieceMoveBitboard) & blackQueens,
 					blackKing, true);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(currentBoard);
@@ -231,16 +231,16 @@ public class MoveGenerator {
 
 			// this is the bitboard after having moved the knight to the next
 			// move
-			long potentialStateBitboard = (nextKnightBitboard ^ nextMove)
+			long possiblePieceMoveBitboard = (nextKnightBitboard ^ nextMove)
 					^ whiteKnights;
 			boolean isValid = BoardManager.IsSelfCheck(whitePawns, whiteRooks,
-					potentialStateBitboard, whiteBishops, whiteQueens,
-					whiteKing, (blackPawns ^ potentialStateBitboard)
-							& blackPawns, (blackRooks ^ potentialStateBitboard)
+					possiblePieceMoveBitboard, whiteBishops, whiteQueens,
+					whiteKing, (blackPawns ^ possiblePieceMoveBitboard)
+							& blackPawns, (blackRooks ^ possiblePieceMoveBitboard)
 							& blackRooks,
-					(blackKnights ^ potentialStateBitboard) & blackKnights,
-					(blackBishops ^ potentialStateBitboard) & blackBishops,
-					(blackQueens ^ potentialStateBitboard) & blackQueens,
+					(blackKnights ^ possiblePieceMoveBitboard) & blackKnights,
+					(blackBishops ^ possiblePieceMoveBitboard) & blackBishops,
+					(blackQueens ^ possiblePieceMoveBitboard) & blackQueens,
 					blackKing, true);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(currentBoard);
@@ -285,16 +285,16 @@ public class MoveGenerator {
 
 			// this is the bitboard after having moved the knight to the next
 			// move
-			long potentialStateBitboard = (nextBishopBitboard ^ nextMove)
+			long possiblePieceMoveBitboard = (nextBishopBitboard ^ nextMove)
 					^ whiteBishops;
 			boolean isValid = BoardManager.IsSelfCheck(whitePawns, whiteRooks,
-					whiteKnights, potentialStateBitboard, whiteQueens,
-					whiteKing, (blackPawns ^ potentialStateBitboard)
-							& blackPawns, (blackRooks ^ potentialStateBitboard)
+					whiteKnights, possiblePieceMoveBitboard, whiteQueens,
+					whiteKing, (blackPawns ^ possiblePieceMoveBitboard)
+							& blackPawns, (blackRooks ^ possiblePieceMoveBitboard)
 							& blackRooks,
-					(blackKnights ^ potentialStateBitboard) & blackKnights,
-					(blackBishops ^ potentialStateBitboard) & blackBishops,
-					(blackQueens ^ potentialStateBitboard) & blackQueens,
+					(blackKnights ^ possiblePieceMoveBitboard) & blackKnights,
+					(blackBishops ^ possiblePieceMoveBitboard) & blackBishops,
+					(blackQueens ^ possiblePieceMoveBitboard) & blackQueens,
 					blackKing, true);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(currentBoard);
@@ -338,16 +338,16 @@ public class MoveGenerator {
 
 			// this is the bitboard after having moved the knight to the next
 			// move
-			long potentialStateBitboard = (nextQueenBitboard ^ nextMove)
+			long possiblePieceMoveBitboard = (nextQueenBitboard ^ nextMove)
 					^ whiteQueens;
 			boolean isValid = BoardManager.IsSelfCheck(whitePawns, whiteRooks,
-					whiteKnights, whiteBishops, potentialStateBitboard,
-					whiteKing, (blackPawns ^ potentialStateBitboard)
-							& blackPawns, (blackRooks ^ potentialStateBitboard)
+					whiteKnights, whiteBishops, possiblePieceMoveBitboard,
+					whiteKing, (blackPawns ^ possiblePieceMoveBitboard)
+							& blackPawns, (blackRooks ^ possiblePieceMoveBitboard)
 							& blackRooks,
-					(blackKnights ^ potentialStateBitboard) & blackKnights,
-					(blackBishops ^ potentialStateBitboard) & blackBishops,
-					(blackQueens ^ potentialStateBitboard) & blackQueens,
+					(blackKnights ^ possiblePieceMoveBitboard) & blackKnights,
+					(blackBishops ^ possiblePieceMoveBitboard) & blackBishops,
+					(blackQueens ^ possiblePieceMoveBitboard) & blackQueens,
 					blackKing, true);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(currentBoard);
@@ -390,16 +390,16 @@ public class MoveGenerator {
 
 			// this is the bitboard after having moved the knight to the next
 			// move
-			long potentialStateBitboard = (nextRookBitboard ^ nextMove)
+			long possiblePieceMoveBitboard = (nextRookBitboard ^ nextMove)
 					^ whiteRooks;
 			boolean isValid = BoardManager.IsSelfCheck(whitePawns,
-					potentialStateBitboard, whiteKnights, whiteBishops,
+					possiblePieceMoveBitboard, whiteKnights, whiteBishops,
 					whiteQueens, whiteKing,
-					(blackPawns ^ potentialStateBitboard) & blackPawns,
-					(blackRooks ^ potentialStateBitboard) & blackRooks,
-					(blackKnights ^ potentialStateBitboard) & blackKnights,
-					(blackBishops ^ potentialStateBitboard) & blackBishops,
-					(blackQueens ^ potentialStateBitboard) & blackQueens,
+					(blackPawns ^ possiblePieceMoveBitboard) & blackPawns,
+					(blackRooks ^ possiblePieceMoveBitboard) & blackRooks,
+					(blackKnights ^ possiblePieceMoveBitboard) & blackKnights,
+					(blackBishops ^ possiblePieceMoveBitboard) & blackBishops,
+					(blackQueens ^ possiblePieceMoveBitboard) & blackQueens,
 					blackKing, true);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(currentBoard);
@@ -531,16 +531,16 @@ public class MoveGenerator {
 
 			// this is the bitboard after having moved the knight to the next
 			// move
-			long potentialStateBitboard = (nextKnightBitboard ^ nextMove)
+			long possiblePieceMoveBitboard = (nextKnightBitboard ^ nextMove)
 					^ blackKnights;
 			boolean isValid = BoardManager.IsSelfCheck(blackPawns, blackRooks,
-					potentialStateBitboard, blackBishops, blackQueens,
-					blackKing, (whitePawns ^ potentialStateBitboard)
-							& whitePawns, (whiteRooks ^ potentialStateBitboard)
+					possiblePieceMoveBitboard, blackBishops, blackQueens,
+					blackKing, (whitePawns ^ possiblePieceMoveBitboard)
+							& whitePawns, (whiteRooks ^ possiblePieceMoveBitboard)
 							& whiteRooks,
-					(whiteKnights ^ potentialStateBitboard) & whiteKnights,
-					(whiteBishops ^ potentialStateBitboard) & whiteBishops,
-					(whiteQueens ^ potentialStateBitboard) & whiteQueens,
+					(whiteKnights ^ possiblePieceMoveBitboard) & whiteKnights,
+					(whiteBishops ^ possiblePieceMoveBitboard) & whiteBishops,
+					(whiteQueens ^ possiblePieceMoveBitboard) & whiteQueens,
 					whiteKing, false);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(currentBoard);
@@ -584,16 +584,16 @@ public class MoveGenerator {
 
 			// this is the bitboard after having moved the knight to the next
 			// move
-			long potentialStateBitboard = (nextBishopBitboard ^ nextMove)
+			long possiblePieceMoveBitboard = (nextBishopBitboard ^ nextMove)
 					^ blackBishops;
 			boolean isValid = BoardManager.IsSelfCheck(blackPawns, blackRooks,
-					blackKnights, potentialStateBitboard, blackQueens,
-					blackKing, (whitePawns ^ potentialStateBitboard)
-							& whitePawns, (whiteRooks ^ potentialStateBitboard)
+					blackKnights, possiblePieceMoveBitboard, blackQueens,
+					blackKing, (whitePawns ^ possiblePieceMoveBitboard)
+							& whitePawns, (whiteRooks ^ possiblePieceMoveBitboard)
 							& whiteRooks,
-					(whiteKnights ^ potentialStateBitboard) & whiteKnights,
-					(whiteBishops ^ potentialStateBitboard) & whiteBishops,
-					(whiteQueens ^ potentialStateBitboard) & whiteQueens,
+					(whiteKnights ^ possiblePieceMoveBitboard) & whiteKnights,
+					(whiteBishops ^ possiblePieceMoveBitboard) & whiteBishops,
+					(whiteQueens ^ possiblePieceMoveBitboard) & whiteQueens,
 					whiteKing, false);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(currentBoard);
@@ -637,16 +637,16 @@ public class MoveGenerator {
 
 			// this is the bitboard after having moved the knight to the next
 			// move
-			long potentialStateBitboard = (nextQueenBitboard ^ nextMove)
+			long possiblePieceMoveBitboard = (nextQueenBitboard ^ nextMove)
 					^ blackQueens;
 			boolean isValid = BoardManager.IsSelfCheck(blackPawns, blackRooks,
-					blackKnights, blackBishops, potentialStateBitboard,
-					blackKing, (whitePawns ^ potentialStateBitboard)
-							& whitePawns, (whiteRooks ^ potentialStateBitboard)
+					blackKnights, blackBishops, possiblePieceMoveBitboard,
+					blackKing, (whitePawns ^ possiblePieceMoveBitboard)
+							& whitePawns, (whiteRooks ^ possiblePieceMoveBitboard)
 							& whiteRooks,
-					(whiteKnights ^ potentialStateBitboard) & whiteKnights,
-					(whiteBishops ^ potentialStateBitboard) & whiteBishops,
-					(whiteQueens ^ potentialStateBitboard) & whiteQueens,
+					(whiteKnights ^ possiblePieceMoveBitboard) & whiteKnights,
+					(whiteBishops ^ possiblePieceMoveBitboard) & whiteBishops,
+					(whiteQueens ^ possiblePieceMoveBitboard) & whiteQueens,
 					whiteKing, false);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(currentBoard);
@@ -689,16 +689,16 @@ public class MoveGenerator {
 
 			// this is the bitboard after having moved the knight to the next
 			// move
-			long potentialStateBitboard = (nextRookBitboard ^ nextMove)
+			long possiblePieceMoveBitboard = (nextRookBitboard ^ nextMove)
 					^ blackRooks;
 			boolean isValid = BoardManager.IsSelfCheck(blackPawns,
-					potentialStateBitboard, blackKnights, blackBishops,
+					possiblePieceMoveBitboard, blackKnights, blackBishops,
 					blackQueens, blackKing,
-					(whitePawns ^ potentialStateBitboard) & whitePawns,
-					(whiteRooks ^ potentialStateBitboard) & whiteRooks,
-					(whiteKnights ^ potentialStateBitboard) & whiteKnights,
-					(whiteBishops ^ potentialStateBitboard) & whiteBishops,
-					(whiteQueens ^ potentialStateBitboard) & whiteQueens,
+					(whitePawns ^ possiblePieceMoveBitboard) & whitePawns,
+					(whiteRooks ^ possiblePieceMoveBitboard) & whiteRooks,
+					(whiteKnights ^ possiblePieceMoveBitboard) & whiteKnights,
+					(whiteBishops ^ possiblePieceMoveBitboard) & whiteBishops,
+					(whiteQueens ^ possiblePieceMoveBitboard) & whiteQueens,
 					whiteKing, false);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(currentBoard);
@@ -741,22 +741,22 @@ public class MoveGenerator {
 
 			// this is the bitboard after having moved the knight to the next
 			// move
-			long potentialStateBitboard = (nextPawnBitboard ^ nextMove)
+			long possiblePieceMoveBitboard = (nextPawnBitboard ^ nextMove)
 					^ blackPawns;
-			boolean isValid = BoardManager.IsSelfCheck(potentialStateBitboard,
+			boolean isValid = BoardManager.IsSelfCheck(possiblePieceMoveBitboard,
 					blackRooks, blackKnights, blackBishops, blackQueens,
-					blackKing, (whitePawns ^ potentialStateBitboard)
-							& whitePawns, (whiteRooks ^ potentialStateBitboard)
+					blackKing, (whitePawns ^ possiblePieceMoveBitboard)
+							& whitePawns, (whiteRooks ^ possiblePieceMoveBitboard)
 							& whiteRooks,
-					(whiteKnights ^ potentialStateBitboard) & whiteKnights,
-					(whiteBishops ^ potentialStateBitboard) & whiteBishops,
-					(whiteQueens ^ potentialStateBitboard) & whiteQueens,
+					(whiteKnights ^ possiblePieceMoveBitboard) & whiteKnights,
+					(whiteBishops ^ possiblePieceMoveBitboard) & whiteBishops,
+					(whiteQueens ^ possiblePieceMoveBitboard) & whiteQueens,
 					whiteKing, false);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextPawnBitboard).length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
-				// printBitboard(potentialStateBitboard);
+				// printBitboard(possiblePieceMoveBitboard);
 				// System.out.println("current board");
 				// printBoard(currentBoard);
 				// System.out.println("From: " + temp[fromCoord % 8][fromCoord /
@@ -804,22 +804,22 @@ public class MoveGenerator {
 
 			// this is the bitboard after having moved the knight to the next
 			// move
-			long potentialStateBitboard = (nextKingBitboard ^ nextMove)
+			long possiblePieceMoveBitboard = (nextKingBitboard ^ nextMove)
 					^ blackKing;
 			boolean isValid = BoardManager.IsSelfCheck(blackPawns, blackRooks,
 					blackKnights, blackBishops, blackQueens,
-					potentialStateBitboard,
-					(whitePawns ^ potentialStateBitboard) & whitePawns,
-					(whiteRooks ^ potentialStateBitboard) & whiteRooks,
-					(whiteKnights ^ potentialStateBitboard) & whiteKnights,
-					(whiteBishops ^ potentialStateBitboard) & whiteBishops,
-					(whiteQueens ^ potentialStateBitboard) & whiteQueens,
+					possiblePieceMoveBitboard,
+					(whitePawns ^ possiblePieceMoveBitboard) & whitePawns,
+					(whiteRooks ^ possiblePieceMoveBitboard) & whiteRooks,
+					(whiteKnights ^ possiblePieceMoveBitboard) & whiteKnights,
+					(whiteBishops ^ possiblePieceMoveBitboard) & whiteBishops,
+					(whiteQueens ^ possiblePieceMoveBitboard) & whiteQueens,
 					whiteKing, false);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextKingBitboard).length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
-				// printBitboard(potentialStateBitboard);
+				// printBitboard(possiblePieceMoveBitboard);
 				// System.out.println("current board");
 				// printBoard(currentBoard);
 				// System.out.println("From: " + temp[fromCoord % 8][fromCoord /

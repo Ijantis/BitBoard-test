@@ -1,5 +1,8 @@
 package board;
 
+import operations.pieces.BlackPieces;
+import operations.pieces.WhitePieces;
+
 public class BoardManager {
 
 	private static long whitePawns, whiteRooks, whiteKnights, whiteBishops,

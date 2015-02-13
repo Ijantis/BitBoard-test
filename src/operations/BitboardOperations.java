@@ -1,4 +1,4 @@
-package board;
+package operations;
 
 public class BitboardOperations {
 

@@ -2,8 +2,8 @@ package ai.evaluation;
 
 import java.util.Vector;
 
-import board.BitboardOperations;
-import board.MoveGenerator;
+import operations.BitboardOperations;
+import operations.MoveGenerator;
 
 public class Evaluator {
 

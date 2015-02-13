@@ -1,50 +1,53 @@
-package board;
+package operations.pieces;
 
-public class BlackPieces {
+import operations.BitboardOperations;
 
-	protected static long getPawnMoves(long blackPawns, long occupiedSquares,
-			long whitePieces) {
-		return getPawnMovesVertical(blackPawns, occupiedSquares)
-				| getPawnMovesDiagonal(blackPawns, whitePieces);
+public class WhitePieces {
+
+	public static long getPawnMoves(long whitePawns, long occupiedSquares,
+			long blackPieces) {
+		return getPawnMovesVertical(whitePawns, occupiedSquares)
+				| getPawnMovesDiagonal(whitePawns, blackPieces);
 	}
 
-	protected static long getPawnMovesVertical(long blackPawns,
+	public static long getPawnMovesVertical(long whitePawns,
 			long occupiedSquares) {
 
 		// Vertical single rank
-		long upOne = (blackPawns >>> 8) & ~occupiedSquares;
+		long upOne = (whitePawns << 8) & ~occupiedSquares;
+
 		// Moving up 2 spaces from 2nd rank
-		long seventhRankPawns = blackPawns & BitboardOperations.maskRank(7);
-		long pawnsNotBlocked = (((seventhRankPawns >>> 8) & ~occupiedSquares) << 8);
-		long upTwo = pawnsNotBlocked >>> 16 & ~occupiedSquares;
+		long secondRankPawns = whitePawns & BitboardOperations.maskRank(2);
+		long pawnsNotBlocked = (((secondRankPawns << 8) & ~occupiedSquares) >>> 8);
+		long upTwo = pawnsNotBlocked << 16 & ~occupiedSquares;
 
 		return upOne | upTwo;
 	}
 
 	/*
-	 * Generate black pawn moves for attacking a piece
+	 * Generate white pawn moves for attacking a piece
 	 */
-	protected static long getPawnMovesDiagonal(long blackPawns, long whitePieces) {
-		return getPawnAttackingSquares(blackPawns) & whitePieces;
+	public static long getPawnMovesDiagonal(long whitePawns, long blackPieces) {
+		return getPawnAttackingSquares(whitePawns) & blackPieces;
 	}
 
 	/*
-	 * Generate squares under attack diagonally by a black pawn
+	 * Generate squares under attack diagonally by a white pawn
 	 */
-	protected static long getPawnAttackingSquares(long blackPawns) {
-		long upLeft = ((blackPawns & BitboardOperations.clearFile(1)) >>> 7);
-		long upRight = ((blackPawns & BitboardOperations.clearFile(8)) >>> 9);
+	public static long getPawnAttackingSquares(long whitePawns) {
+		long upLeft = ((whitePawns & BitboardOperations.clearFile(1)) << 7);
+		long upRight = ((whitePawns & BitboardOperations.clearFile(8)) << 9);
 		long attackingAPiece = (upLeft | upRight);
 
 		return attackingAPiece;
 	}
 
-	protected static long getKnightMoves(long blackKnights, long blackPieces) {
-		return getKnightAttackingSquares(blackKnights) & ~blackPieces;// &
-																		// ~getblackPieces();
+	public static long getKnightMoves(long whiteKnights, long whitePieces) {
+		return getKnightAttackingSquares(whiteKnights) & ~whitePieces;// &
+																		// ~getWhitePieces();
 	}
 
-	protected static long getKnightAttackingSquares(long blackKnights) {
+	public static long getKnightAttackingSquares(long whiteKnights) {
 		// variable names are first direction then second direction
 
 		long firstFile = BitboardOperations.clearFile(1);
@@ -52,17 +55,17 @@ public class BlackPieces {
 		long seventhFile = BitboardOperations.clearFile(7);
 		long eigthFile = BitboardOperations.clearFile(8);
 
-		long upRight = (blackKnights & eigthFile) << 17;
-		long upLeft = (blackKnights & firstFile) << 15;
+		long upRight = (whiteKnights & eigthFile) << 17;
+		long upLeft = (whiteKnights & firstFile) << 15;
 
-		long rightUp = (BitboardOperations.clearFile(8) & seventhFile & blackKnights) << 10;
-		long rightDown = (BitboardOperations.clearFile(8) & seventhFile & blackKnights) >>> 6;
+		long rightUp = (BitboardOperations.clearFile(8) & seventhFile & whiteKnights) << 10;
+		long rightDown = (BitboardOperations.clearFile(8) & seventhFile & whiteKnights) >>> 6;
 
-		long downRight = (blackKnights & eigthFile) >>> 15;
-		long downLeft = (blackKnights & firstFile) >>> 17;
+		long downRight = (whiteKnights & eigthFile) >>> 15;
+		long downLeft = (whiteKnights & firstFile) >>> 17;
 
-		long leftUp = (firstFile & secondFile & blackKnights) << 6;
-		long leftDown = (firstFile & secondFile & blackKnights) >>> 10;
+		long leftUp = (firstFile & secondFile & whiteKnights) << 6;
+		long leftDown = (firstFile & secondFile & whiteKnights) >>> 10;
 
 		long possibleMoves = upRight | upLeft | rightUp | rightDown | downRight
 				| downLeft | leftUp | leftDown;
@@ -70,13 +73,13 @@ public class BlackPieces {
 		return possibleMoves;
 	}
 
-	protected static long getRookMoves(long rookBitboardToCalculate,
-			long occupiedSquares, long blackPieces) {
+	public static long getRookMoves(long rookBitboardToCalculate,
+			long occupiedSquares, long whitePieces) {
 		return getRookAttackingSquares(rookBitboardToCalculate, occupiedSquares)
-				& ~blackPieces;
+				& ~whitePieces;
 	}
 
-	protected static long getRookAttackingSquares(long rookBitboardToCalculate,
+	public static long getRookAttackingSquares(long rookBitboardToCalculate,
 			long occupiedSquares) {
 
 		long nextRook = 0L;
@@ -148,87 +151,91 @@ public class BlackPieces {
 		return left_moves | right_moves | up_moves | down_moves;
 	}
 
-	protected static long getBishopMoves(long blackBishops,
-			long occupiedSquares, long blackPieces) {
-		return getBishopAttackingSquares(blackBishops, occupiedSquares)
-				& ~blackPieces;
+	public static long getBishopMoves(long whiteBishops,
+			long occupiedSquares, long whitePieces) {
+		return getBishopAttackingSquares(whiteBishops, occupiedSquares)
+				& ~whitePieces;
 
 	}
 
-	protected static long getBishopAttackingSquares(long blackBishops,
+	public static long getBishopAttackingSquares(long whiteBishops,
 			long occupiedSquares) {
 
 		long topRightSquares = BitboardOperations
-				.getTopRightSquares(blackBishops);
+				.getTopRightSquares(whiteBishops);
 		long topRight = topRightSquares & occupiedSquares;
 		topRight = (topRight << 9) | (topRight << 18) | (topRight << 27)
 				| (topRight << 36) | (topRight << 45) | (topRight << 54);
 		topRight = topRight & topRightSquares;
 		topRight = topRight ^ topRightSquares;
+		// topRight = topRight & ~getWhitePieces();
 
 		long bottomLeftSquares = BitboardOperations
-				.getBottomLeftSquares(blackBishops);
+				.getBottomLeftSquares(whiteBishops);
 		long bottomLeft = bottomLeftSquares & occupiedSquares;
 		bottomLeft = (bottomLeft >>> 9) | (bottomLeft >>> 18)
 				| (bottomLeft >>> 27) | (bottomLeft >>> 36)
 				| (bottomLeft >>> 45) | (bottomLeft >>> 54);
 		bottomLeft = bottomLeft & bottomLeftSquares;
 		bottomLeft = bottomLeft ^ bottomLeftSquares;
+		// bottomLeft = bottomLeft & ~getWhitePieces();
 
 		long bottomRightSquares = BitboardOperations
-				.getBottomRightSquares(blackBishops);
+				.getBottomRightSquares(whiteBishops);
 		long bottomRight = bottomRightSquares & occupiedSquares;
 		bottomRight = (bottomRight >>> 7) | (bottomRight >>> 14)
 				| (bottomRight >>> 21) | (bottomRight >>> 28)
 				| (bottomRight >>> 35) | (bottomRight >>> 42);
 		bottomRight = bottomRight & bottomRightSquares;
 		bottomRight = bottomRight ^ bottomRightSquares;
+		// bottomRight = bottomRight & ~getWhitePieces();
 
 		long topLeftSquares = BitboardOperations
-				.getTopLeftSquares(blackBishops);
+				.getTopLeftSquares(whiteBishops);
 		long topLeft = topLeftSquares & occupiedSquares;
 		topLeft = (topLeft << 7) | (topLeft << 14) | (topLeft << 21)
 				| (topLeft << 28) | (topLeft << 35) | (topLeft << 42);
 		topLeft = topLeft & topLeftSquares;
 		topLeft = topLeft ^ topLeftSquares;
+		// topLeft = topLeft & ~getWhitePieces();
 
 		return topRight | topLeft | bottomRight | bottomLeft;
 	}
 
-	protected static long getQueenAttackingSquares(long blackQueens,
+	public static long getQueenAttackingSquares(long whiteQueens,
 			long occupiedSquares) {
-		return getBishopAttackingSquares(blackQueens, occupiedSquares)
-				| getRookAttackingSquares(blackQueens, occupiedSquares);
+		return getBishopAttackingSquares(whiteQueens, occupiedSquares)
+				| getRookAttackingSquares(whiteQueens, occupiedSquares);
 	}
 
-	protected static long getQueenMoves(long blackQueens, long occupiedSquares,
-			long blackPieces) {
-		return getQueenAttackingSquares(blackQueens, occupiedSquares)
-				& ~blackPieces;
+	public static long getQueenMoves(long whiteQueens, long occupiedSquares,
+			long whitePieces) {
+		return getQueenAttackingSquares(whiteQueens, occupiedSquares)
+				& ~whitePieces;
 	}
 
 	/*
-	 * Generate black king moves.
+	 * Generate white king moves.
 	 */
-	protected static long getKingAttackingSquares(long blackKing,
-			long blackPieces) {
+	public static long getKingAttackingSquares(long whiteKing,
+			long whitePieces) {
 
 		// vertical movement 8 bit shift
-		long up = blackKing << 8;
-		long down = blackKing >>> 8;
+		long up = whiteKing << 8;
+		long down = whiteKing >>> 8;
 
 		long firstFile = BitboardOperations.clearFile(1);
 		long eigthFile = BitboardOperations.clearFile(8);
 
 		// clear file stops move generation to the left if on the 1st file
-		long left = ((blackKing & firstFile) >>> 1);
-		long upLeft = (blackKing & firstFile) << 7;
-		long downLeft = (blackKing & firstFile) >>> 9;
+		long left = ((whiteKing & firstFile) >>> 1);
+		long upLeft = (whiteKing & firstFile) << 7;
+		long downLeft = (whiteKing & firstFile) >>> 9;
 
 		// clear file stops move generation to the right if on the 8th file
-		long right = ((blackKing & eigthFile) << 1);
-		long upRight = ((blackKing & eigthFile) << 9);
-		long downRight = ((blackKing & eigthFile) >>> 7);
+		long right = ((whiteKing & eigthFile) << 1);
+		long upRight = ((whiteKing & eigthFile) << 9);
+		long downRight = ((whiteKing & eigthFile) >>> 7);
 
 		long possibleMoves = (up | down | left | right | upRight | downRight
 				| upLeft | downLeft);
@@ -238,9 +245,9 @@ public class BlackPieces {
 		return (possibleMoves);
 	}
 
-	protected static long getKingMoves(long blackKing, long blackPieces,
-			long whiteAttackingSquares) {
-		return (getKingAttackingSquares(blackKing, blackPieces) & ~whiteAttackingSquares)
-				& ~blackPieces;
+	public static long getKingMoves(long whiteKing, long whitePieces,
+			long blackAttackingSquares) {
+		return (getKingAttackingSquares(whiteKing, whitePieces) & ~blackAttackingSquares)
+				& ~whitePieces;
 	}
 }

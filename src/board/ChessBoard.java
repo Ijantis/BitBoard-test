@@ -3,6 +3,10 @@ package board;
 import java.util.Scanner;
 import java.util.Vector;
 
+import operations.BitboardOperations;
+import operations.MoveGenerator;
+import operations.pieces.BlackPieces;
+import operations.pieces.WhitePieces;
 import other.FENLoader;
 import ai.evaluation.Evaluator;
 

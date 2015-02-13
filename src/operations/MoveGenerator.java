@@ -1,7 +1,11 @@
-package board;
+package operations;
 
 import java.util.Collection;
 import java.util.Vector;
+
+import operations.pieces.BlackPieces;
+import operations.pieces.WhitePieces;
+import board.BoardManager;
 
 public class MoveGenerator {
 

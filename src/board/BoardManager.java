@@ -10,7 +10,7 @@ public class BoardManager {
 	private static long blackPawns, blackRooks, blackKnights, blackBishops,
 			blackQueens, blackKing;
 
-	protected static boolean IsSelfCheck(long whitePawns, long whiteRooks,
+	public static boolean IsSelfCheck(long whitePawns, long whiteRooks,
 			long whiteKnights, long whiteBishops, long whiteQueens,
 			long whiteKing, long blackPawns, long blackRooks,
 			long blackKnights, long blackBishops, long blackQueens,
@@ -38,7 +38,7 @@ public class BoardManager {
 
 	}
 
-	protected static boolean IsSelfCheck(String[][] boardToCheck,
+	public static boolean IsSelfCheck(String[][] boardToCheck,
 			boolean checkForWhite) {
 
 		generateBitBoards(boardToCheck);

@@ -1,4 +1,5 @@
 src/board/DeleteMe.java
+src/board/testClass.java
 *.class
 report/*
 bin/*

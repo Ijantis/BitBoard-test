@@ -1,10 +1,13 @@
 package board;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Vector;
 
 import operations.BitboardOperations;
 import operations.MoveGenerator;
+import operations.WhiteMoveGeneratorThread;
 import operations.pieces.BlackPieces;
 import operations.pieces.WhitePieces;
 import other.FENLoader;
@@ -27,32 +30,68 @@ public class ChessBoard {
 	// Upper case for WHITE
 	// Lower case for BLACK
 	// 0,0 is top left 0,7 is top right 7,7 bottom right
-	// private char[][] currentBoard = {
-	// { 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' },
-	// { 'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n' },
-	// { 'B', 'P', ' ', ' ', ' ', ' ', 'p', 'b' },
-	// { 'Q', 'P', ' ', ' ', ' ', ' ', 'p', 'q' },
-	// { 'K', 'P', ' ', ' ', ' ', ' ', 'p', 'k' },
-	// { 'B', 'P', ' ', ' ', ' ', ' ', 'p', 'b' },
-	// { 'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n' },
-	// { 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' } };;
-
 	private char[][] currentBoard = {
 			{ 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' },
-			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', 'n' },
-			{ ' ', 'P', 'N', ' ', ' ', ' ', 'p', 'b' },
-			{ 'Q', ' ', 'B', 'P', ' ', ' ', 'p', 'q' },
-			{ 'K', ' ', 'B', 'P', ' ', ' ', 'p', 'k' },
-			{ ' ', 'P', 'N', ' ', ' ', ' ', 'p', 'b' },
-			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', 'n' },
+			{ 'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n' },
+			{ 'B', 'P', ' ', ' ', ' ', ' ', 'p', 'b' },
+			{ 'Q', 'P', ' ', ' ', ' ', ' ', 'p', 'q' },
+			{ 'K', 'P', ' ', ' ', ' ', ' ', 'p', 'k' },
+			{ 'B', 'P', ' ', ' ', ' ', ' ', 'p', 'b' },
+			{ 'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n' },
 			{ 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' } };;
+
+	Vector<char[][]> threadedList;
+	Vector<char[][]> serialList;
 
 	public ChessBoard() {
 		long time = System.currentTimeMillis();
 		long timeNano = System.nanoTime();
 
 		updateBitboards();
-		printBoard();
+		// printBoard();
+		testThreaded();
+		newGame();
+		updateBitboards();
+		testMethod();
+
+		System.out.println("FINISH");
+		System.out.println("Serial " + serialList.size());
+		System.out.println("Threaded " + threadedList.size());
+
+		int count = 0;
+		threadedList.removeAll(serialList);
+		System.out.println(threadedList.size());
+
+		for (Iterator iterator = threadedList.iterator(); iterator.hasNext();) {
+			char[][] type = (char[][]) iterator.next();
+			for (Iterator iterator2 = serialList.iterator(); iterator2
+					.hasNext();) {
+				char[][] type2 = (char[][]) iterator2.next();
+				boolean check = true;
+				for (int i = 0; check && i < type2.length; i++) {
+					check = Arrays.equals(type[i], type2[i]);
+				}
+				if (check) {
+					count++;
+				}
+			}
+		}
+		System.out.println(count);
+
+		// for (Iterator iterator = threadedList.iterator();
+		// iterator.hasNext();) {
+		// char[][] type = (char[][]) iterator.next();
+		// currentBoard = type;
+		// printBoard();
+		//
+		// }
+		//
+		// for (Iterator iterator = serialList.iterator(); iterator.hasNext();)
+		// {
+		// char[][] type = (char[][]) iterator.next();
+		// currentBoard = type;
+		// printBoard();
+		// }
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -61,12 +100,85 @@ public class ChessBoard {
 
 	}
 
+	private void testThreaded() {
+		Thread temp = createWhiteMoveGenerator();
+		try {
+			temp.join();
+			Vector<char[][]> moves = (Vector<char[][]>) WhiteMoveGeneratorThread
+					.getStates().clone();
+			System.out.println(moves.size());
+			Vector<Thread> threads = new Vector<Thread>();
+
+			while (!moves.isEmpty()) {
+				currentBoard = moves.get(0);
+				updateBitboards();
+				threads.add(createWhiteMoveGenerator());
+				moves.remove(0);
+			}
+
+			for (Thread thread : threads) {
+				thread.join();
+			}
+
+			moves = (Vector<char[][]>) WhiteMoveGeneratorThread.getStates()
+					.clone();
+			threads.removeAllElements();
+
+			System.out.println(moves.size());
+			threadedList = (Vector<char[][]>) moves.clone();
+			while (!moves.isEmpty()) {
+				currentBoard = moves.get(0);
+				updateBitboards();
+				threads.add(createWhiteMoveGenerator());
+				moves.remove(0);
+			}
+
+			for (Thread thread : threads) {
+				thread.join();
+			}
+			moves = (Vector<char[][]>) WhiteMoveGeneratorThread.getStates()
+					.clone();
+			System.out.println(moves.size());
+			// while (!moves.isEmpty()) {
+			// currentBoard = moves.get(0);
+			// updateBitboards();
+			// threads.add(createWhiteMoveGenerator());
+			// moves.remove(0);
+			// }
+			//
+			// for (Thread thread : threads) {
+			// thread.join();
+			// }
+			// moves = (Vector<char[][]>) WhiteMoveGeneratorThread.getStates()
+			// .clone();
+
+			System.out.println(moves.size());
+
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	private double evaluatePosition() {
 		return Evaluator.evaluatePosition(whitePawns, whiteRooks, whiteKnights,
 				whiteBishops, whiteQueens, whiteKing, blackPawns, blackRooks,
 				blackKnights, blackBishops, blackQueens, blackKing,
 				currentBoard, getWhiteAttackingSquares(),
 				getBlackAttackingSquares());
+	}
+
+	private Thread createWhiteMoveGenerator() {
+		Thread WhiteMoveGeneratorThread = new Thread(
+				new WhiteMoveGeneratorThread(currentBoard, whitePawns,
+						whiteRooks, whiteKnights, whiteBishops, whiteQueens,
+						whiteKing, getBlackPieces(), getWhitePieces(),
+						getBlackAttackingSquares(), blackPawns, blackRooks,
+						blackKnights, blackBishops, blackQueens, blackKing));
+		WhiteMoveGeneratorThread.start();
+
+		return WhiteMoveGeneratorThread;
+
 	}
 
 	private Vector<char[][]> generateWhiteLegalMoves() {
@@ -476,43 +588,39 @@ public class ChessBoard {
 		while (!firstMove.isEmpty()) {
 			currentBoard = firstMove.get(0);
 			updateBitboards();
-			printBoard();
-			evaluatePosition();
-			System.out.println();
-			System.out.println();
+			secondMove.addAll(generateWhiteLegalMoves());
 			firstMove.remove(0);
 		}
 
-		// secondSize = secondMove.size();
-		// while (!secondMove.isEmpty()) {
-		// currentBoard = secondMove.get(0);
-		// thirdMove.addAll(generateWhiteLegalMoves());
-		// updateBitboards();
-		// printBoard();
-		// System.out.println(evaluatePosition());
-		// secondMove.remove(0);
-		// }
-		//
-		// thirdSize = thirdMove.size();
-		// while (!thirdMove.isEmpty()) {
-		// currentBoard = thirdMove.get(0);
-		// fourthMove.addAll(generateBlackLegalMoves());
-		// updateBitboards();
-		// // printBoard();
-		// thirdMove.remove(0);
-		// }
-		//
-		// fourthSize = fourthMove.size();
+		secondSize = secondMove.size();
+		serialList = (Vector<char[][]>) secondMove.clone();
+		while (!secondMove.isEmpty()) {
+			currentBoard = secondMove.get(0);
+			thirdMove.addAll(generateWhiteLegalMoves());
+			updateBitboards();
+			secondMove.remove(0);
+		}
+
+		thirdSize = thirdMove.size();
+		while (!thirdMove.isEmpty()) {
+			currentBoard = thirdMove.get(0);
+			// fourthMove.addAll(generateBlackLegalMoves());
+			updateBitboards();
+			// printBoard();
+			thirdMove.remove(0);
+		}
+
+		fourthSize = fourthMove.size();
 		// while (!fourthMove.isEmpty()) {
 		// currentBoard = fourthMove.get(0);
 		// updateBitboards();
 		// // printBoard();
 		// fourthMove.remove(0);
 		// }
-		// System.out.println(firstSize);
-		// System.out.println(secondSize);
-		// System.out.println(thirdSize);
-		// System.out.println(fourthSize);
+		System.out.println(firstSize);
+		System.out.println(secondSize);
+		System.out.println(thirdSize);
+		System.out.println(fourthSize);
 	}
 
 	/*

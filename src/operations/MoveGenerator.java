@@ -1,6 +1,5 @@
 package operations;
 
-import java.util.Collection;
 import java.util.Vector;
 
 import operations.pieces.BlackPieces;
@@ -182,11 +181,11 @@ public class MoveGenerator {
 			// move
 			long possiblePieceMoveBitboard = (nextPawnBitboard ^ nextMove)
 					^ whitePawns;
-			boolean isValid = BoardManager.IsSelfCheck(possiblePieceMoveBitboard,
-					whiteRooks, whiteKnights, whiteBishops, whiteQueens,
-					whiteKing, (blackPawns ^ possiblePieceMoveBitboard)
-							& blackPawns, (blackRooks ^ possiblePieceMoveBitboard)
-							& blackRooks,
+			boolean isValid = BoardManager.IsSelfCheck(
+					possiblePieceMoveBitboard, whiteRooks, whiteKnights,
+					whiteBishops, whiteQueens, whiteKing,
+					(blackPawns ^ possiblePieceMoveBitboard) & blackPawns,
+					(blackRooks ^ possiblePieceMoveBitboard) & blackRooks,
 					(blackKnights ^ possiblePieceMoveBitboard) & blackKnights,
 					(blackBishops ^ possiblePieceMoveBitboard) & blackBishops,
 					(blackQueens ^ possiblePieceMoveBitboard) & blackQueens,
@@ -211,13 +210,12 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	protected static Vector<char[][]> whiteKnightMoves(
-			long nextKnightBitboard, long possibleMovesBitboard,
-			long whitePawns, long whiteRooks, long whiteKnights,
-			long whiteBishops, long whiteQueens, long blackPawns,
-			long blackRooks, long blackKnights, long blackBishops,
-			long blackQueens, long whiteKing, long blackKing,
-			char[][] currentBoard) {
+	protected static Vector<char[][]> whiteKnightMoves(long nextKnightBitboard,
+			long possibleMovesBitboard, long whitePawns, long whiteRooks,
+			long whiteKnights, long whiteBishops, long whiteQueens,
+			long blackPawns, long blackRooks, long blackKnights,
+			long blackBishops, long blackQueens, long whiteKing,
+			long blackKing, char[][] currentBoard) {
 		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
 		// System.out.println("NEXT PIECE ");
@@ -238,8 +236,8 @@ public class MoveGenerator {
 			boolean isValid = BoardManager.IsSelfCheck(whitePawns, whiteRooks,
 					possiblePieceMoveBitboard, whiteBishops, whiteQueens,
 					whiteKing, (blackPawns ^ possiblePieceMoveBitboard)
-							& blackPawns, (blackRooks ^ possiblePieceMoveBitboard)
-							& blackRooks,
+							& blackPawns,
+					(blackRooks ^ possiblePieceMoveBitboard) & blackRooks,
 					(blackKnights ^ possiblePieceMoveBitboard) & blackKnights,
 					(blackBishops ^ possiblePieceMoveBitboard) & blackBishops,
 					(blackQueens ^ possiblePieceMoveBitboard) & blackQueens,
@@ -265,13 +263,12 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	protected static Vector<char[][]> whiteBishopMoves(
-			long nextBishopBitboard, long possibleMovesBitboard,
-			long whitePawns, long whiteRooks, long whiteKnights,
-			long whiteBishops, long whiteQueens, long blackPawns,
-			long blackRooks, long blackKnights, long blackBishops,
-			long blackQueens, long whiteKing, long blackKing,
-			char[][] currentBoard) {
+	protected static Vector<char[][]> whiteBishopMoves(long nextBishopBitboard,
+			long possibleMovesBitboard, long whitePawns, long whiteRooks,
+			long whiteKnights, long whiteBishops, long whiteQueens,
+			long blackPawns, long blackRooks, long blackKnights,
+			long blackBishops, long blackQueens, long whiteKing,
+			long blackKing, char[][] currentBoard) {
 		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
 		// System.out.println("NEXT PIECE ");
@@ -292,8 +289,8 @@ public class MoveGenerator {
 			boolean isValid = BoardManager.IsSelfCheck(whitePawns, whiteRooks,
 					whiteKnights, possiblePieceMoveBitboard, whiteQueens,
 					whiteKing, (blackPawns ^ possiblePieceMoveBitboard)
-							& blackPawns, (blackRooks ^ possiblePieceMoveBitboard)
-							& blackRooks,
+							& blackPawns,
+					(blackRooks ^ possiblePieceMoveBitboard) & blackRooks,
 					(blackKnights ^ possiblePieceMoveBitboard) & blackKnights,
 					(blackBishops ^ possiblePieceMoveBitboard) & blackBishops,
 					(blackQueens ^ possiblePieceMoveBitboard) & blackQueens,
@@ -345,8 +342,8 @@ public class MoveGenerator {
 			boolean isValid = BoardManager.IsSelfCheck(whitePawns, whiteRooks,
 					whiteKnights, whiteBishops, possiblePieceMoveBitboard,
 					whiteKing, (blackPawns ^ possiblePieceMoveBitboard)
-							& blackPawns, (blackRooks ^ possiblePieceMoveBitboard)
-							& blackRooks,
+							& blackPawns,
+					(blackRooks ^ possiblePieceMoveBitboard) & blackRooks,
 					(blackKnights ^ possiblePieceMoveBitboard) & blackKnights,
 					(blackBishops ^ possiblePieceMoveBitboard) & blackBishops,
 					(blackQueens ^ possiblePieceMoveBitboard) & blackQueens,
@@ -543,8 +540,8 @@ public class MoveGenerator {
 			boolean isValid = BoardManager.IsSelfCheck(blackPawns, blackRooks,
 					possiblePieceMoveBitboard, blackBishops, blackQueens,
 					blackKing, (whitePawns ^ possiblePieceMoveBitboard)
-							& whitePawns, (whiteRooks ^ possiblePieceMoveBitboard)
-							& whiteRooks,
+							& whitePawns,
+					(whiteRooks ^ possiblePieceMoveBitboard) & whiteRooks,
 					(whiteKnights ^ possiblePieceMoveBitboard) & whiteKnights,
 					(whiteBishops ^ possiblePieceMoveBitboard) & whiteBishops,
 					(whiteQueens ^ possiblePieceMoveBitboard) & whiteQueens,
@@ -596,8 +593,8 @@ public class MoveGenerator {
 			boolean isValid = BoardManager.IsSelfCheck(blackPawns, blackRooks,
 					blackKnights, possiblePieceMoveBitboard, blackQueens,
 					blackKing, (whitePawns ^ possiblePieceMoveBitboard)
-							& whitePawns, (whiteRooks ^ possiblePieceMoveBitboard)
-							& whiteRooks,
+							& whitePawns,
+					(whiteRooks ^ possiblePieceMoveBitboard) & whiteRooks,
 					(whiteKnights ^ possiblePieceMoveBitboard) & whiteKnights,
 					(whiteBishops ^ possiblePieceMoveBitboard) & whiteBishops,
 					(whiteQueens ^ possiblePieceMoveBitboard) & whiteQueens,
@@ -649,8 +646,8 @@ public class MoveGenerator {
 			boolean isValid = BoardManager.IsSelfCheck(blackPawns, blackRooks,
 					blackKnights, blackBishops, possiblePieceMoveBitboard,
 					blackKing, (whitePawns ^ possiblePieceMoveBitboard)
-							& whitePawns, (whiteRooks ^ possiblePieceMoveBitboard)
-							& whiteRooks,
+							& whitePawns,
+					(whiteRooks ^ possiblePieceMoveBitboard) & whiteRooks,
 					(whiteKnights ^ possiblePieceMoveBitboard) & whiteKnights,
 					(whiteBishops ^ possiblePieceMoveBitboard) & whiteBishops,
 					(whiteQueens ^ possiblePieceMoveBitboard) & whiteQueens,
@@ -750,11 +747,11 @@ public class MoveGenerator {
 			// move
 			long possiblePieceMoveBitboard = (nextPawnBitboard ^ nextMove)
 					^ blackPawns;
-			boolean isValid = BoardManager.IsSelfCheck(possiblePieceMoveBitboard,
-					blackRooks, blackKnights, blackBishops, blackQueens,
-					blackKing, (whitePawns ^ possiblePieceMoveBitboard)
-							& whitePawns, (whiteRooks ^ possiblePieceMoveBitboard)
-							& whiteRooks,
+			boolean isValid = BoardManager.IsSelfCheck(
+					possiblePieceMoveBitboard, blackRooks, blackKnights,
+					blackBishops, blackQueens, blackKing,
+					(whitePawns ^ possiblePieceMoveBitboard) & whitePawns,
+					(whiteRooks ^ possiblePieceMoveBitboard) & whiteRooks,
 					(whiteKnights ^ possiblePieceMoveBitboard) & whiteKnights,
 					(whiteBishops ^ possiblePieceMoveBitboard) & whiteBishops,
 					(whiteQueens ^ possiblePieceMoveBitboard) & whiteQueens,
@@ -855,7 +852,7 @@ public class MoveGenerator {
 
 	private static char[][] copyCurrentBoard(char[][] currentBoard) {
 		char[][] temp = new char[currentBoard.length][currentBoard.length];
-		
+
 		for (int x = 0; x < temp.length; x++) {
 			for (int y = 0; y < temp.length; y++) {
 				temp[x][y] = currentBoard[x][y];
@@ -900,9 +897,5 @@ public class MoveGenerator {
 			System.out.println();
 		}
 		System.out.println();
-	}
-
-	public static void printCount() {
-		System.out.println(count);
 	}
 }

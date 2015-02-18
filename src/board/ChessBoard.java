@@ -48,15 +48,10 @@ public class ChessBoard {
 		long timeNano = System.nanoTime();
 
 		newGame();
-		updateBitboards();
 		makeMove(13, 21);
-		updateBitboards();
 		makeMove(52, 36);
-		updateBitboards();
 		makeMove(14, 30);
-		updateBitboards();
 		makeMove(59, 31);
-		updateBitboards();
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -225,7 +220,7 @@ public class ChessBoard {
 	 *         3 if the move is possible and there is a draw.
 	 * 
 	 */
-	private int makeMove(long fromSquare, long toSquare) {
+	public int makeMove(long fromSquare, long toSquare) {
 
 		int x = (int) (fromSquare % 8);
 		int y = (int) (fromSquare / 8);
@@ -262,9 +257,11 @@ public class ChessBoard {
 
 					if (isCheckmate()) {
 						System.out.println("Checkmate!");
+						updateBitboards();
 						return 2;
 					} else {
 						System.out.println("Normal move");
+						updateBitboards();
 						return 1;
 					}
 				} else {
@@ -657,6 +654,10 @@ public class ChessBoard {
 		updateBitboards();
 		printBoard();
 
+	}
+
+	public char[][] getBoard() {
+		return currentBoard;
 	}
 
 }

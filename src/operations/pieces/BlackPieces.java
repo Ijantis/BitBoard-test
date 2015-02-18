@@ -34,8 +34,8 @@ public class BlackPieces {
 	 * Generate squares under attack diagonally by a black pawn
 	 */
 	public static long getPawnAttackingSquares(long blackPawns) {
-		long upLeft = ((blackPawns & BitboardOperations.clearFile(1)) >>> 7);
-		long upRight = ((blackPawns & BitboardOperations.clearFile(8)) >>> 9);
+		long upLeft = ((blackPawns & BitboardOperations.clearFile(1)) >>> 9);
+		long upRight = ((blackPawns & BitboardOperations.clearFile(8)) >>> 7);
 		long attackingAPiece = (upLeft | upRight);
 
 		return attackingAPiece;

@@ -265,17 +265,16 @@ public class ChessBoard {
 				isValid = BoardManager.IsSelfCheck(tempBoard, false);
 			}
 
-			return isValid;
 			// TODO: Add en passant check.
-			// if (isValid) {
-			// currentBoard = tempBoard;
-			// updateBitboards();
-			// return true;
-			// // return isValid;
-			// } else {
-			// return false;
-			// // return isValid;
-			// }
+			if (isValid) {
+				currentBoard = tempBoard;
+				updateBitboards();
+				return true;
+				// return isValid;
+			} else {
+				return false;
+				// return isValid;
+			}
 		}
 
 		return false;

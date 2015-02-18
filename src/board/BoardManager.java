@@ -38,10 +38,10 @@ public class BoardManager {
 
 	}
 
-	public static boolean IsSelfCheck(String[][] boardToCheck,
+	public static boolean IsSelfCheck(char[][] tempBoard,
 			boolean checkForWhite) {
 
-		generateBitBoards(boardToCheck);
+		generateBitBoards(tempBoard);
 
 		if (checkForWhite) {
 			return (whiteKing & getBlackAttackingSquares()) == 0;
@@ -51,44 +51,44 @@ public class BoardManager {
 
 	}
 
-	private static void generateBitBoards(String[][] boardToCheck) {
+	private static void generateBitBoards(char[][] boardToCheck) {
 		long currentPiece = 1;
 		for (int i = 0; i < 64; i++) {
 			switch (boardToCheck[i % 8][i / 8]) {
-			case "P":
+			case 'P':
 				whitePawns = whitePawns | currentPiece;
 				break;
-			case "R":
+			case 'R':
 				whiteRooks = whiteRooks | currentPiece;
 				break;
-			case "N":
+			case 'N':
 				whiteKnights = whiteKnights | currentPiece;
 				break;
-			case "B":
+			case 'B':
 				whiteBishops = whiteBishops | currentPiece;
 				break;
-			case "Q":
+			case 'Q':
 				whiteQueens = whiteQueens | currentPiece;
 				break;
-			case "K":
+			case 'K':
 				whiteKing = whiteKing | currentPiece;
 				break;
-			case "p":
+			case 'p':
 				blackPawns = blackPawns | currentPiece;
 				break;
-			case "r":
+			case 'r':
 				blackRooks = blackRooks | currentPiece;
 				break;
-			case "n":
+			case 'n':
 				blackKnights = blackKnights | currentPiece;
 				break;
-			case "b":
+			case 'b':
 				blackBishops = blackBishops | currentPiece;
 				break;
-			case "q":
+			case 'q':
 				blackQueens = blackQueens | currentPiece;
 				break;
-			case "k":
+			case 'k':
 				blackKing = blackKing | currentPiece;
 				break;
 			default:

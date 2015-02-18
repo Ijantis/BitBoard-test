@@ -77,7 +77,7 @@ public class MoveGenerator {
 					blackBishops, blackQueens, whiteKing, blackKing,
 					currentBoard));
 
-			temp = (Long.highestOneBit(whiteQueens) - 1) & temp;
+			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
 		temp = whiteRooks;
@@ -115,18 +115,11 @@ public class MoveGenerator {
 			long blackKing, char[][] currentBoard) {
 		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
-		// System.out.println("NEXT PIECE ");
-		// printBitboard(nextKnightBitboard);
-		// System.out.println("POSSIBLE MOVES");
-		// printBitboard(possibleMovesBitboard);
-
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
 			nextMove = Long.highestOneBit(possibleMovesBitboard);
-			// System.out.println("NEXT MOVE");
-			// printBitboard(nextMove);
 
-			// this is the bitboard after having moved the knight to the next
+			// this is the bitboard after having moved the piece to the next
 			// move
 			long possiblePieceMoveBitboard = (nextKingBitboard ^ nextMove)
 					^ whiteKing;
@@ -151,7 +144,6 @@ public class MoveGenerator {
 
 			}
 
-			// printBitboard((nextKnightBitboard ^ nextMove) ^ whiteKnights);
 			possibleMovesBitboard = Long.highestOneBit(possibleMovesBitboard)
 					- 1 & possibleMovesBitboard;
 		}
@@ -166,18 +158,11 @@ public class MoveGenerator {
 			long blackKing, char[][] currentBoard) {
 		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
-		// System.out.println("NEXT PIECE ");
-		// printBitboard(nextKnightBitboard);
-		// System.out.println("POSSIBLE MOVES");
-		// printBitboard(possibleMovesBitboard);
-
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
 			nextMove = Long.highestOneBit(possibleMovesBitboard);
-			// System.out.println("NEXT MOVE");
-			// printBitboard(nextMove);
 
-			// this is the bitboard after having moved the knight to the next
+			// this is the bitboard after having moved the piece to the next
 			// move
 			long possiblePieceMoveBitboard = (nextPawnBitboard ^ nextMove)
 					^ whitePawns;
@@ -202,7 +187,6 @@ public class MoveGenerator {
 
 			}
 
-			// printBitboard((nextKnightBitboard ^ nextMove) ^ whiteKnights);
 			possibleMovesBitboard = Long.highestOneBit(possibleMovesBitboard)
 					- 1 & possibleMovesBitboard;
 		}
@@ -218,18 +202,11 @@ public class MoveGenerator {
 			long blackKing, char[][] currentBoard) {
 		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
-		// System.out.println("NEXT PIECE ");
-		// printBitboard(nextKnightBitboard);
-		// System.out.println("POSSIBLE MOVES");
-		// printBitboard(possibleMovesBitboard);
-
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
 			nextMove = Long.highestOneBit(possibleMovesBitboard);
-			// System.out.println("NEXT MOVE");
-			// printBitboard(nextMove);
 
-			// this is the bitboard after having moved the knight to the next
+			// this is the bitboard after having moved the piece to the next
 			// move
 			long possiblePieceMoveBitboard = (nextKnightBitboard ^ nextMove)
 					^ whiteKnights;
@@ -271,18 +248,11 @@ public class MoveGenerator {
 			long blackKing, char[][] currentBoard) {
 		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
-		// System.out.println("NEXT PIECE ");
-		// printBitboard(nextKnightBitboard);
-		// System.out.println("POSSIBLE MOVES");
-		// printBitboard(possibleMovesBitboard);
-
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
 			nextMove = Long.highestOneBit(possibleMovesBitboard);
-			// System.out.println("NEXT MOVE");
-			// printBitboard(nextMove);
 
-			// this is the bitboard after having moved the knight to the next
+			// this is the bitboard after having moved the piece to the next
 			// move
 			long possiblePieceMoveBitboard = (nextBishopBitboard ^ nextMove)
 					^ whiteBishops;
@@ -308,7 +278,6 @@ public class MoveGenerator {
 
 			}
 
-			// printBitboard((nextKnightBitboard ^ nextMove) ^ whiteKnights);
 			possibleMovesBitboard = Long.highestOneBit(possibleMovesBitboard)
 					- 1 & possibleMovesBitboard;
 		}
@@ -324,18 +293,11 @@ public class MoveGenerator {
 			long blackKing, char[][] currentBoard) {
 		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
-		// System.out.println("NEXT PIECE ");
-		// printBitboard(nextKnightBitboard);
-		// System.out.println("POSSIBLE MOVES");
-		// printBitboard(possibleMovesBitboard);
-
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
 			nextMove = Long.highestOneBit(possibleMovesBitboard);
-			// System.out.println("NEXT MOVE");
-			// printBitboard(nextMove);
 
-			// this is the bitboard after having moved the knight to the next
+			// this is the bitboard after having moved the piece to the next
 			// move
 			long possiblePieceMoveBitboard = (nextQueenBitboard ^ nextMove)
 					^ whiteQueens;
@@ -360,7 +322,6 @@ public class MoveGenerator {
 
 			}
 
-			// printBitboard((nextKnightBitboard ^ nextMove) ^ whiteKnights);
 			possibleMovesBitboard = Long.highestOneBit(possibleMovesBitboard)
 					- 1 & possibleMovesBitboard;
 		}
@@ -376,18 +337,11 @@ public class MoveGenerator {
 			long blackKing, char[][] currentBoard) {
 		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
-		// System.out.println("NEXT PIECE ");
-		// printBitboard(nextKnightBitboard);
-		// System.out.println("POSSIBLE MOVES");
-		// printBitboard(possibleMovesBitboard);
-
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
 			nextMove = Long.highestOneBit(possibleMovesBitboard);
-			// System.out.println("NEXT MOVE");
-			// printBitboard(nextMove);
 
-			// this is the bitboard after having moved the knight to the next
+			// this is the bitboard after having moved the piece to the next
 			// move
 			long possiblePieceMoveBitboard = (nextRookBitboard ^ nextMove)
 					^ whiteRooks;
@@ -412,7 +366,6 @@ public class MoveGenerator {
 
 			}
 
-			// printBitboard((nextKnightBitboard ^ nextMove) ^ whiteKnights);
 			possibleMovesBitboard = Long.highestOneBit(possibleMovesBitboard)
 					- 1 & possibleMovesBitboard;
 		}
@@ -500,12 +453,11 @@ public class MoveGenerator {
 
 		long kingMovesBitboard = BlackPieces.getKingMoves(blackKing,
 				blackPieces, whiteAttackingSquares);
-
 		possibleStates.addAll(blackKingMoves(blackKing, kingMovesBitboard,
 				whitePawns, whiteRooks, whiteKnights, whiteBishops,
 				whiteQueens, blackPawns, blackRooks, blackKnights,
 				blackBishops, blackQueens, whiteKing, blackKing, currentBoard));
-		
+
 		if (possibleStates.isEmpty()) {
 			System.out.println("Checkmate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			printBoard(currentBoard);
@@ -522,18 +474,11 @@ public class MoveGenerator {
 			long blackKing, char[][] currentBoard) {
 		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
-		// System.out.println("NEXT PIECE ");
-		// printBitboard(nextKnightBitboard);
-		// System.out.println("POSSIBLE MOVES");
-		// printBitboard(possibleMovesBitboard);
-
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
 			nextMove = Long.highestOneBit(possibleMovesBitboard);
-			// System.out.println("NEXT MOVE");
-			// printBitboard(nextMove);
 
-			// this is the bitboard after having moved the knight to the next
+			// this is the bitboard after having moved the piece to the next
 			// move
 			long possiblePieceMoveBitboard = (nextKnightBitboard ^ nextMove)
 					^ blackKnights;
@@ -559,7 +504,6 @@ public class MoveGenerator {
 
 			}
 
-			// printBitboard((nextKnightBitboard ^ nextMove) ^ whiteKnights);
 			possibleMovesBitboard = Long.highestOneBit(possibleMovesBitboard)
 					- 1 & possibleMovesBitboard;
 		}
@@ -575,18 +519,13 @@ public class MoveGenerator {
 			long blackKing, char[][] currentBoard) {
 		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
-		// System.out.println("NEXT PIECE ");
-		// printBitboard(nextKnightBitboard);
-		// System.out.println("POSSIBLE MOVES");
-		// printBitboard(possibleMovesBitboard);
-
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
 			nextMove = Long.highestOneBit(possibleMovesBitboard);
 			// System.out.println("NEXT MOVE");
 			// printBitboard(nextMove);
 
-			// this is the bitboard after having moved the knight to the next
+			// this is the bitboard after having moved the piece to the next
 			// move
 			long possiblePieceMoveBitboard = (nextBishopBitboard ^ nextMove)
 					^ blackBishops;
@@ -628,18 +567,11 @@ public class MoveGenerator {
 			long blackKing, char[][] currentBoard) {
 		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
-		// System.out.println("NEXT PIECE ");
-		// printBitboard(nextKnightBitboard);
-		// System.out.println("POSSIBLE MOVES");
-		// printBitboard(possibleMovesBitboard);
-
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
 			nextMove = Long.highestOneBit(possibleMovesBitboard);
-			// System.out.println("NEXT MOVE");
-			// printBitboard(nextMove);
 
-			// this is the bitboard after having moved the knight to the next
+			// this is the bitboard after having moved the piece to the next
 			// move
 			long possiblePieceMoveBitboard = (nextQueenBitboard ^ nextMove)
 					^ blackQueens;
@@ -664,7 +596,6 @@ public class MoveGenerator {
 
 			}
 
-			// printBitboard((nextKnightBitboard ^ nextMove) ^ whiteKnights);
 			possibleMovesBitboard = Long.highestOneBit(possibleMovesBitboard)
 					- 1 & possibleMovesBitboard;
 		}
@@ -680,18 +611,11 @@ public class MoveGenerator {
 			long blackKing, char[][] currentBoard) {
 		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
-		// System.out.println("NEXT PIECE ");
-		// printBitboard(nextKnightBitboard);
-		// System.out.println("POSSIBLE MOVES");
-		// printBitboard(possibleMovesBitboard);
-
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
 			nextMove = Long.highestOneBit(possibleMovesBitboard);
-			// System.out.println("NEXT MOVE");
-			// printBitboard(nextMove);
 
-			// this is the bitboard after having moved the knight to the next
+			// this is the bitboard after having moved the piece to the next
 			// move
 			long possiblePieceMoveBitboard = (nextRookBitboard ^ nextMove)
 					^ blackRooks;
@@ -716,7 +640,6 @@ public class MoveGenerator {
 
 			}
 
-			// printBitboard((nextKnightBitboard ^ nextMove) ^ whiteKnights);
 			possibleMovesBitboard = Long.highestOneBit(possibleMovesBitboard)
 					- 1 & possibleMovesBitboard;
 		}
@@ -732,18 +655,11 @@ public class MoveGenerator {
 			long blackKing, char[][] currentBoard) {
 		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
-		// System.out.println("NEXT PIECE ");
-		// printBitboard(nextPawnBitboard);
-		// System.out.println("POSSIBLE MOVES");
-		// printBitboard(possibleMovesBitboard);
-
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
 			nextMove = Long.highestOneBit(possibleMovesBitboard);
-			// System.out.println("NEXT MOVE");
-			// printBitboard(nextMove);
 
-			// this is the bitboard after having moved the knight to the next
+			// this is the bitboard after having moved the piece to the next
 			// move
 			long possiblePieceMoveBitboard = (nextPawnBitboard ^ nextMove)
 					^ blackPawns;
@@ -760,26 +676,12 @@ public class MoveGenerator {
 				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextPawnBitboard).length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
-				// printBitboard(possiblePieceMoveBitboard);
-				// System.out.println("current board");
-				// printBoard(currentBoard);
-				// System.out.println("From: " + temp[fromCoord % 8][fromCoord /
-				// 8]);
-				// System.out.println("x : " + (fromCoord % 8) + " y : " +
-				// (fromCoord / 8));
-				// System.out.println("To " + temp[toCoord % 8][toCoord / 8]);
-				// System.out.println("x : " + (toCoord % 8) + " y : " +
-				// (toCoord / 8));
-				// System.out.println("Printing temp board before change");
-				// printBoard(temp);
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = ' ';
-				// System.out.println("printing temp board after change");
 				listOfMoves.add(temp);
 
 			}
 
-			// printBitboard((nextKnightBitboard ^ nextMove) ^ whiteKnights);
 			possibleMovesBitboard = Long.highestOneBit(possibleMovesBitboard)
 					- 1 & possibleMovesBitboard;
 		}
@@ -795,18 +697,13 @@ public class MoveGenerator {
 			long blackKing, char[][] currentBoard) {
 		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
 
-		// System.out.println("NEXT PIECE ");
-		// printBitboard(nextPawnBitboard);
-		// System.out.println("POSSIBLE MOVES");
-		// printBitboard(possibleMovesBitboard);
-
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
 			nextMove = Long.highestOneBit(possibleMovesBitboard);
 			// System.out.println("NEXT MOVE");
 			// printBitboard(nextMove);
 
-			// this is the bitboard after having moved the knight to the next
+			// this is the bitboard after having moved the piece to the next
 			// move
 			long possiblePieceMoveBitboard = (nextKingBitboard ^ nextMove)
 					^ blackKing;
@@ -823,26 +720,12 @@ public class MoveGenerator {
 				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextKingBitboard).length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
-				// printBitboard(possiblePieceMoveBitboard);
-				// System.out.println("current board");
-				// printBoard(currentBoard);
-				// System.out.println("From: " + temp[fromCoord % 8][fromCoord /
-				// 8]);
-				// System.out.println("x : " + (fromCoord % 8) + " y : " +
-				// (fromCoord / 8));
-				// System.out.println("To " + temp[toCoord % 8][toCoord / 8]);
-				// System.out.println("x : " + (toCoord % 8) + " y : " +
-				// (toCoord / 8));
-				// System.out.println("Printing temp board before change");
-				// printBoard(temp);
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = ' ';
-				// System.out.println("printing temp board after change");
 				listOfMoves.add(temp);
 
 			}
 
-			// printBitboard((nextKnightBitboard ^ nextMove) ^ whiteKnights);
 			possibleMovesBitboard = Long.highestOneBit(possibleMovesBitboard)
 					- 1 & possibleMovesBitboard;
 		}
@@ -891,7 +774,7 @@ public class MoveGenerator {
 				if (temp == ' ') {
 					System.out.print(", ");
 				} else {
-					System.out.print(board[x][y] + " ");
+					System.out.print(board[x][y] + ' ');
 				}
 			}
 			System.out.println();

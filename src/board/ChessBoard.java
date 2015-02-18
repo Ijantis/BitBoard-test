@@ -49,9 +49,14 @@ public class ChessBoard {
 
 		newGame();
 		updateBitboards();
-		makeMove(10, 18);
+		makeMove(13, 21);
 		updateBitboards();
-		printBoard();
+		makeMove(52, 36);
+		updateBitboards();
+		makeMove(14, 30);
+		updateBitboards();
+		makeMove(59, 31);
+		updateBitboards();
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -207,7 +212,20 @@ public class ChessBoard {
 	/*
 	 * fromSquare and toSquare should be between 0 and 63 inclusive
 	 */
-	public boolean makeMove(long fromSquare, long toSquare) {
+	/**
+	 * 
+	 * @param fromSquare
+	 * @param toSquare
+	 * @return 0 if move is not possible.
+	 *         <p>
+	 *         1 If the move is possible and play can continue.
+	 *         <p>
+	 *         2 if the move is possible and there is a checkmate.
+	 *         <p>
+	 *         3 if the move is possible and there is a draw.
+	 * 
+	 */
+	private int makeMove(long fromSquare, long toSquare) {
 
 		int x = (int) (fromSquare % 8);
 		int y = (int) (fromSquare / 8);
@@ -216,36 +234,57 @@ public class ChessBoard {
 		long toBitboard = BitboardOperations.getPositionBitboard(toSquare);
 		char[][] tempBoard = copyCurrentBoard();
 
-		// check to see if a piece exists at the from coordinate
-		// check to see if the piece has a move possible
-		if (moveIsPossible(fromBitboard, fromSquare, toBitboard)) {
+		// first check to see if its the correct players turn for the piece
+		// about to move
+		if (Character.isUpperCase((currentBoard[x][y])) && whiteToMove
+				|| (Character.isLowerCase(currentBoard[x][y]) && !whiteToMove)) {
+			// check to see if a piece exists at the from coordinate
+			// check to see if the piece has a move possible
+			if (moveIsPossible(fromBitboard, fromSquare, toBitboard)) {
+				// move the piece on the temporary board
+				tempBoard[(int) toSquare % 8][(int) toSquare / 8] = tempBoard[(int) x][(int) y];
+				tempBoard[x][y] = ' ';
 
-			// move the piece on the temporary board
-			tempBoard[(int) toSquare % 8][(int) toSquare / 8] = tempBoard[(int) x][(int) y];
-			tempBoard[x][y] = ' ';
+				// next check if tempBoard puts the same colour king in check
+				// and
+				// if its all good then currentBoard = tempBoard;
+				boolean isValid;
+				if (Character.isUpperCase(tempBoard[x][y])) {
+					isValid = BoardManager.IsSelfCheck(tempBoard, true);
+				} else {
+					isValid = BoardManager.IsSelfCheck(tempBoard, false);
+				}
+				// TODO: Add en passant check.
+				if (isValid) {
+					currentBoard = tempBoard;
+					updateBitboards();
+					whiteToMove = !whiteToMove;
 
-			// next check if tempBoard puts the same colour king in check and
-			// if its all good then currentBoard = tempBoard;
-			boolean isValid;
-			if (Character.isUpperCase(tempBoard[x][y])) {
-				isValid = BoardManager.IsSelfCheck(tempBoard, true);
-			} else {
-				isValid = BoardManager.IsSelfCheck(tempBoard, false);
-			}
-
-			// TODO: Add en passant check.
-			if (isValid) {
-				currentBoard = tempBoard;
-				updateBitboards();
-				return true;
-				// return isValid;
-			} else {
-				return false;
-				// return isValid;
+					if (isCheckmate()) {
+						System.out.println("Checkmate!");
+						return 2;
+					} else {
+						System.out.println("Normal move");
+						return 1;
+					}
+				} else {
+					System.out.println("No move");
+					return 0;
+				}
 			}
 		}
+		System.out.println("No moveF");
+		return 0;
+	}
 
-		return false;
+	private boolean isCheckmate() {
+
+		if (whiteToMove) {
+			return generateWhiteLegalMoves().size() == 0;
+		} else {
+			return generateBlackLegalMoves().size() == 0;
+		}
+
 	}
 
 	/**
@@ -259,7 +298,7 @@ public class ChessBoard {
 	 *            - The coordinate of the piece being moved
 	 * @param toBitboard
 	 *            - The bitboard of the destination square
-	 * @return
+	 * @return true if the move is possible or false if the move is not possible
 	 */
 	private boolean moveIsPossible(long fromBitboard, long fromSquare,
 			long toBitboard) {

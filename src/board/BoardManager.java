@@ -38,9 +38,9 @@ public class BoardManager {
 
 	}
 
-	public static boolean IsSelfCheck(char[][] tempBoard,
-			boolean checkForWhite) {
+	public static boolean IsSelfCheck(char[][] tempBoard, boolean checkForWhite) {
 
+		clearBitboards();
 		generateBitBoards(tempBoard);
 
 		if (checkForWhite) {
@@ -49,6 +49,22 @@ public class BoardManager {
 			return (blackKing & getWhiteAttackingSquares()) == 0;
 		}
 
+	}
+
+	private static void clearBitboards() {
+		BoardManager.whitePawns = 0;
+		BoardManager.whiteRooks = 0;
+		BoardManager.whiteKnights = 0;
+		BoardManager.whiteBishops = 0;
+		BoardManager.whiteQueens = 0;
+		BoardManager.whiteKing = 0;
+
+		BoardManager.blackPawns = 0;
+		BoardManager.blackRooks = 0;
+		BoardManager.blackKnights = 0;
+		BoardManager.blackBishops = 0;
+		BoardManager.blackQueens = 0;
+		BoardManager.blackKing = 0;
 	}
 
 	private static void generateBitBoards(char[][] boardToCheck) {

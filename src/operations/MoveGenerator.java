@@ -101,9 +101,6 @@ public class MoveGenerator {
 				whiteQueens, blackPawns, blackRooks, blackKnights,
 				blackBishops, blackQueens, whiteKing, blackKing, currentBoard));
 
-		if (possibleStates.isEmpty()) {
-			System.out.println("Checkmate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		}
 		return possibleStates;
 	}
 
@@ -458,10 +455,6 @@ public class MoveGenerator {
 				whiteQueens, blackPawns, blackRooks, blackKnights,
 				blackBishops, blackQueens, whiteKing, blackKing, currentBoard));
 
-		if (possibleStates.isEmpty()) {
-			System.out.println("Checkmate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-			printBoard(currentBoard);
-		}
 		return possibleStates;
 
 	}

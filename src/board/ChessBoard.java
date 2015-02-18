@@ -47,51 +47,11 @@ public class ChessBoard {
 		long time = System.currentTimeMillis();
 		long timeNano = System.nanoTime();
 
-		updateBitboards();
-		// printBoard();
-		testThreaded();
 		newGame();
 		updateBitboards();
-		testMethod();
-
-		System.out.println("FINISH");
-		System.out.println("Serial " + serialList.size());
-		System.out.println("Threaded " + threadedList.size());
-
-		int count = 0;
-		threadedList.removeAll(serialList);
-		System.out.println(threadedList.size());
-
-		for (Iterator iterator = threadedList.iterator(); iterator.hasNext();) {
-			char[][] type = (char[][]) iterator.next();
-			for (Iterator iterator2 = serialList.iterator(); iterator2
-					.hasNext();) {
-				char[][] type2 = (char[][]) iterator2.next();
-				boolean check = true;
-				for (int i = 0; check && i < type2.length; i++) {
-					check = Arrays.equals(type[i], type2[i]);
-				}
-				if (check) {
-					count++;
-				}
-			}
-		}
-		System.out.println(count);
-
-		// for (Iterator iterator = threadedList.iterator();
-		// iterator.hasNext();) {
-		// char[][] type = (char[][]) iterator.next();
-		// currentBoard = type;
-		// printBoard();
-		//
-		// }
-		//
-		// for (Iterator iterator = serialList.iterator(); iterator.hasNext();)
-		// {
-		// char[][] type = (char[][]) iterator.next();
-		// currentBoard = type;
-		// printBoard();
-		// }
+		makeMove(10, 18);
+		updateBitboards();
+		printBoard();
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -231,6 +191,14 @@ public class ChessBoard {
 				currentBoard[x][y] = ' ';
 			}
 		}
+
+		whiteToMove = true;
+		whiteCastleKing = true;
+		whiteCastleQueen = true;
+		blackCastleKing = true;
+		blackCastleQueen = true;
+		numberOfFullMoves = 1;
+		numberOfHalfMoves = 0;
 
 		updateBitboards();
 

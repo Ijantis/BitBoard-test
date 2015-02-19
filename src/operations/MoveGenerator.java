@@ -17,7 +17,7 @@ public class MoveGenerator {
 			long whiteKing, long blackPieces, long whitePieces,
 			long blackAttackingSquares, long blackPawns, long blackRooks,
 			long blackKnights, long blackBishops, long blackQueens,
-			long blackKing) {
+			long blackKing, boolean whiteCastleKing, boolean whiteCastleQueen) {
 
 		Vector<char[][]> possibleStates = new Vector<char[][]>(20, 20);
 		long temp;
@@ -95,7 +95,8 @@ public class MoveGenerator {
 		}
 
 		long kingMovesBitboard = WhitePieces.getKingMoves(whiteKing,
-				whitePieces, blackAttackingSquares);
+				whitePieces, blackAttackingSquares, whiteCastleKing,
+				whiteCastleQueen);
 		possibleStates.addAll(whiteKingMoves(whiteKing, kingMovesBitboard,
 				whitePawns, whiteRooks, whiteKnights, whiteBishops,
 				whiteQueens, blackPawns, blackRooks, blackKnights,
@@ -376,7 +377,7 @@ public class MoveGenerator {
 			long whiteKing, long blackPieces, long whitePieces,
 			long whiteAttackingSquares, long blackPawns, long blackRooks,
 			long blackKnights, long blackBishops, long blackQueens,
-			long blackKing) {
+			long blackKing, boolean blackCastleKing, boolean blackCastleQueen) {
 
 		Vector<char[][]> possibleStates = new Vector<char[][]>(20, 20);
 		long temp;
@@ -449,7 +450,8 @@ public class MoveGenerator {
 		}
 
 		long kingMovesBitboard = BlackPieces.getKingMoves(blackKing,
-				blackPieces, whiteAttackingSquares);
+				blackPieces, whiteAttackingSquares, blackCastleKing,
+				blackCastleQueen);
 		possibleStates.addAll(blackKingMoves(blackKing, kingMovesBitboard,
 				whitePawns, whiteRooks, whiteKnights, whiteBishops,
 				whiteQueens, blackPawns, blackRooks, blackKnights,

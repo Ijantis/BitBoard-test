@@ -4,6 +4,11 @@ import operations.BitboardOperations;
 
 public class WhitePieces {
 
+	private final static long whiteCastleKingSquares = Long.parseLong(
+			"1100000", 2);
+	private final static long whiteCastleQueenSquares = Long.parseLong("1100",
+			2);
+
 	public static long getPawnMoves(long whitePawns, long occupiedSquares,
 			long blackPieces) {
 		return getPawnMovesVertical(whitePawns, occupiedSquares)
@@ -151,8 +156,8 @@ public class WhitePieces {
 		return left_moves | right_moves | up_moves | down_moves;
 	}
 
-	public static long getBishopMoves(long whiteBishops,
-			long occupiedSquares, long whitePieces) {
+	public static long getBishopMoves(long whiteBishops, long occupiedSquares,
+			long whitePieces) {
 		return getBishopAttackingSquares(whiteBishops, occupiedSquares)
 				& ~whitePieces;
 
@@ -217,8 +222,7 @@ public class WhitePieces {
 	/*
 	 * Generate white king moves.
 	 */
-	public static long getKingAttackingSquares(long whiteKing,
-			long whitePieces) {
+	public static long getKingAttackingSquares(long whiteKing, long whitePieces) {
 
 		// vertical movement 8 bit shift
 		long up = whiteKing << 8;
@@ -246,8 +250,43 @@ public class WhitePieces {
 	}
 
 	public static long getKingMoves(long whiteKing, long whitePieces,
-			long blackAttackingSquares) {
-		return (getKingAttackingSquares(whiteKing, whitePieces) & ~blackAttackingSquares)
+			long blackAttackingSquares, boolean whiteCastleKing,
+			boolean whiteCastleQueen) {
+
+		long castled = 0;
+
+		if (whiteCastleKing
+				&& ((whiteCastleKingSquares & blackAttackingSquares) == 0)
+				&& ((whiteCastleKingSquares & whitePieces) == 0)) {
+			castled = castled | whiteKing << 2;
+		}
+
+		if (whiteCastleQueen
+				&& ((whiteCastleQueenSquares & blackAttackingSquares) == 0)
+				&& ((whiteCastleQueenSquares & whitePieces) == 0)) {
+			castled = castled | whiteKing >>> 2;
+		}
+
+		return ((getKingAttackingSquares(whiteKing, whitePieces) & ~blackAttackingSquares) | castled)
 				& ~whitePieces;
+	}
+
+	private static void printBitboard(long bitBoard) {
+		String stringBitBoard = Long.toBinaryString(bitBoard);
+		System.out.println("Value : " + stringBitBoard);
+		while (stringBitBoard.length() != 64) {
+			stringBitBoard = "0" + stringBitBoard;
+		}
+
+		for (int i = 0; i < 8; i++) {
+			StringBuilder stringReverser = new StringBuilder(
+					stringBitBoard.substring(i * 8, ((i + 1) * 8)));
+			stringReverser.reverse();
+			for (int j = 0; j < stringReverser.toString().length(); j++) {
+				System.out.print(stringReverser.toString().charAt(j) + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
 	}
 }

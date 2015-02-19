@@ -4,6 +4,12 @@ import operations.BitboardOperations;
 
 public class BlackPieces {
 
+	private final static long blackCastleKingSquares = Long.parseLong(
+			"110000000000000000000000000000000000000000000000000000000000000",
+			2);
+	private final static long blackCastleQueenSquares = Long.parseLong(
+			"110000000000000000000000000000000000000000000000000000000000", 2);
+
 	public static long getPawnMoves(long blackPawns, long occupiedSquares,
 			long whitePieces) {
 		return getPawnMovesVertical(blackPawns, occupiedSquares)
@@ -240,8 +246,24 @@ public class BlackPieces {
 	}
 
 	public static long getKingMoves(long blackKing, long blackPieces,
-			long whiteAttackingSquares) {
-		return (getKingAttackingSquares(blackKing, blackPieces) & ~whiteAttackingSquares)
+			long whiteAttackingSquares, boolean blackCastleKing,
+			boolean blackCastleQueen) {
+
+		long castled = 0;
+
+		if (blackCastleKing
+				&& ((blackCastleKingSquares & whiteAttackingSquares) == 0)
+				&& ((blackCastleKingSquares & blackPieces) == 0)) {
+			castled = castled | blackKing << 2;
+		}
+
+		if (blackCastleQueen
+				&& ((blackCastleQueenSquares & whiteAttackingSquares) == 0)
+				&& ((blackCastleQueenSquares & blackPieces) == 0)) {
+			castled = castled | blackKing >>> 2;
+		}
+
+		return ((getKingAttackingSquares(blackKing, blackPieces) & ~whiteAttackingSquares) | castled)
 				& ~blackPieces;
 	}
 

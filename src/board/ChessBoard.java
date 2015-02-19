@@ -33,12 +33,12 @@ public class ChessBoard {
 	// 0,0 is top left 0,7 is top right 7,7 bottom right
 	private char[][] currentBoard = {
 			{ 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' },
-			{ 'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n' },
-			{ 'B', 'P', ' ', ' ', ' ', ' ', 'p', 'b' },
-			{ 'Q', 'P', ' ', ' ', ' ', ' ', 'p', 'q' },
+			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', ' ' },
+			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', ' ' },
+			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', ' ' },
 			{ 'K', 'P', ' ', ' ', ' ', ' ', 'p', 'k' },
-			{ 'B', 'P', ' ', ' ', ' ', ' ', 'p', 'b' },
-			{ 'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n' },
+			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', ' ' },
+			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', ' ' },
 			{ 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' } };;
 
 	Vector<char[][]> threadedList;
@@ -48,11 +48,9 @@ public class ChessBoard {
 		long time = System.currentTimeMillis();
 		long timeNano = System.nanoTime();
 
-		newGame();
-		makeMove(12, 20);
-		makeMove(48, 40);
-		makeMove(20, 28);
-		makeMove(56, 48);
+		updateBitboards();
+		makeMove(4, 2);
+		makeMove(60, 58);
 		printBoard();
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
@@ -149,7 +147,7 @@ public class ChessBoard {
 				whiteRooks, whiteKnights, whiteBishops, whiteQueens, whiteKing,
 				getBlackPieces(), getWhitePieces(), getBlackAttackingSquares(),
 				blackPawns, blackRooks, blackKnights, blackBishops,
-				blackQueens, blackKing);
+				blackQueens, blackKing, whiteCastleKing, whiteCastleQueen);
 	}
 
 	private Vector<char[][]> generateBlackLegalMoves() {
@@ -157,7 +155,7 @@ public class ChessBoard {
 				whiteRooks, whiteKnights, whiteBishops, whiteQueens, whiteKing,
 				getBlackPieces(), getWhitePieces(), getWhiteAttackingSquares(),
 				blackPawns, blackRooks, blackKnights, blackBishops,
-				blackQueens, blackKing);
+				blackQueens, blackKing, blackCastleKing, blackCastleQueen);
 	}
 
 	public void newGame() {
@@ -262,6 +260,36 @@ public class ChessBoard {
 
 					// update castling rights if a rook or king has moved
 					updateCastlingRights(fromSquare);
+
+					// Move the rook if the king has castled.
+					switch (tempBoard[(int) toSquare % 8][(int) toSquare / 8]) {
+					case 'K':
+						if (fromSquare == 4) {
+							if (toSquare == 6) {
+								tempBoard[5][0] = tempBoard[7][0];
+								tempBoard[7][0] = ' ';
+							} else if (toSquare == 2) {
+								tempBoard[3][0] = tempBoard[0][0];
+								tempBoard[0][0] = ' ';
+							}
+
+						}
+
+						break;
+
+					case 'k':
+						if (fromSquare == 60) {
+							if (toSquare == 62) {
+								tempBoard[5][7] = tempBoard[7][7];
+								tempBoard[7][7] = ' ';
+							} else if (toSquare == 58) {
+								tempBoard[3][7] = tempBoard[0][7];
+								tempBoard[0][7] = ' ';
+							}
+
+						}
+						break;
+					}
 
 					// TODO: add en passant check here
 
@@ -384,7 +412,8 @@ public class ChessBoard {
 					getOccupiedSquares(), getWhitePieces());
 		case 'K':
 			return WhitePieces.getKingMoves(fromBitboard, getWhitePieces(),
-					getBlackAttackingSquares());
+					getBlackAttackingSquares(), whiteCastleKing,
+					whiteCastleQueen);
 		case 'p':
 			return BlackPieces.getPawnMoves(fromBitboard, getOccupiedSquares(),
 					getWhitePieces());
@@ -401,7 +430,8 @@ public class ChessBoard {
 					getOccupiedSquares(), getBlackPieces());
 		case 'k':
 			return BlackPieces.getKingMoves(fromBitboard, getBlackPieces(),
-					getWhiteAttackingSquares());
+					getWhiteAttackingSquares(), blackCastleKing,
+					blackCastleQueen);
 		}
 		return 0L;
 	}

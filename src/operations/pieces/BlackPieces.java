@@ -150,8 +150,8 @@ public class BlackPieces {
 		return left_moves | right_moves | up_moves | down_moves;
 	}
 
-	public static long getBishopMoves(long blackBishops,
-			long occupiedSquares, long blackPieces) {
+	public static long getBishopMoves(long blackBishops, long occupiedSquares,
+			long blackPieces) {
 		return getBishopAttackingSquares(blackBishops, occupiedSquares)
 				& ~blackPieces;
 
@@ -212,8 +212,7 @@ public class BlackPieces {
 	/*
 	 * Generate black king moves.
 	 */
-	public static long getKingAttackingSquares(long blackKing,
-			long blackPieces) {
+	public static long getKingAttackingSquares(long blackKing, long blackPieces) {
 
 		// vertical movement 8 bit shift
 		long up = blackKing << 8;
@@ -244,5 +243,24 @@ public class BlackPieces {
 			long whiteAttackingSquares) {
 		return (getKingAttackingSquares(blackKing, blackPieces) & ~whiteAttackingSquares)
 				& ~blackPieces;
+	}
+
+	private static void printBitboard(long bitBoard) {
+		String stringBitBoard = Long.toBinaryString(bitBoard);
+		System.out.println("Value : " + stringBitBoard);
+		while (stringBitBoard.length() != 64) {
+			stringBitBoard = "0" + stringBitBoard;
+		}
+
+		for (int i = 0; i < 8; i++) {
+			StringBuilder stringReverser = new StringBuilder(
+					stringBitBoard.substring(i * 8, ((i + 1) * 8)));
+			stringReverser.reverse();
+			for (int j = 0; j < stringReverser.toString().length(); j++) {
+				System.out.print(stringReverser.toString().charAt(j) + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
 	}
 }

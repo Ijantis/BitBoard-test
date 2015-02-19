@@ -48,10 +48,10 @@ public class ChessBoard {
 		long timeNano = System.nanoTime();
 
 		newGame();
-		makeMove(13, 21);
-		makeMove(52, 36);
-		makeMove(14, 30);
-		makeMove(59, 31);
+		makeMove(12, 20);
+		makeMove(53, 45);
+		makeMove(3, 39);
+		printBoard();
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -233,9 +233,11 @@ public class ChessBoard {
 		// about to move
 		if (Character.isUpperCase((currentBoard[x][y])) && whiteToMove
 				|| (Character.isLowerCase(currentBoard[x][y]) && !whiteToMove)) {
+			System.out.println("Correct colour");
 			// check to see if a piece exists at the from coordinate
 			// check to see if the piece has a move possible
 			if (moveIsPossible(fromBitboard, fromSquare, toBitboard)) {
+				System.out.println("Move possible");
 				// move the piece on the temporary board
 				tempBoard[(int) toSquare % 8][(int) toSquare / 8] = tempBoard[(int) x][(int) y];
 				tempBoard[x][y] = ' ';
@@ -244,9 +246,11 @@ public class ChessBoard {
 				// and
 				// if its all good then currentBoard = tempBoard;
 				boolean isValid;
-				if (Character.isUpperCase(tempBoard[x][y])) {
+				if (Character.isUpperCase(tempBoard[(int) (toSquare % 8)][(int) (toSquare / 8)])) {
+					System.out.println("Checking white king in check");
 					isValid = BoardManager.IsSelfCheck(tempBoard, true);
 				} else {
+					System.out.println("Checking black king in check");
 					isValid = BoardManager.IsSelfCheck(tempBoard, false);
 				}
 				// TODO: Add en passant check.
@@ -346,7 +350,7 @@ public class ChessBoard {
 			return BlackPieces.getRookMoves(fromBitboard, getOccupiedSquares(),
 					getBlackPieces());
 		case 'n':
-			return BlackPieces.getKnightMoves(fromSquare, getBlackPieces());
+			return BlackPieces.getKnightMoves(fromBitboard, getBlackPieces());
 		case 'b':
 			return BlackPieces.getBishopMoves(fromBitboard,
 					getOccupiedSquares(), getBlackPieces());

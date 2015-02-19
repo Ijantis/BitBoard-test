@@ -11,7 +11,6 @@ public class GameLoop {
 	public GameLoop() {
 
 		ChessBoard currentGameBoard = new ChessBoard();
-		currentGameBoard.newGame();
 
 	}
 }

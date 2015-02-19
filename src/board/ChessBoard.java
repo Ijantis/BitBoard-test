@@ -24,6 +24,7 @@ public class ChessBoard {
 	private boolean whiteCastleQueen = true;
 	private boolean blackCastleKing = true;
 	private boolean blackCastleQueen = true;
+	private short enPassant = 0;
 	private int numberOfFullMoves = 1;
 	private int numberOfHalfMoves = 0;
 
@@ -49,8 +50,9 @@ public class ChessBoard {
 
 		newGame();
 		makeMove(12, 20);
-		makeMove(53, 45);
-		makeMove(3, 39);
+		makeMove(48, 40);
+		makeMove(20, 28);
+		makeMove(56, 48);
 		printBoard();
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
@@ -246,15 +248,23 @@ public class ChessBoard {
 				// and
 				// if its all good then currentBoard = tempBoard;
 				boolean isValid;
-				if (Character.isUpperCase(tempBoard[(int) (toSquare % 8)][(int) (toSquare / 8)])) {
+				if (Character
+						.isUpperCase(tempBoard[(int) (toSquare % 8)][(int) (toSquare / 8)])) {
 					System.out.println("Checking white king in check");
 					isValid = BoardManager.IsSelfCheck(tempBoard, true);
 				} else {
 					System.out.println("Checking black king in check");
 					isValid = BoardManager.IsSelfCheck(tempBoard, false);
 				}
-				// TODO: Add en passant check.
+
+				// If the move is going to be made this if statement is entered.
 				if (isValid) {
+
+					// update castling rights if a rook or king has moved
+					updateCastlingRights(fromSquare);
+
+					// TODO: add en passant check here
+
 					currentBoard = tempBoard;
 					updateBitboards();
 					whiteToMove = !whiteToMove;
@@ -276,6 +286,38 @@ public class ChessBoard {
 		}
 		System.out.println("No moveF");
 		return 0;
+	}
+
+	private void updateCastlingRights(long fromSquare) {
+		if (whiteCastleKing || whiteCastleQueen) {
+			switch ((int) fromSquare) {
+			case 4:
+				whiteCastleKing = false;
+				whiteCastleQueen = false;
+				break;
+			case 0:
+				whiteCastleQueen = false;
+				break;
+			case 7:
+				whiteCastleKing = false;
+				break;
+			}
+		}
+
+		if (blackCastleKing || blackCastleQueen) {
+			switch ((int) fromSquare) {
+			case 60:
+				blackCastleKing = false;
+				blackCastleQueen = false;
+				break;
+			case 56:
+				blackCastleQueen = false;
+				break;
+			case 63:
+				blackCastleKing = false;
+				break;
+			}
+		}
 	}
 
 	private boolean isCheckmate() {

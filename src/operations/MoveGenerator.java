@@ -17,7 +17,8 @@ public class MoveGenerator {
 			long whiteKing, long blackPieces, long whitePieces,
 			long blackAttackingSquares, long blackPawns, long blackRooks,
 			long blackKnights, long blackBishops, long blackQueens,
-			long blackKing, boolean whiteCastleKing, boolean whiteCastleQueen) {
+			long blackKing, boolean whiteCastleKing, boolean whiteCastleQueen,
+			long enPassantSquare) {
 
 		Vector<char[][]> possibleStates = new Vector<char[][]>(20, 20);
 		long temp;
@@ -27,7 +28,7 @@ public class MoveGenerator {
 
 			long nextPawn = Long.highestOneBit(temp);
 			long bitboardOfMoves = WhitePieces.getPawnMoves(nextPawn,
-					whitePieces | blackPieces, blackPieces);
+					whitePieces | blackPieces, blackPieces,enPassantSquare);
 			possibleStates.addAll(whitePawnMoves(nextPawn, bitboardOfMoves,
 					whitePawns, whiteRooks, whiteKnights, whiteBishops,
 					whiteQueens, blackPawns, blackRooks, blackKnights,
@@ -377,7 +378,8 @@ public class MoveGenerator {
 			long whiteKing, long blackPieces, long whitePieces,
 			long whiteAttackingSquares, long blackPawns, long blackRooks,
 			long blackKnights, long blackBishops, long blackQueens,
-			long blackKing, boolean blackCastleKing, boolean blackCastleQueen) {
+			long blackKing, boolean blackCastleKing, boolean blackCastleQueen,
+			long enPassantSquare) {
 
 		Vector<char[][]> possibleStates = new Vector<char[][]>(20, 20);
 		long temp;
@@ -386,7 +388,7 @@ public class MoveGenerator {
 		while (temp != 0) {
 			long nextPawn = Long.highestOneBit(temp);
 			long bitboardOfMoves = BlackPieces.getPawnMoves(nextPawn,
-					blackPieces | whitePieces, whitePieces);
+					blackPieces | whitePieces, whitePieces,enPassantSquare);
 			possibleStates.addAll(blackPawnMoves(nextPawn, bitboardOfMoves,
 					whitePawns, whiteRooks, whiteKnights, whiteBishops,
 					whiteQueens, blackPawns, blackRooks, blackKnights,

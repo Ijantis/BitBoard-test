@@ -10,13 +10,20 @@ public class WhitePieces {
 			2);
 
 	public static long getPawnMoves(long whitePawns, long occupiedSquares,
-			long blackPieces) {
-		return getPawnMovesVertical(whitePawns, occupiedSquares)
+			long blackPieces, long enPassantSquare) {
+		return getPawnMovesVertical(whitePawns, occupiedSquares,
+				enPassantSquare)
 				| getPawnMovesDiagonal(whitePawns, blackPieces);
 	}
 
 	public static long getPawnMovesVertical(long whitePawns,
-			long occupiedSquares) {
+			long occupiedSquares, long enPassantSquare) {
+		long enPassantBitboard = 0;
+		// en passant
+		if (enPassantSquare >= 40 && enPassantSquare <= 47) {
+			enPassantBitboard = Long.parseLong("1", 2);
+			enPassantBitboard = enPassantBitboard << enPassantSquare;
+		}
 
 		// Vertical single rank
 		long upOne = (whitePawns << 8) & ~occupiedSquares;
@@ -26,7 +33,7 @@ public class WhitePieces {
 		long pawnsNotBlocked = (((secondRankPawns << 8) & ~occupiedSquares) >>> 8);
 		long upTwo = pawnsNotBlocked << 16 & ~occupiedSquares;
 
-		return upOne | upTwo;
+		return upOne | upTwo | enPassantBitboard;
 	}
 
 	/*

@@ -50,7 +50,10 @@ public class ChessBoard {
 
 		updateBitboards();
 		makeMove(12, 28);
-		makeMove(60, 58);
+		makeMove(55, 47);
+		makeMove(28, 36);
+		makeMove(51, 35);
+		makeMove(36, 43);
 		printBoard();
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
@@ -148,7 +151,8 @@ public class ChessBoard {
 				whiteRooks, whiteKnights, whiteBishops, whiteQueens, whiteKing,
 				getBlackPieces(), getWhitePieces(), getBlackAttackingSquares(),
 				blackPawns, blackRooks, blackKnights, blackBishops,
-				blackQueens, blackKing, whiteCastleKing, whiteCastleQueen);
+				blackQueens, blackKing, whiteCastleKing, whiteCastleQueen,
+				enPassantSquare);
 	}
 
 	private Vector<char[][]> generateBlackLegalMoves() {
@@ -156,7 +160,8 @@ public class ChessBoard {
 				whiteRooks, whiteKnights, whiteBishops, whiteQueens, whiteKing,
 				getBlackPieces(), getWhitePieces(), getWhiteAttackingSquares(),
 				blackPawns, blackRooks, blackKnights, blackBishops,
-				blackQueens, blackKing, blackCastleKing, blackCastleQueen);
+				blackQueens, blackKing, blackCastleKing, blackCastleQueen,
+				enPassantSquare);
 	}
 
 	public void newGame() {
@@ -255,6 +260,7 @@ public class ChessBoard {
 				// If the move is going to be made this if statement is entered.
 				if (isValid) {
 
+					System.out.println("en passant reset");
 					enPassantSquare = 0;
 
 					// switch statement to update special conditions
@@ -442,7 +448,7 @@ public class ChessBoard {
 		switch (currentBoard[(int) fromSquare % 8][(int) fromSquare / 8]) {
 		case 'P':
 			return WhitePieces.getPawnMoves(fromBitboard, getOccupiedSquares(),
-					getBlackPieces());
+					getBlackPieces(), enPassantSquare);
 		case 'R':
 			return WhitePieces.getRookMoves(fromBitboard, getOccupiedSquares(),
 					getWhitePieces());
@@ -460,7 +466,7 @@ public class ChessBoard {
 					whiteCastleQueen);
 		case 'p':
 			return BlackPieces.getPawnMoves(fromBitboard, getOccupiedSquares(),
-					getWhitePieces());
+					getWhitePieces(), enPassantSquare);
 		case 'r':
 			return BlackPieces.getRookMoves(fromBitboard, getOccupiedSquares(),
 					getBlackPieces());

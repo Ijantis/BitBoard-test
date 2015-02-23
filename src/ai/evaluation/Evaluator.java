@@ -12,7 +12,9 @@ public class Evaluator {
 			long whiteKing, long blackPawns, long blackRooks,
 			long blackKnights, long blackBishops, long blackQueens,
 			long blackKing, char[][] currentBoard, long whiteAttackingSquares,
-			long blackAttackingSquares) {
+			long blackAttackingSquares, boolean whiteCastleKing,
+			boolean whiteCastleQueen, boolean blackCastleKing,
+			boolean blackCastleQueen) {
 
 		double whiteScore = 0;
 		double blackScore = 0;
@@ -48,7 +50,8 @@ public class Evaluator {
 				(whiteBishops | whiteKing | whiteKnights | whitePawns
 						| whiteQueens | whiteRooks), blackAttackingSquares,
 				blackPawns, blackRooks, blackKnights, blackBishops,
-				blackQueens, blackKing).size() * 0.1;
+				blackQueens, blackKing, whiteCastleKing, whiteCastleQueen)
+				.size() * 0.1;
 
 		blackScore += MoveGenerator.generateBlackLegalMoves(
 				currentBoard,
@@ -63,7 +66,8 @@ public class Evaluator {
 				(whiteBishops | whiteKing | whiteKnights | whitePawns
 						| whiteQueens | whiteRooks), whiteAttackingSquares,
 				blackPawns, blackRooks, blackKnights, blackBishops,
-				blackQueens, blackKing).size() * 0.1;
+				blackQueens, blackKing, blackCastleKing, blackCastleQueen)
+				.size() * 0.1;
 
 		// problems with precision so this is needed
 		return Math.round((whiteScore - blackScore) * 100) / 100d;

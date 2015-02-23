@@ -125,7 +125,8 @@ public class ChessBoard {
 				whiteBishops, whiteQueens, whiteKing, blackPawns, blackRooks,
 				blackKnights, blackBishops, blackQueens, blackKing,
 				currentBoard, getWhiteAttackingSquares(),
-				getBlackAttackingSquares());
+				getBlackAttackingSquares(), whiteCastleKing, whiteCastleQueen,
+				blackCastleKing, blackCastleQueen);
 	}
 
 	private Thread createWhiteMoveGenerator() {
@@ -233,11 +234,9 @@ public class ChessBoard {
 		// about to move
 		if (Character.isUpperCase((currentBoard[x][y])) && whiteToMove
 				|| (Character.isLowerCase(currentBoard[x][y]) && !whiteToMove)) {
-			System.out.println("Correct colour");
 			// check to see if a piece exists at the from coordinate
 			// check to see if the piece has a move possible
 			if (moveIsPossible(fromBitboard, fromSquare, toBitboard)) {
-				System.out.println("Move possible");
 				// move the piece on the temporary board
 				tempBoard[(int) toSquare % 8][(int) toSquare / 8] = tempBoard[(int) x][(int) y];
 				tempBoard[x][y] = ' ';
@@ -248,10 +247,8 @@ public class ChessBoard {
 				boolean isValid;
 				if (Character
 						.isUpperCase(tempBoard[(int) (toSquare % 8)][(int) (toSquare / 8)])) {
-					System.out.println("Checking white king in check");
 					isValid = BoardManager.IsSelfCheck(tempBoard, true);
 				} else {
-					System.out.println("Checking black king in check");
 					isValid = BoardManager.IsSelfCheck(tempBoard, false);
 				}
 

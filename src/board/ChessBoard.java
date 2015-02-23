@@ -24,7 +24,7 @@ public class ChessBoard {
 	private boolean whiteCastleQueen = true;
 	private boolean blackCastleKing = true;
 	private boolean blackCastleQueen = true;
-	private short enPassant = 0;
+	private long enPassantSquare = 0;
 	private int numberOfFullMoves = 1;
 	private int numberOfHalfMoves = 0;
 
@@ -49,7 +49,7 @@ public class ChessBoard {
 		long timeNano = System.nanoTime();
 
 		updateBitboards();
-		makeMove(4, 2);
+		makeMove(12, 28);
 		makeMove(60, 58);
 		printBoard();
 
@@ -258,35 +258,82 @@ public class ChessBoard {
 				// If the move is going to be made this if statement is entered.
 				if (isValid) {
 
-					// update castling rights if a rook or king has moved
-					updateCastlingRights(fromSquare);
+					enPassantSquare = 0;
 
-					// Move the rook if the king has castled.
+					// switch statement to update special conditions
 					switch (tempBoard[(int) toSquare % 8][(int) toSquare / 8]) {
+
+					// castling check
 					case 'K':
 						if (fromSquare == 4) {
 							if (toSquare == 6) {
 								tempBoard[5][0] = tempBoard[7][0];
 								tempBoard[7][0] = ' ';
+								whiteCastleKing = false;
+								whiteCastleQueen = false;
 							} else if (toSquare == 2) {
 								tempBoard[3][0] = tempBoard[0][0];
 								tempBoard[0][0] = ' ';
+								whiteCastleQueen = false;
+								whiteCastleKing = false;
 							}
-
 						}
 
 						break;
 
+					// castling check
 					case 'k':
 						if (fromSquare == 60) {
 							if (toSquare == 62) {
 								tempBoard[5][7] = tempBoard[7][7];
 								tempBoard[7][7] = ' ';
+								blackCastleKing = false;
+								blackCastleQueen = false;
 							} else if (toSquare == 58) {
 								tempBoard[3][7] = tempBoard[0][7];
 								tempBoard[0][7] = ' ';
+								blackCastleKing = false;
+								blackCastleQueen = false;
 							}
 
+						}
+						break;
+
+					// castling check
+					case 'R':
+						if (fromSquare == 0) {
+							whiteCastleQueen = false;
+						} else if (fromSquare == 7) {
+							whiteCastleKing = false;
+						}
+						break;
+
+					// castling check
+					case 'r':
+						if (fromSquare == 56) {
+							blackCastleQueen = false;
+						} else if (fromSquare == 63) {
+							blackCastleKing = false;
+						}
+						break;
+
+					case 'P':
+						if (fromSquare >= 8 && fromSquare <= 15) {
+							if (toSquare - 16 == fromSquare) {
+								enPassantSquare = fromSquare + 8;
+								System.out.println("en passant square is "
+										+ enPassantSquare);
+							}
+						}
+						break;
+
+					case 'p':
+						if (fromSquare >= 45 && fromSquare <= 55) {
+							if (toSquare + 16 == fromSquare) {
+								enPassantSquare = fromSquare - 8;
+								System.out.println("en passant square is "
+										+ enPassantSquare);
+							}
 						}
 						break;
 					}
@@ -316,7 +363,7 @@ public class ChessBoard {
 		return 0;
 	}
 
-	private void updateCastlingRights(long fromSquare) {
+	private void removeCastlingRights(long fromSquare) {
 		if (whiteCastleKing || whiteCastleQueen) {
 			switch ((int) fromSquare) {
 			case 4:

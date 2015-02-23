@@ -261,7 +261,6 @@ public class ChessBoard {
 				if (isValid) {
 
 					System.out.println("en passant reset");
-					enPassantSquare = 0;
 
 					// switch statement to update special conditions
 					switch (tempBoard[(int) toSquare % 8][(int) toSquare / 8]) {
@@ -281,7 +280,7 @@ public class ChessBoard {
 								whiteCastleKing = false;
 							}
 						}
-
+						enPassantSquare = 0;
 						break;
 
 					// castling check
@@ -300,6 +299,7 @@ public class ChessBoard {
 							}
 
 						}
+						enPassantSquare = 0;
 						break;
 
 					// castling check
@@ -309,6 +309,7 @@ public class ChessBoard {
 						} else if (fromSquare == 7) {
 							whiteCastleKing = false;
 						}
+						enPassantSquare = 0;
 						break;
 
 					// castling check
@@ -318,6 +319,7 @@ public class ChessBoard {
 						} else if (fromSquare == 63) {
 							blackCastleKing = false;
 						}
+						enPassantSquare = 0;
 						break;
 
 					case 'P':
@@ -328,6 +330,12 @@ public class ChessBoard {
 										+ enPassantSquare);
 							}
 						}
+						System.out.println(toSquare);
+						System.out.println(enPassantSquare);
+						if (toSquare == enPassantSquare) {
+							tempBoard[(int) (enPassantSquare - 8) % 8][(int) (enPassantSquare - 8) / 8] = ' ';
+						}
+
 						break;
 
 					case 'p':
@@ -338,19 +346,30 @@ public class ChessBoard {
 										+ enPassantSquare);
 							}
 						}
+						if (toSquare == enPassantSquare) {
+							tempBoard[(int) (enPassantSquare + 8) % 8][(int) (enPassantSquare + 8) / 8] = ' ';
+						}
+						break;
+
+					default:
+						enPassantSquare = 0;
 						break;
 					}
-
-					// TODO: add en passant check here
 
 					currentBoard = tempBoard;
 					updateBitboards();
 					whiteToMove = !whiteToMove;
 
+					// TODO: Draw by repetition check should happen here at some
+					// point. Checkmate rule is incorrect and needs to check if
+					// the king is in check!!!
 					if (isCheckmate()) {
 						System.out.println("Checkmate!");
 						updateBitboards();
 						return 2;
+					} else if (isStalemate()) {
+						System.out.println("Stalemate");
+						return 3;
 					} else {
 						System.out.println("Normal move");
 						updateBitboards();
@@ -406,6 +425,10 @@ public class ChessBoard {
 			return generateBlackLegalMoves().size() == 0;
 		}
 
+	}
+
+	private boolean isStalemate() {
+		return false;
 	}
 
 	/**

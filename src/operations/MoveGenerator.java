@@ -479,15 +479,15 @@ public class MoveGenerator {
 			// move
 			long possiblePieceMoveBitboard = (nextKnightBitboard ^ nextMove)
 					^ blackKnights;
-			boolean isValid = BoardManager.IsSelfCheck(blackPawns, blackRooks,
-					possiblePieceMoveBitboard, blackBishops, blackQueens,
-					blackKing, (whitePawns ^ possiblePieceMoveBitboard)
-							& whitePawns,
+			boolean isValid = BoardManager.IsSelfCheck(
+					(whitePawns ^ possiblePieceMoveBitboard) & whitePawns,
 					(whiteRooks ^ possiblePieceMoveBitboard) & whiteRooks,
 					(whiteKnights ^ possiblePieceMoveBitboard) & whiteKnights,
 					(whiteBishops ^ possiblePieceMoveBitboard) & whiteBishops,
 					(whiteQueens ^ possiblePieceMoveBitboard) & whiteQueens,
-					whiteKing, false);
+					whiteKing, blackPawns, blackRooks,
+					possiblePieceMoveBitboard, blackBishops, blackQueens,
+					blackKing, false);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextKnightBitboard)
@@ -526,15 +526,14 @@ public class MoveGenerator {
 			// move
 			long possiblePieceMoveBitboard = (nextBishopBitboard ^ nextMove)
 					^ blackBishops;
-			boolean isValid = BoardManager.IsSelfCheck(blackPawns, blackRooks,
-					blackKnights, possiblePieceMoveBitboard, blackQueens,
-					blackKing, (whitePawns ^ possiblePieceMoveBitboard)
-							& whitePawns,
+			boolean isValid = BoardManager.IsSelfCheck(
+					(whitePawns ^ possiblePieceMoveBitboard) & whitePawns,
 					(whiteRooks ^ possiblePieceMoveBitboard) & whiteRooks,
 					(whiteKnights ^ possiblePieceMoveBitboard) & whiteKnights,
 					(whiteBishops ^ possiblePieceMoveBitboard) & whiteBishops,
 					(whiteQueens ^ possiblePieceMoveBitboard) & whiteQueens,
-					whiteKing, false);
+					whiteKing, blackPawns, blackRooks, blackKnights,
+					possiblePieceMoveBitboard, blackQueens, blackKing, false);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextBishopBitboard)
@@ -572,15 +571,14 @@ public class MoveGenerator {
 			// move
 			long possiblePieceMoveBitboard = (nextQueenBitboard ^ nextMove)
 					^ blackQueens;
-			boolean isValid = BoardManager.IsSelfCheck(blackPawns, blackRooks,
-					blackKnights, blackBishops, possiblePieceMoveBitboard,
-					blackKing, (whitePawns ^ possiblePieceMoveBitboard)
-							& whitePawns,
+			boolean isValid = BoardManager.IsSelfCheck(
+					(whitePawns ^ possiblePieceMoveBitboard) & whitePawns,
 					(whiteRooks ^ possiblePieceMoveBitboard) & whiteRooks,
 					(whiteKnights ^ possiblePieceMoveBitboard) & whiteKnights,
 					(whiteBishops ^ possiblePieceMoveBitboard) & whiteBishops,
 					(whiteQueens ^ possiblePieceMoveBitboard) & whiteQueens,
-					whiteKing, false);
+					whiteKing, blackPawns, blackRooks, blackKnights,
+					blackBishops, possiblePieceMoveBitboard, blackKing, false);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextQueenBitboard).length() - 1;
@@ -616,15 +614,14 @@ public class MoveGenerator {
 			// move
 			long possiblePieceMoveBitboard = (nextRookBitboard ^ nextMove)
 					^ blackRooks;
-			boolean isValid = BoardManager.IsSelfCheck(blackPawns,
-					possiblePieceMoveBitboard, blackKnights, blackBishops,
-					blackQueens, blackKing,
+			boolean isValid = BoardManager.IsSelfCheck(
 					(whitePawns ^ possiblePieceMoveBitboard) & whitePawns,
 					(whiteRooks ^ possiblePieceMoveBitboard) & whiteRooks,
 					(whiteKnights ^ possiblePieceMoveBitboard) & whiteKnights,
 					(whiteBishops ^ possiblePieceMoveBitboard) & whiteBishops,
 					(whiteQueens ^ possiblePieceMoveBitboard) & whiteQueens,
-					whiteKing, false);
+					whiteKing, blackPawns, possiblePieceMoveBitboard,
+					blackKnights, blackBishops, blackQueens, blackKing, false);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextRookBitboard).length() - 1;
@@ -661,14 +658,13 @@ public class MoveGenerator {
 			long possiblePieceMoveBitboard = (nextPawnBitboard ^ nextMove)
 					^ blackPawns;
 			boolean isValid = BoardManager.IsSelfCheck(
-					possiblePieceMoveBitboard, blackRooks, blackKnights,
-					blackBishops, blackQueens, blackKing,
 					(whitePawns ^ possiblePieceMoveBitboard) & whitePawns,
 					(whiteRooks ^ possiblePieceMoveBitboard) & whiteRooks,
 					(whiteKnights ^ possiblePieceMoveBitboard) & whiteKnights,
 					(whiteBishops ^ possiblePieceMoveBitboard) & whiteBishops,
 					(whiteQueens ^ possiblePieceMoveBitboard) & whiteQueens,
-					whiteKing, false);
+					whiteKing, possiblePieceMoveBitboard, blackRooks,
+					blackKnights, blackBishops, blackQueens, blackKing, false);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextPawnBitboard).length() - 1;
@@ -704,15 +700,19 @@ public class MoveGenerator {
 			// move
 			long possiblePieceMoveBitboard = (nextKingBitboard ^ nextMove)
 					^ blackKing;
-			boolean isValid = BoardManager.IsSelfCheck(blackPawns, blackRooks,
-					blackKnights, blackBishops, blackQueens,
-					possiblePieceMoveBitboard,
-					(whitePawns ^ possiblePieceMoveBitboard) & whitePawns,
-					(whiteRooks ^ possiblePieceMoveBitboard) & whiteRooks,
-					(whiteKnights ^ possiblePieceMoveBitboard) & whiteKnights,
-					(whiteBishops ^ possiblePieceMoveBitboard) & whiteBishops,
-					(whiteQueens ^ possiblePieceMoveBitboard) & whiteQueens,
-					whiteKing, false);
+			boolean isValid = BoardManager
+					.IsSelfCheck((whitePawns ^ possiblePieceMoveBitboard)
+							& whitePawns,
+							(whiteRooks ^ possiblePieceMoveBitboard)
+									& whiteRooks,
+							(whiteKnights ^ possiblePieceMoveBitboard)
+									& whiteKnights,
+							(whiteBishops ^ possiblePieceMoveBitboard)
+									& whiteBishops,
+							(whiteQueens ^ possiblePieceMoveBitboard)
+									& whiteQueens, whiteKing, blackPawns,
+							blackRooks, blackKnights, blackBishops,
+							blackQueens, possiblePieceMoveBitboard, false);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(currentBoard);
 				int fromCoord = Long.toBinaryString(nextKingBitboard).length() - 1;

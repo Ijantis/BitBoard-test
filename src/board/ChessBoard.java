@@ -49,13 +49,16 @@ public class ChessBoard {
 		long timeNano = System.nanoTime();
 
 		updateBitboards();
-		newGameFromFEN("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1");
-		System.out.println(generateWhiteLegalMoves().size());
-		Vector<char[][]> temp = generateWhiteLegalMoves();
-		// while (!temp.isEmpty()) {
-		// printBoard(temp.get(0));
-		// temp.remove(0);
-		// }
+		newGameFromFEN("8/8/3K4/3Nn3/3nN3/4k3/8/8 b - - 0 1");
+		System.out.println(generateBlackLegalMoves().size());
+		
+		Vector<char[][]> temp = generateBlackLegalMoves();
+		
+		while (!temp.isEmpty()) {
+			currentBoard = temp.get(0);
+			printBoard();
+			temp.remove(0);
+		}
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");

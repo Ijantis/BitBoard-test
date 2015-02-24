@@ -48,17 +48,8 @@ public class ChessBoard {
 		long time = System.currentTimeMillis();
 		long timeNano = System.nanoTime();
 
+		printBoard();
 		updateBitboards();
-		newGameFromFEN("8/8/3K4/3Nn3/3nN3/4k3/8/8 b - - 0 1");
-		System.out.println(generateBlackLegalMoves().size());
-		
-		Vector<char[][]> temp = generateBlackLegalMoves();
-		
-		while (!temp.isEmpty()) {
-			currentBoard = temp.get(0);
-			printBoard();
-			temp.remove(0);
-		}
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -264,8 +255,6 @@ public class ChessBoard {
 				// If the move is going to be made this if statement is entered.
 				if (isValid) {
 
-					System.out.println("en passant reset");
-
 					// switch statement to update special conditions
 					switch (tempBoard[(int) toSquare % 8][(int) toSquare / 8]) {
 
@@ -330,14 +319,15 @@ public class ChessBoard {
 						if (fromSquare >= 8 && fromSquare <= 15) {
 							if (toSquare - 16 == fromSquare) {
 								enPassantSquare = fromSquare + 8;
-								System.out.println("en passant square is "
-										+ enPassantSquare);
 							}
 						}
-						System.out.println(toSquare);
-						System.out.println(enPassantSquare);
 						if (toSquare == enPassantSquare) {
 							tempBoard[(int) (enPassantSquare - 8) % 8][(int) (enPassantSquare - 8) / 8] = ' ';
+						}
+
+						// pawn promotion
+						if (fromSquare >= 48) {
+							tempBoard[(int) toSquare % 8][(int) toSquare / 8] = 'Q';
 						}
 
 						break;
@@ -346,12 +336,13 @@ public class ChessBoard {
 						if (fromSquare >= 45 && fromSquare <= 55) {
 							if (toSquare + 16 == fromSquare) {
 								enPassantSquare = fromSquare - 8;
-								System.out.println("en passant square is "
-										+ enPassantSquare);
 							}
 						}
 						if (toSquare == enPassantSquare) {
 							tempBoard[(int) (enPassantSquare + 8) % 8][(int) (enPassantSquare + 8) / 8] = ' ';
+						}
+						if (fromSquare <= 15) {
+							tempBoard[(int) toSquare % 8][(int) toSquare / 8] = 'q';
 						}
 						break;
 

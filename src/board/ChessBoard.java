@@ -11,6 +11,7 @@ import operations.WhiteMoveGeneratorThread;
 import operations.pieces.BlackPieces;
 import operations.pieces.WhitePieces;
 import other.FENLoader;
+import other.HashGenerator;
 import ai.evaluation.Evaluator;
 
 public class ChessBoard {
@@ -48,8 +49,8 @@ public class ChessBoard {
 		long time = System.currentTimeMillis();
 		long timeNano = System.nanoTime();
 
-		printBoard();
-		updateBitboards();
+		newGame();
+		testMethod();
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -728,46 +729,71 @@ public class ChessBoard {
 		Vector<char[][]> secondMove = new Vector<char[][]>();
 		Vector<char[][]> thirdMove = new Vector<char[][]>();
 		Vector<char[][]> fourthMove = new Vector<char[][]>();
+		Vector<String> firstHash = new Vector<String>();
+		Vector<String> thirdHash = new Vector<String>();
 
 		int firstSize, secondSize, thirdSize, fourthSize;
 
 		firstSize = firstMove.size();
+		System.out.println(firstSize);
 		while (!firstMove.isEmpty()) {
 			currentBoard = firstMove.get(0);
+			firstHash.add(HashGenerator.generatePositionHash(currentBoard));
 			updateBitboards();
-			secondMove.addAll(generateWhiteLegalMoves());
+			secondMove.addAll(generateBlackLegalMoves());
 			firstMove.remove(0);
 		}
 
 		secondSize = secondMove.size();
+		System.out.println(secondSize);
 		serialList = (Vector<char[][]>) secondMove.clone();
 		while (!secondMove.isEmpty()) {
 			currentBoard = secondMove.get(0);
-			thirdMove.addAll(generateWhiteLegalMoves());
 			updateBitboards();
+			thirdMove.addAll(generateWhiteLegalMoves());
 			secondMove.remove(0);
 		}
 
 		thirdSize = thirdMove.size();
+		System.out.println(thirdSize);
 		while (!thirdMove.isEmpty()) {
 			currentBoard = thirdMove.get(0);
-			// fourthMove.addAll(generateBlackLegalMoves());
+			thirdHash.add(HashGenerator.generatePositionHash(currentBoard));
 			updateBitboards();
-			// printBoard();
+			// fourthMove.addAll(generateBlackLegalMoves());
 			thirdMove.remove(0);
 		}
 
+		String temp;
+		for (int i = 0; i < thirdHash.size(); i++) {
+			temp = thirdHash.get(i);
+			for (int j = i + 1; j < thirdHash.size(); j++) {
+				if (thirdHash.get(j).equals(temp)) {
+					thirdHash.remove(j);
+					j--;
+				}
+			}
+		}
+		System.out.println(thirdHash.size());
+
+		for (int i = 0; i < firstHash.size(); i++) {
+			temp = firstHash.get(i);
+			for (int j = i + 1; j < firstHash.size(); j++) {
+				if (firstHash.get(j).equals(temp)) {
+					firstHash.remove(j);
+					j--;
+				}
+			}
+		}
+
+		System.out.println(firstHash.size());
+
+		while (!firstHash.isEmpty()) {
+			System.out.println(firstHash.get(0));
+			firstHash.remove(0);
+		}
+
 		fourthSize = fourthMove.size();
-		// while (!fourthMove.isEmpty()) {
-		// currentBoard = fourthMove.get(0);
-		// updateBitboards();
-		// // printBoard();
-		// fourthMove.remove(0);
-		// }
-		System.out.println(firstSize);
-		System.out.println(secondSize);
-		System.out.println(thirdSize);
-		System.out.println(fourthSize);
 	}
 
 	/*

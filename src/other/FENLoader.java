@@ -144,4 +144,41 @@ public class FENLoader {
 	public static int getFullMoves(String string) {
 		return Integer.parseInt(string);
 	}
+
+	public static long getEnPassantSquare(String next) {
+
+		long enPassantSquare = 0;
+
+		if (next.equals("-")) {
+			return 0;
+		}
+
+		switch (next.charAt(0)) {
+		case 'b':
+			enPassantSquare += 1;
+			break;
+		case 'c':
+			enPassantSquare += 2;
+			break;
+		case 'd':
+			enPassantSquare += 3;
+			break;
+		case 'e':
+			enPassantSquare += 4;
+			break;
+		case 'f':
+			enPassantSquare += 5;
+			break;
+		case 'g':
+			enPassantSquare += 6;
+			break;
+		case 'h':
+			enPassantSquare += 7;
+			break;
+		}
+
+		enPassantSquare += (Long.parseLong(next.charAt(1) + "") - 1) * 8;
+		System.out.println(enPassantSquare);
+		return enPassantSquare;
+	}
 }

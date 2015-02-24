@@ -49,12 +49,13 @@ public class ChessBoard {
 		long timeNano = System.nanoTime();
 
 		updateBitboards();
-		makeMove(12, 28);
-		makeMove(55, 47);
-		makeMove(28, 36);
-		makeMove(51, 35);
-		makeMove(36, 43);
-		printBoard();
+		newGameFromFEN("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1");
+		System.out.println(generateWhiteLegalMoves().size());
+		Vector<char[][]> temp = generateWhiteLegalMoves();
+		// while (!temp.isEmpty()) {
+		// printBoard(temp.get(0));
+		// temp.remove(0);
+		// }
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -795,7 +796,7 @@ public class ChessBoard {
 		blackCastleQueen = castlingPermissions[3];
 
 		// TODO: implement en passant
-		fenScanner.next();
+		enPassantSquare = FENLoader.getEnPassantSquare(fenScanner.next());
 
 		numberOfHalfMoves = FENLoader.getHalfMoves(fenScanner.next());
 		numberOfFullMoves = FENLoader.getFullMoves(fenScanner.next());

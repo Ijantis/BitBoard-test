@@ -70,8 +70,8 @@ public class MoveGenerator {
 		temp = whiteQueens;
 		while (temp != 0) {
 			long nextQueen = Long.highestOneBit(temp);
-			long bitboardOfMoves = WhitePieces.getQueenMoves(nextQueen, whitePieces
-					| blackPieces, whitePieces);
+			long bitboardOfMoves = WhitePieces.getQueenMoves(nextQueen,
+					whitePieces | blackPieces, whitePieces);
 			possibleStates.addAll(whiteQueenMoves(nextQueen, bitboardOfMoves,
 					whitePawns, whiteRooks, whiteKnights, whiteBishops,
 					whiteQueens, blackPawns, blackRooks, blackKnights,
@@ -428,7 +428,7 @@ public class MoveGenerator {
 		temp = blackQueens;
 		while (temp != 0) {
 			long nextQueen = Long.highestOneBit(temp);
-			long bitboardOfMoves = BlackPieces.getQueenMoves(blackQueens,
+			long bitboardOfMoves = BlackPieces.getQueenMoves(nextQueen,
 					blackPieces | whitePieces, blackPieces);
 			possibleStates.addAll(blackQueenMoves(nextQueen, bitboardOfMoves,
 					whitePawns, whiteRooks, whiteKnights, whiteBishops,

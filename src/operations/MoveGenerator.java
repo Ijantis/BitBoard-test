@@ -28,7 +28,7 @@ public class MoveGenerator {
 
 			long nextPawn = Long.highestOneBit(temp);
 			long bitboardOfMoves = WhitePieces.getPawnMoves(nextPawn,
-					whitePieces | blackPieces, blackPieces,enPassantSquare);
+					whitePieces | blackPieces, blackPieces, enPassantSquare);
 			possibleStates.addAll(whitePawnMoves(nextPawn, bitboardOfMoves,
 					whitePawns, whiteRooks, whiteKnights, whiteBishops,
 					whiteQueens, blackPawns, blackRooks, blackKnights,
@@ -70,7 +70,7 @@ public class MoveGenerator {
 		temp = whiteQueens;
 		while (temp != 0) {
 			long nextQueen = Long.highestOneBit(temp);
-			long bitboardOfMoves = WhitePieces.getQueenMoves(temp, whitePieces
+			long bitboardOfMoves = WhitePieces.getQueenMoves(nextQueen, whitePieces
 					| blackPieces, whitePieces);
 			possibleStates.addAll(whiteQueenMoves(nextQueen, bitboardOfMoves,
 					whitePawns, whiteRooks, whiteKnights, whiteBishops,
@@ -388,7 +388,7 @@ public class MoveGenerator {
 		while (temp != 0) {
 			long nextPawn = Long.highestOneBit(temp);
 			long bitboardOfMoves = BlackPieces.getPawnMoves(nextPawn,
-					blackPieces | whitePieces, whitePieces,enPassantSquare);
+					blackPieces | whitePieces, whitePieces, enPassantSquare);
 			possibleStates.addAll(blackPawnMoves(nextPawn, bitboardOfMoves,
 					whitePawns, whiteRooks, whiteKnights, whiteBishops,
 					whiteQueens, blackPawns, blackRooks, blackKnights,
@@ -753,7 +753,7 @@ public class MoveGenerator {
 					stringBitBoard.substring(i * 8, ((i + 1) * 8)));
 			stringReverser.reverse();
 			for (int j = 0; j < stringReverser.toString().length(); j++) {
-				System.out.print(stringReverser.toString().charAt(j) + ' ');
+				System.out.print(stringReverser.toString().charAt(j) + " ");
 			}
 			System.out.println();
 		}

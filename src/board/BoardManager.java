@@ -33,9 +33,6 @@ public class BoardManager {
 		if (checkForWhite) {
 			return (whiteKing & getBlackAttackingSquares()) == 0;
 		} else {
-			// printBitboard(blackKing);
-			// printBitboard(getWhiteAttackingSquares());
-			// printBitboard(blackKing & getWhiteAttackingSquares());
 			return (blackKing & getWhiteAttackingSquares()) == 0;
 		}
 

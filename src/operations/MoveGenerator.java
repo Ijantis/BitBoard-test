@@ -231,7 +231,6 @@ public class MoveGenerator {
 
 			}
 
-			// printBitboard((nextKnightBitboard ^ nextMove) ^ whiteKnights);
 			possibleMovesBitboard = Long.highestOneBit(possibleMovesBitboard)
 					- 1 & possibleMovesBitboard;
 		}
@@ -519,8 +518,6 @@ public class MoveGenerator {
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
 			nextMove = Long.highestOneBit(possibleMovesBitboard);
-			// System.out.println("NEXT MOVE");
-			// printBitboard(nextMove);
 
 			// this is the bitboard after having moved the piece to the next
 			// move
@@ -547,7 +544,6 @@ public class MoveGenerator {
 
 			}
 
-			// printBitboard((nextKnightBitboard ^ nextMove) ^ whiteKnights);
 			possibleMovesBitboard = Long.highestOneBit(possibleMovesBitboard)
 					- 1 & possibleMovesBitboard;
 		}
@@ -693,8 +689,6 @@ public class MoveGenerator {
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
 			nextMove = Long.highestOneBit(possibleMovesBitboard);
-			// System.out.println("NEXT MOVE");
-			// printBitboard(nextMove);
 
 			// this is the bitboard after having moved the piece to the next
 			// move

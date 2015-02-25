@@ -34,14 +34,14 @@ public class ChessBoard {
 	// Lower case for BLACK
 	// 0,0 is top left 0,7 is top right 7,7 bottom right
 	private char[][] currentBoard = {
-			{ 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' },
-			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', ' ' },
-			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', ' ' },
-			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', ' ' },
-			{ 'K', 'P', ' ', ' ', ' ', ' ', 'p', 'k' },
-			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', ' ' },
-			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', ' ' },
-			{ 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' } };;
+			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
+			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
+			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
+			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
+			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'k' },
+			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
+			{ ' ', ' ', ' ', ' ', ' ', ' ', 'q', ' ' },
+			{ 'K', ' ', ' ', ' ', ' ', ' ', ' ', ' ' } };;
 
 	Vector<char[][]> threadedList;
 	Vector<char[][]> serialList;
@@ -50,8 +50,11 @@ public class ChessBoard {
 		long time = System.currentTimeMillis();
 		long timeNano = System.nanoTime();
 
-		newGame();
-		testMethod();
+		updateBitboards();
+		removeCastlingRights();
+		whiteToMove = !whiteToMove;
+		makeMove(54, 22);
+		printBoard();
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -374,15 +377,20 @@ public class ChessBoard {
 					whiteToMove = !whiteToMove;
 
 					// TODO: Draw by repetition check should happen here at some
-					// point. Checkmate rule is incorrect and needs to check if
-					// the king is in check!!!
+					// point.
 					if (isCheckmate()) {
 						System.out.println("Checkmate!");
 						updateBitboards();
-						return 2;
+						if (whiteToMove) {
+							System.out.println("Black wins");
+							return 2;
+						} else {
+							System.out.println("White wins");
+							return 3;
+						}
 					} else if (isStalemate()) {
 						System.out.println("Stalemate");
-						return 3;
+						return 4;
 					} else {
 						System.out.println("Normal move");
 						updateBitboards();
@@ -433,15 +441,24 @@ public class ChessBoard {
 	private boolean isCheckmate() {
 
 		if (whiteToMove) {
-			return generateWhiteLegalMoves().size() == 0;
+			return (generateWhiteLegalMoves().size() == 0)
+					&& ((whiteKing & getBlackAttackingSquares()) != 0);
 		} else {
-			return generateBlackLegalMoves().size() == 0;
+			return (generateBlackLegalMoves().size() == 0)
+					&& ((blackKing & getWhiteAttackingSquares()) != 0);
 		}
 
 	}
 
 	private boolean isStalemate() {
-		return false;
+
+		if (whiteToMove) {
+			return (generateWhiteLegalMoves().size() == 0)
+					&& ((whiteKing & getBlackAttackingSquares()) == 0);
+		} else {
+			return (generateBlackLegalMoves().size() == 0)
+					&& ((blackKing & getWhiteAttackingSquares()) == 0);
+		}
 	}
 
 	/**
@@ -847,4 +864,10 @@ public class ChessBoard {
 		return currentBoard;
 	}
 
+	private void removeCastlingRights() {
+		whiteCastleKing = false;
+		whiteCastleQueen = false;
+		blackCastleKing = false;
+		blackCastleQueen = false;
+	}
 }

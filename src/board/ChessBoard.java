@@ -11,7 +11,8 @@ import operations.WhiteMoveGeneratorThread;
 import operations.pieces.BlackPieces;
 import operations.pieces.WhitePieces;
 import other.FENLoader;
-import other.HashGenerator;
+//import other.HashGenerator;
+import ai.Engine;
 import ai.evaluation.Evaluator;
 
 public class ChessBoard {
@@ -203,6 +204,22 @@ public class ChessBoard {
 		numberOfHalfMoves = 0;
 
 		updateBitboards();
+
+	}
+
+	public Gamestate createGamestate() {
+
+		return new Gamestate(currentBoard, whitePawns, whiteRooks,
+				whiteKnights, whiteBishops, whiteQueens, whiteKing, blackPawns,
+				blackRooks, blackKnights, blackBishops, blackQueens, blackKing,
+				whiteToMove, whiteToMove, whiteCastleKing, whiteCastleQueen,
+				blackCastleKing, blackCastleQueen, enPassantSquare,
+				numberOfFullMoves, numberOfHalfMoves);
+	}
+
+	public void makeAIMove(int difficulty, boolean playingWhite) {
+
+		Engine.makeMove(difficulty, playingWhite, createGamestate());
 
 	}
 

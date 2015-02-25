@@ -1,5 +1,6 @@
 package ai;
 
+import java.util.Random;
 import java.util.Vector;
 
 import board.Gamestate;
@@ -30,32 +31,51 @@ public class Engine {
 		Vector<char[][]> listOfMoves = new Vector<char[][]>();
 
 		if (playingWhite) {
-			listOfMoves = 
+			listOfMoves = generateWhiteLegalMoves(gamestate);
+		} else {
+			listOfMoves = generateBlackLegalMoves(gamestate);
 		}
-		
-		
-		
-		return null;
+
+		Random myRandom = new Random();
+		return listOfMoves.get(myRandom.nextInt(listOfMoves.size()));
 
 	}
 
-	private Vector<char[][]> generateWhiteLegalMoves() {
+	private static Vector<char[][]> generateWhiteLegalMoves(Gamestate gamestate) {
 
-		return MoveGenerator.generateWhiteLegalMoves(currentBoard, whitePawns,
-				whiteRooks, whiteKnights, whiteBishops, whiteQueens, whiteKing,
-				getBlackPieces(), getWhitePieces(), getBlackAttackingSquares(),
-				blackPawns, blackRooks, blackKnights, blackBishops,
-				blackQueens, blackKing, whiteCastleKing, whiteCastleQueen,
-				enPassantSquare);
+		return MoveGenerator
+				.generateWhiteLegalMoves(gamestate.getCurrentBoard(),
+						gamestate.getWhitePawns(), gamestate.getWhiteRooks(),
+						gamestate.getWhiteKnights(),
+						gamestate.getWhiteBishops(),
+						gamestate.getWhiteQueens(), gamestate.getWhiteKing(),
+						gamestate.getBlackPieces(), gamestate.getWhitePieces(),
+						gamestate.getBlackAttackingSquares(),
+						gamestate.getBlackPawns(), gamestate.getBlackRooks(),
+						gamestate.getBlackKnights(),
+						gamestate.getBlackBishops(),
+						gamestate.getBlackQueens(), gamestate.getBlackKing(),
+						gamestate.canWhiteCastleKing(),
+						gamestate.canWhiteCastleQueen(),
+						gamestate.getEnPassantSquare());
 	}
 
-	private Vector<char[][]> generateBlackLegalMoves() {
-		return MoveGenerator.generateBlackLegalMoves(currentBoard, whitePawns,
-				whiteRooks, whiteKnights, whiteBishops, whiteQueens, whiteKing,
-				getBlackPieces(), getWhitePieces(), getWhiteAttackingSquares(),
-				blackPawns, blackRooks, blackKnights, blackBishops,
-				blackQueens, blackKing, blackCastleKing, blackCastleQueen,
-				enPassantSquare);
+	private static Vector<char[][]> generateBlackLegalMoves(Gamestate gamestate) {
+		return MoveGenerator
+				.generateBlackLegalMoves(gamestate.getCurrentBoard(),
+						gamestate.getWhitePawns(), gamestate.getWhiteRooks(),
+						gamestate.getWhiteKnights(),
+						gamestate.getWhiteBishops(),
+						gamestate.getWhiteQueens(), gamestate.getWhiteKing(),
+						gamestate.getBlackPieces(), gamestate.getWhitePieces(),
+						gamestate.getWhiteAttackingSquares(),
+						gamestate.getBlackPawns(), gamestate.getBlackRooks(),
+						gamestate.getBlackKnights(),
+						gamestate.getBlackBishops(),
+						gamestate.getBlackQueens(), gamestate.getBlackKing(),
+						gamestate.canBlackCastleKing(),
+						gamestate.canBlackCastleQueen(),
+						gamestate.getEnPassantSquare());
 	}
 
 }

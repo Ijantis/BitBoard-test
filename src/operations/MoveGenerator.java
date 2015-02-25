@@ -765,7 +765,7 @@ public class MoveGenerator {
 				if (temp == ' ') {
 					System.out.print(", ");
 				} else {
-					System.out.print(board[x][y] + ' ');
+					System.out.print(board[x][y] + " ");
 				}
 			}
 			System.out.println();

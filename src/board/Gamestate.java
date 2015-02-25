@@ -19,6 +19,8 @@ public class Gamestate {
 	private int numberOfHalfMoves = 0;
 	private char[][] currentBoard;
 
+	private long whiteAttackingSquares, blackAttackingSquares;
+
 	private long whitePawns, whiteRooks, whiteKnights, whiteBishops,
 			whiteQueens, whiteKing;
 	private long blackPawns, blackRooks, blackKnights, blackBishops,
@@ -31,7 +33,8 @@ public class Gamestate {
 			long blackKing, boolean whiteToMove, boolean whiteToMove3,
 			boolean whiteCastleKing, boolean whiteCastleQueen,
 			boolean blackCastleKing, boolean blackCastleQueen,
-			long enPassantSquare, int numberOfFullMoves, int numberOfHalfMoves) {
+			long enPassantSquare, int numberOfFullMoves, int numberOfHalfMoves,
+			long whiteAttackingSquares, long blackAttackingSquares) {
 
 		this.whitePawns = whitePawns;
 		this.whiteRooks = whiteRooks;
@@ -56,6 +59,11 @@ public class Gamestate {
 		this.enPassantSquare = enPassantSquare;
 		this.numberOfFullMoves = numberOfFullMoves;
 		this.numberOfHalfMoves = numberOfHalfMoves;
+
+		this.whiteAttackingSquares = whiteAttackingSquares;
+		this.blackAttackingSquares = blackAttackingSquares;
+		
+		this.currentBoard = currentBoard;
 	}
 
 	public long getWhitePawns() {
@@ -140,6 +148,24 @@ public class Gamestate {
 
 	public char[][] getCurrentBoard() {
 		return currentBoard;
+	}
+
+	public long getBlackPieces() {
+		return (blackBishops | blackKing | blackKnights | blackPawns
+				| blackQueens | blackRooks);
+	}
+
+	public long getWhitePieces() {
+		return (whiteBishops | whiteKing | whiteKnights | whitePawns
+				| whiteQueens | whiteRooks);
+	}
+
+	public long getBlackAttackingSquares() {
+		return blackAttackingSquares;
+	}
+
+	public long getWhiteAttackingSquares() {
+		return whiteAttackingSquares;
 	}
 
 }

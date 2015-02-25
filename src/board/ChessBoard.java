@@ -50,10 +50,9 @@ public class ChessBoard {
 		long time = System.currentTimeMillis();
 		long timeNano = System.nanoTime();
 
-		updateBitboards();
-		removeCastlingRights();
-		whiteToMove = !whiteToMove;
-		makeMove(54, 22);
+		newGame();
+		makeMove(12, 20);
+		makeAIMove(Engine.AI_RANDOM, false);
 		printBoard();
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
@@ -184,11 +183,11 @@ public class ChessBoard {
 		currentBoard[6][7] = 'n';
 		currentBoard[7][7] = 'r';
 
-		for (int x = 0; x < 7; x++) {
+		for (int x = 0; x < 8; x++) {
 			currentBoard[x][1] = 'P';
 		}
 
-		for (int x = 0; x < 7; x++) {
+		for (int x = 0; x < 8; x++) {
 			currentBoard[x][6] = 'p';
 		}
 
@@ -212,17 +211,20 @@ public class ChessBoard {
 
 	public Gamestate createGamestate() {
 
-		return new Gamestate(currentBoard, whitePawns, whiteRooks,
+		return new Gamestate(copyCurrentBoard(), whitePawns, whiteRooks,
 				whiteKnights, whiteBishops, whiteQueens, whiteKing, blackPawns,
 				blackRooks, blackKnights, blackBishops, blackQueens, blackKing,
 				whiteToMove, whiteToMove, whiteCastleKing, whiteCastleQueen,
 				blackCastleKing, blackCastleQueen, enPassantSquare,
-				numberOfFullMoves, numberOfHalfMoves);
+				numberOfFullMoves, numberOfHalfMoves,
+				getWhiteAttackingSquares(), getBlackAttackingSquares());
 	}
 
 	public void makeAIMove(int difficulty, boolean playingWhite) {
 
-		Engine.makeMove(difficulty, playingWhite, createGamestate());
+		currentBoard = Engine.makeMove(difficulty, playingWhite,
+				createGamestate());
+		updateBitboards();
 
 	}
 
@@ -869,5 +871,16 @@ public class ChessBoard {
 		whiteCastleQueen = false;
 		blackCastleKing = false;
 		blackCastleQueen = false;
+	}
+
+	private static char[][] copyCurrentBoard(char[][] currentBoard) {
+		char[][] temp = new char[currentBoard.length][currentBoard.length];
+
+		for (int x = 0; x < temp.length; x++) {
+			for (int y = 0; y < temp.length; y++) {
+				temp[x][y] = currentBoard[x][y];
+			}
+		}
+		return temp;
 	}
 }

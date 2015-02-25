@@ -9,11 +9,8 @@ package board;
  */
 public class Gamestate {
 
-	private boolean whiteToMove = true;
-	private boolean whiteCastleKing = true;
-	private boolean whiteCastleQueen = true;
-	private boolean blackCastleKing = true;
-	private boolean blackCastleQueen = true;
+	private boolean whiteToMove, whiteCastleKing, whiteCastleQueen,
+			blackCastleKing, blackCastleQueen;
 	private long enPassantSquare = 0;
 	private int numberOfFullMoves = 1;
 	private int numberOfHalfMoves = 0;
@@ -30,10 +27,10 @@ public class Gamestate {
 			long whiteKnights, long whiteBishops, long whiteQueens,
 			long whiteKing, long blackPawns, long blackRooks,
 			long blackKnights, long blackBishops, long blackQueens,
-			long blackKing, boolean whiteToMove, boolean whiteToMove3,
-			boolean whiteCastleKing, boolean whiteCastleQueen,
-			boolean blackCastleKing, boolean blackCastleQueen,
-			long enPassantSquare, int numberOfFullMoves, int numberOfHalfMoves,
+			long blackKing, boolean whiteToMove, boolean whiteCastleKing,
+			boolean whiteCastleQueen, boolean blackCastleKing,
+			boolean blackCastleQueen, long enPassantSquare,
+			int numberOfFullMoves, int numberOfHalfMoves,
 			long whiteAttackingSquares, long blackAttackingSquares) {
 
 		this.whitePawns = whitePawns;
@@ -62,7 +59,7 @@ public class Gamestate {
 
 		this.whiteAttackingSquares = whiteAttackingSquares;
 		this.blackAttackingSquares = blackAttackingSquares;
-		
+
 		this.currentBoard = currentBoard;
 	}
 
@@ -168,4 +165,7 @@ public class Gamestate {
 		return whiteAttackingSquares;
 	}
 
+	public long getOccupiedSquares() {
+		return getWhitePieces() | getBlackPieces();
+	}
 }

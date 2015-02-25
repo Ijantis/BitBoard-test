@@ -40,8 +40,8 @@ public class ChessBoard {
 			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
 			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'k' },
 			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-			{ ' ', ' ', ' ', ' ', ' ', ' ', 'q', ' ' },
-			{ 'K', ' ', ' ', ' ', ' ', ' ', ' ', ' ' } };;
+			{ 'r', 'r', ' ', ' ', ' ', ' ', ' ', ' ' },
+			{ 'Q', 'r', ' ', ' ', ' ', ' ', ' ', ' ' } };;
 
 	Vector<char[][]> threadedList;
 	Vector<char[][]> serialList;
@@ -51,9 +51,8 @@ public class ChessBoard {
 		long timeNano = System.nanoTime();
 
 		newGame();
-		makeMove(12, 20);
-		makeAIMove(Engine.AI_RANDOM, false);
-		printBoard();
+
+		testMethod();
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -145,22 +144,13 @@ public class ChessBoard {
 	}
 
 	private Vector<char[][]> generateWhiteLegalMoves() {
-
-		return MoveGenerator.generateWhiteLegalMoves(currentBoard, whitePawns,
-				whiteRooks, whiteKnights, whiteBishops, whiteQueens, whiteKing,
-				getBlackPieces(), getWhitePieces(), getBlackAttackingSquares(),
-				blackPawns, blackRooks, blackKnights, blackBishops,
-				blackQueens, blackKing, whiteCastleKing, whiteCastleQueen,
-				enPassantSquare);
+		Gamestate temp = createGamestate();
+		return MoveGenerator.generateWhiteLegalMoves(temp);
 	}
 
 	private Vector<char[][]> generateBlackLegalMoves() {
-		return MoveGenerator.generateBlackLegalMoves(currentBoard, whitePawns,
-				whiteRooks, whiteKnights, whiteBishops, whiteQueens, whiteKing,
-				getBlackPieces(), getWhitePieces(), getWhiteAttackingSquares(),
-				blackPawns, blackRooks, blackKnights, blackBishops,
-				blackQueens, blackKing, blackCastleKing, blackCastleQueen,
-				enPassantSquare);
+		Gamestate temp = createGamestate();
+		return MoveGenerator.generateBlackLegalMoves(temp);
 	}
 
 	public void newGame() {
@@ -214,7 +204,7 @@ public class ChessBoard {
 		return new Gamestate(copyCurrentBoard(), whitePawns, whiteRooks,
 				whiteKnights, whiteBishops, whiteQueens, whiteKing, blackPawns,
 				blackRooks, blackKnights, blackBishops, blackQueens, blackKing,
-				whiteToMove, whiteToMove, whiteCastleKing, whiteCastleQueen,
+				whiteToMove, whiteCastleKing, whiteCastleQueen,
 				blackCastleKing, blackCastleQueen, enPassantSquare,
 				numberOfFullMoves, numberOfHalfMoves,
 				getWhiteAttackingSquares(), getBlackAttackingSquares());
@@ -774,7 +764,7 @@ public class ChessBoard {
 		System.out.println(firstSize);
 		while (!firstMove.isEmpty()) {
 			currentBoard = firstMove.get(0);
-			firstHash.add(HashGenerator.generatePositionHash(currentBoard));
+			// firstHash.add(HashGenerator.generatePositionHash(currentBoard));
 			updateBitboards();
 			secondMove.addAll(generateBlackLegalMoves());
 			firstMove.remove(0);
@@ -794,7 +784,7 @@ public class ChessBoard {
 		System.out.println(thirdSize);
 		while (!thirdMove.isEmpty()) {
 			currentBoard = thirdMove.get(0);
-			thirdHash.add(HashGenerator.generatePositionHash(currentBoard));
+			// thirdHash.add(HashGenerator.generatePositionHash(currentBoard));
 			updateBitboards();
 			// fourthMove.addAll(generateBlackLegalMoves());
 			thirdMove.remove(0);

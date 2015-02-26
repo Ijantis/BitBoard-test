@@ -539,10 +539,6 @@ public class MoveGenerator {
 			long possiblePieceMoveBitboard = (nextKingBitboard ^ nextMove)
 					^ myGamestate.getBlackKing();
 			boolean isValid = BoardManager.IsSelfCheck(
-					myGamestate.getBlackPawns(), myGamestate.getBlackRooks(),
-					myGamestate.getBlackKnights(),
-					myGamestate.getBlackBishops(),
-					myGamestate.getBlackQueens(), possiblePieceMoveBitboard,
 					(myGamestate.getWhitePawns() ^ possiblePieceMoveBitboard)
 							& myGamestate.getWhitePawns(),
 					(myGamestate.getWhiteRooks() ^ possiblePieceMoveBitboard)
@@ -553,7 +549,11 @@ public class MoveGenerator {
 							& myGamestate.getWhiteBishops(),
 					(myGamestate.getWhiteQueens() ^ possiblePieceMoveBitboard)
 							& myGamestate.getWhiteQueens(),
-					myGamestate.getWhiteKing(), false);
+					myGamestate.getWhiteKing(), myGamestate.getBlackPawns(),
+					myGamestate.getBlackRooks(), myGamestate.getBlackKnights(),
+					myGamestate.getBlackBishops(),
+					myGamestate.getBlackQueens(), possiblePieceMoveBitboard,
+					false);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(myGamestate.getCurrentBoard());
 				int fromCoord = Long.toBinaryString(nextKingBitboard).length() - 1;
@@ -597,10 +597,6 @@ public class MoveGenerator {
 			long possiblePieceMoveBitboard = (nextPawnBitboard ^ nextMove)
 					^ myGamestate.getBlackPawns();
 			boolean isValid = BoardManager.IsSelfCheck(
-					possiblePieceMoveBitboard, myGamestate.getBlackRooks(),
-					myGamestate.getBlackKnights(),
-					myGamestate.getBlackBishops(),
-					myGamestate.getBlackQueens(), myGamestate.getBlackKing(),
 					(myGamestate.getWhitePawns() ^ possiblePieceMoveBitboard)
 							& myGamestate.getWhitePawns(),
 					(myGamestate.getWhiteRooks() ^ possiblePieceMoveBitboard)
@@ -611,7 +607,11 @@ public class MoveGenerator {
 							& myGamestate.getWhiteBishops(),
 					(myGamestate.getWhiteQueens() ^ possiblePieceMoveBitboard)
 							& myGamestate.getWhiteQueens(),
-					myGamestate.getWhiteKing(), false);
+					myGamestate.getWhiteKing(), possiblePieceMoveBitboard,
+					myGamestate.getBlackRooks(), myGamestate.getBlackKnights(),
+					myGamestate.getBlackBishops(),
+					myGamestate.getBlackQueens(), myGamestate.getBlackKing(),
+					false);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(myGamestate.getCurrentBoard());
 				int fromCoord = Long.toBinaryString(nextPawnBitboard).length() - 1;
@@ -663,9 +663,6 @@ public class MoveGenerator {
 			long possiblePieceMoveBitboard = (nextKnightBitboard ^ nextMove)
 					^ myGamestate.getBlackKnights();
 			boolean isValid = BoardManager.IsSelfCheck(
-					myGamestate.getBlackPawns(), myGamestate.getBlackRooks(),
-					possiblePieceMoveBitboard, myGamestate.getBlackBishops(),
-					myGamestate.getBlackQueens(), myGamestate.getBlackKing(),
 					(myGamestate.getWhitePawns() ^ possiblePieceMoveBitboard)
 							& myGamestate.getWhitePawns(),
 					(myGamestate.getWhiteRooks() ^ possiblePieceMoveBitboard)
@@ -676,7 +673,11 @@ public class MoveGenerator {
 							& myGamestate.getWhiteBishops(),
 					(myGamestate.getWhiteQueens() ^ possiblePieceMoveBitboard)
 							& myGamestate.getWhiteQueens(),
-					myGamestate.getWhiteKing(), false);
+					myGamestate.getWhiteKing(), myGamestate.getBlackPawns(),
+					myGamestate.getBlackRooks(), possiblePieceMoveBitboard,
+					myGamestate.getBlackBishops(),
+					myGamestate.getBlackQueens(), myGamestate.getBlackKing(),
+					false);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(myGamestate.getCurrentBoard());
 				int fromCoord = Long.toBinaryString(nextKnightBitboard)
@@ -717,9 +718,6 @@ public class MoveGenerator {
 			long possiblePieceMoveBitboard = (nextBishopBitboard ^ nextMove)
 					^ myGamestate.getBlackBishops();
 			boolean isValid = BoardManager.IsSelfCheck(
-					myGamestate.getBlackPawns(), myGamestate.getBlackRooks(),
-					myGamestate.getBlackKnights(), possiblePieceMoveBitboard,
-					myGamestate.getBlackQueens(), myGamestate.getBlackKing(),
 					(myGamestate.getWhitePawns() ^ possiblePieceMoveBitboard)
 							& myGamestate.getWhitePawns(),
 					(myGamestate.getWhiteRooks() ^ possiblePieceMoveBitboard)
@@ -730,7 +728,10 @@ public class MoveGenerator {
 							& myGamestate.getWhiteBishops(),
 					(myGamestate.getWhiteQueens() ^ possiblePieceMoveBitboard)
 							& myGamestate.getWhiteQueens(),
-					myGamestate.getWhiteKing(), false);
+					myGamestate.getWhiteKing(), myGamestate.getBlackPawns(),
+					myGamestate.getBlackRooks(), myGamestate.getBlackKnights(),
+					possiblePieceMoveBitboard, myGamestate.getBlackQueens(),
+					myGamestate.getBlackKing(), false);
 
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(myGamestate.getCurrentBoard());
@@ -771,10 +772,6 @@ public class MoveGenerator {
 			long possiblePieceMoveBitboard = (nextQueenBitboard ^ nextMove)
 					^ myGamestate.getBlackQueens();
 			boolean isValid = BoardManager.IsSelfCheck(
-					myGamestate.getBlackPawns(), myGamestate.getBlackRooks(),
-					myGamestate.getBlackKnights(),
-					myGamestate.getBlackBishops(), possiblePieceMoveBitboard,
-					myGamestate.getBlackKing(),
 					(myGamestate.getWhitePawns() ^ possiblePieceMoveBitboard)
 							& myGamestate.getWhitePawns(),
 					(myGamestate.getWhiteRooks() ^ possiblePieceMoveBitboard)
@@ -785,7 +782,10 @@ public class MoveGenerator {
 							& myGamestate.getWhiteBishops(),
 					(myGamestate.getWhiteQueens() ^ possiblePieceMoveBitboard)
 							& myGamestate.getWhiteQueens(),
-					myGamestate.getWhiteKing(), false);
+					myGamestate.getWhiteKing(), myGamestate.getBlackPawns(),
+					myGamestate.getBlackRooks(), myGamestate.getBlackKnights(),
+					myGamestate.getBlackBishops(), possiblePieceMoveBitboard,
+					myGamestate.getBlackKing(), false);
 
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(myGamestate.getCurrentBoard());
@@ -826,10 +826,6 @@ public class MoveGenerator {
 					^ myGamestate.getBlackRooks();
 
 			boolean isValid = BoardManager.IsSelfCheck(
-					myGamestate.getBlackPawns(), possiblePieceMoveBitboard,
-					myGamestate.getBlackKnights(),
-					myGamestate.getBlackBishops(),
-					myGamestate.getBlackQueens(), myGamestate.getBlackKing(),
 					(myGamestate.getWhitePawns() ^ possiblePieceMoveBitboard)
 							& myGamestate.getWhitePawns(),
 					(myGamestate.getWhiteRooks() ^ possiblePieceMoveBitboard)
@@ -840,7 +836,11 @@ public class MoveGenerator {
 							& myGamestate.getWhiteBishops(),
 					(myGamestate.getWhiteQueens() ^ possiblePieceMoveBitboard)
 							& myGamestate.getWhiteQueens(),
-					myGamestate.getWhiteKing(), false);
+					myGamestate.getWhiteKing(), myGamestate.getBlackPawns(),
+					possiblePieceMoveBitboard, myGamestate.getBlackKnights(),
+					myGamestate.getBlackBishops(),
+					myGamestate.getBlackQueens(), myGamestate.getBlackKing(),
+					false);
 			if (isValid) {
 				char[][] temp = copyCurrentBoard(myGamestate.getCurrentBoard());
 				int fromCoord = Long.toBinaryString(nextRookBitboard).length() - 1;

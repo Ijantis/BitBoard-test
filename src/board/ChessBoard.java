@@ -49,6 +49,7 @@ public class ChessBoard {
 	public ChessBoard() {
 		long time = System.currentTimeMillis();
 		long timeNano = System.nanoTime();
+		newGame();
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");

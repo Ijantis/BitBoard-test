@@ -5,16 +5,18 @@ import java.util.Vector;
 import operations.pieces.BlackPieces;
 import operations.pieces.WhitePieces;
 import board.BoardManager;
-import board.Gamestate;
+import board.FullGameState;
+import board.GameState;
 
 public class MoveGenerator {
 
 	/*
-	 * NOTE: Do not return a Vector<char[][]> return squares numbers instead.
+	 * NOTE: Do not return a Vector<Gamestate> return squares numbers instead.
 	 */
-	public static Vector<char[][]> generateWhiteLegalMoves(Gamestate myGamestate) {
+	public static Vector<GameState> generateWhiteLegalMoves(
+			FullGameState myGamestate) {
 
-		Vector<char[][]> possibleStates = new Vector<char[][]>(20, 20);
+		Vector<GameState> possibleStates = new Vector<GameState>(20, 200);
 		long temp;
 
 		temp = myGamestate.getWhitePawns();
@@ -82,17 +84,17 @@ public class MoveGenerator {
 		long kingMovesBitboard = WhitePieces.getKingMoves(
 				myGamestate.getWhiteKing(), myGamestate.getWhitePieces(),
 				myGamestate.getBlackAttackingSquares(),
-				myGamestate.canWhiteCastleKing(),
-				myGamestate.canWhiteCastleQueen());
+				myGamestate.getWhiteCastleKing(),
+				myGamestate.getWhiteCastleQueen());
 		possibleStates.addAll(whiteKingMoves(myGamestate.getWhiteKing(),
 				kingMovesBitboard, myGamestate));
 
 		return possibleStates;
 	}
 
-	protected static Vector<char[][]> whiteKingMoves(long nextKingBitboard,
-			long possibleMovesBitboard, Gamestate myGamestate) {
-		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
+	protected static Vector<GameState> whiteKingMoves(long nextKingBitboard,
+			long possibleMovesBitboard, FullGameState myGamestate) {
+		Vector<GameState> listOfMoves = new Vector<GameState>(20, 10);
 
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
@@ -126,8 +128,19 @@ public class MoveGenerator {
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
-				listOfMoves.add(temp);
+				if (fromCoord == 4 && toCoord == 6) {
+					temp[5][0] = 'R';
+					temp[7][0] = ' ';
+				} else if (fromCoord == 4 && toCoord == 2) {
+					temp[3][0] = 'R';
+					temp[0][0] = ' ';
+				}
 
+				listOfMoves.add(new GameState(temp, false, false, false,
+						myGamestate.getBlackCastleKing(), myGamestate
+								.getBlackCastleQueen(), 0, myGamestate
+								.getNumberOfFullMoves(), myGamestate
+								.getNumberOfHalfMoves()));
 			}
 
 			possibleMovesBitboard = Long.highestOneBit(possibleMovesBitboard)
@@ -136,9 +149,9 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	protected static Vector<char[][]> whitePawnMoves(long nextPawnBitboard,
-			long possibleMovesBitboard, Gamestate myGamestate) {
-		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
+	protected static Vector<GameState> whitePawnMoves(long nextPawnBitboard,
+			long possibleMovesBitboard, FullGameState myGamestate) {
+		Vector<GameState> listOfMoves = new Vector<GameState>(20, 10);
 
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
@@ -172,7 +185,25 @@ public class MoveGenerator {
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
-				listOfMoves.add(temp);
+				if (toCoord == myGamestate.getEnPassantSquare()) {
+					temp[(int) (((myGamestate.getEnPassantSquare() - 8) % 8))][(int) (((myGamestate
+							.getEnPassantSquare() - 8) / 8))] = ' ';
+				}
+
+				long enPassantSquare;
+				if (fromCoord == toCoord - 16) {
+					enPassantSquare = toCoord - 8;
+				} else {
+					enPassantSquare = 0;
+				}
+
+				listOfMoves.add(new GameState(temp, false, myGamestate
+						.getWhiteCastleKing(), myGamestate
+						.getWhiteCastleQueen(), myGamestate
+						.getBlackCastleKing(), myGamestate
+						.getBlackCastleQueen(), enPassantSquare, myGamestate
+						.getNumberOfFullMoves(), myGamestate
+						.getNumberOfHalfMoves()));
 
 			}
 
@@ -183,9 +214,10 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	protected static Vector<char[][]> whiteKnightMoves(long nextKnightBitboard,
-			long possibleMovesBitboard, Gamestate myGamestate) {
-		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
+	protected static Vector<GameState> whiteKnightMoves(
+			long nextKnightBitboard, long possibleMovesBitboard,
+			FullGameState myGamestate) {
+		Vector<GameState> listOfMoves = new Vector<GameState>(20, 10);
 
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
@@ -219,7 +251,13 @@ public class MoveGenerator {
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
-				listOfMoves.add(temp);
+				listOfMoves.add(new GameState(temp, false, myGamestate
+						.getWhiteCastleKing(), myGamestate
+						.getWhiteCastleQueen(), myGamestate
+						.getBlackCastleKing(), myGamestate
+						.getBlackCastleQueen(), 0, myGamestate
+						.getNumberOfFullMoves(), myGamestate
+						.getNumberOfHalfMoves()));
 
 			}
 
@@ -230,9 +268,10 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	protected static Vector<char[][]> whiteBishopMoves(long nextBishopBitboard,
-			long possibleMovesBitboard, Gamestate myGamestate) {
-		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
+	protected static Vector<GameState> whiteBishopMoves(
+			long nextBishopBitboard, long possibleMovesBitboard,
+			FullGameState myGamestate) {
+		Vector<GameState> listOfMoves = new Vector<GameState>(20, 10);
 
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
@@ -267,7 +306,13 @@ public class MoveGenerator {
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
-				listOfMoves.add(temp);
+				listOfMoves.add(new GameState(temp, false, myGamestate
+						.getWhiteCastleKing(), myGamestate
+						.getWhiteCastleQueen(), myGamestate
+						.getBlackCastleKing(), myGamestate
+						.getBlackCastleQueen(), 0, myGamestate
+						.getNumberOfFullMoves(), myGamestate
+						.getNumberOfHalfMoves()));
 
 			}
 
@@ -278,9 +323,9 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	protected static Vector<char[][]> whiteQueenMoves(long nextQueenBitboard,
-			long possibleMovesBitboard, Gamestate myGamestate) {
-		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
+	protected static Vector<GameState> whiteQueenMoves(long nextQueenBitboard,
+			long possibleMovesBitboard, FullGameState myGamestate) {
+		Vector<GameState> listOfMoves = new Vector<GameState>(20, 10);
 
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
@@ -315,7 +360,13 @@ public class MoveGenerator {
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
-				listOfMoves.add(temp);
+				listOfMoves.add(new GameState(temp, false, myGamestate
+						.getWhiteCastleKing(), myGamestate
+						.getWhiteCastleQueen(), myGamestate
+						.getBlackCastleKing(), myGamestate
+						.getBlackCastleQueen(), 0, myGamestate
+						.getNumberOfFullMoves(), myGamestate
+						.getNumberOfHalfMoves()));
 
 			}
 
@@ -326,9 +377,9 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	protected static Vector<char[][]> whiteRookMoves(long nextRookBitboard,
-			long possibleMovesBitboard, Gamestate myGamestate) {
-		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
+	protected static Vector<GameState> whiteRookMoves(long nextRookBitboard,
+			long possibleMovesBitboard, FullGameState myGamestate) {
+		Vector<GameState> listOfMoves = new Vector<GameState>(20, 10);
 
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
@@ -363,7 +414,29 @@ public class MoveGenerator {
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
-				listOfMoves.add(temp);
+				if (fromCoord == 0) {
+					listOfMoves.add(new GameState(temp, false, myGamestate
+							.getWhiteCastleKing(), false, myGamestate
+							.getBlackCastleKing(), myGamestate
+							.getBlackCastleQueen(), 0, myGamestate
+							.getNumberOfFullMoves(), myGamestate
+							.getNumberOfHalfMoves()));
+				} else if (fromCoord == 7) {
+					listOfMoves.add(new GameState(temp, false, false,
+							myGamestate.getWhiteCastleQueen(), myGamestate
+									.getBlackCastleKing(), myGamestate
+									.getBlackCastleQueen(), 0, myGamestate
+									.getNumberOfFullMoves(), myGamestate
+									.getNumberOfHalfMoves()));
+				} else {
+					listOfMoves.add(new GameState(temp, false, myGamestate
+							.getWhiteCastleKing(), myGamestate
+							.getWhiteCastleQueen(), myGamestate
+							.getBlackCastleKing(), myGamestate
+							.getBlackCastleQueen(), 0, myGamestate
+							.getNumberOfFullMoves(), myGamestate
+							.getNumberOfHalfMoves()));
+				}
 
 			}
 
@@ -374,9 +447,10 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	public static Vector<char[][]> generateBlackLegalMoves(Gamestate myGamestate) {
+	public static Vector<GameState> generateBlackLegalMoves(
+			FullGameState myGamestate) {
 
-		Vector<char[][]> possibleStates = new Vector<char[][]>(20, 20);
+		Vector<GameState> possibleStates = new Vector<GameState>(20, 20);
 		long temp;
 
 		temp = myGamestate.getBlackPawns();
@@ -444,17 +518,17 @@ public class MoveGenerator {
 		long kingMovesBitboard = BlackPieces.getKingMoves(
 				myGamestate.getBlackKing(), myGamestate.getBlackPieces(),
 				myGamestate.getWhiteAttackingSquares(),
-				myGamestate.canBlackCastleKing(),
-				myGamestate.canBlackCastleQueen());
+				myGamestate.getBlackCastleKing(),
+				myGamestate.getBlackCastleQueen());
 		possibleStates.addAll(BlackKingMoves(myGamestate.getBlackKing(),
 				kingMovesBitboard, myGamestate));
 
 		return possibleStates;
 	}
 
-	protected static Vector<char[][]> BlackKingMoves(long nextKingBitboard,
-			long possibleMovesBitboard, Gamestate myGamestate) {
-		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
+	protected static Vector<GameState> BlackKingMoves(long nextKingBitboard,
+			long possibleMovesBitboard, FullGameState myGamestate) {
+		Vector<GameState> listOfMoves = new Vector<GameState>(20, 10);
 
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
@@ -488,7 +562,19 @@ public class MoveGenerator {
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
-				listOfMoves.add(temp);
+				if (fromCoord == 60 && toCoord == 62) {
+					temp[5][7] = 'R';
+					temp[7][7] = ' ';
+				} else if (fromCoord == 60 && toCoord == 58) {
+					temp[3][7] = 'R';
+					temp[0][7] = ' ';
+				}
+
+				listOfMoves.add(new GameState(temp, true, myGamestate
+						.getWhiteCastleKing(), myGamestate
+						.getWhiteCastleQueen(), false, false, 0, myGamestate
+						.getNumberOfFullMoves(), myGamestate
+						.getNumberOfHalfMoves()));
 
 			}
 
@@ -498,9 +584,9 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	protected static Vector<char[][]> BlackPawnMoves(long nextPawnBitboard,
-			long possibleMovesBitboard, Gamestate myGamestate) {
-		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
+	protected static Vector<GameState> BlackPawnMoves(long nextPawnBitboard,
+			long possibleMovesBitboard, FullGameState myGamestate) {
+		Vector<GameState> listOfMoves = new Vector<GameState>(20, 10);
 
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
@@ -534,7 +620,25 @@ public class MoveGenerator {
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
-				listOfMoves.add(temp);
+				if (toCoord == myGamestate.getEnPassantSquare()) {
+					temp[(int) (((myGamestate.getEnPassantSquare() + 8) % 8))][(int) (((myGamestate
+							.getEnPassantSquare() + 8) / 8))] = ' ';
+				}
+
+				long enPassantSquare;
+				if (fromCoord == toCoord + 16) {
+					enPassantSquare = toCoord + 8;
+				} else {
+					enPassantSquare = 0;
+				}
+
+				listOfMoves.add(new GameState(temp, true, myGamestate
+						.getWhiteCastleKing(), myGamestate
+						.getWhiteCastleQueen(), myGamestate
+						.getBlackCastleKing(), myGamestate
+						.getBlackCastleQueen(), enPassantSquare, myGamestate
+						.getNumberOfFullMoves(), myGamestate
+						.getNumberOfHalfMoves()));
 
 			}
 
@@ -545,9 +649,10 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	protected static Vector<char[][]> BlackKnightMoves(long nextKnightBitboard,
-			long possibleMovesBitboard, Gamestate myGamestate) {
-		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
+	protected static Vector<GameState> BlackKnightMoves(
+			long nextKnightBitboard, long possibleMovesBitboard,
+			FullGameState myGamestate) {
+		Vector<GameState> listOfMoves = new Vector<GameState>(20, 10);
 
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
@@ -581,7 +686,13 @@ public class MoveGenerator {
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
-				listOfMoves.add(temp);
+				listOfMoves.add(new GameState(temp, true, myGamestate
+						.getWhiteCastleKing(), myGamestate
+						.getWhiteCastleQueen(), myGamestate
+						.getBlackCastleKing(), myGamestate
+						.getBlackCastleQueen(), 0, myGamestate
+						.getNumberOfFullMoves(), myGamestate
+						.getNumberOfHalfMoves()));
 
 			}
 
@@ -592,9 +703,10 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	protected static Vector<char[][]> BlackBishopMoves(long nextBishopBitboard,
-			long possibleMovesBitboard, Gamestate myGamestate) {
-		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
+	protected static Vector<GameState> BlackBishopMoves(
+			long nextBishopBitboard, long possibleMovesBitboard,
+			FullGameState myGamestate) {
+		Vector<GameState> listOfMoves = new Vector<GameState>(20, 10);
 
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
@@ -629,7 +741,13 @@ public class MoveGenerator {
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
-				listOfMoves.add(temp);
+				listOfMoves.add(new GameState(temp, true, myGamestate
+						.getWhiteCastleKing(), myGamestate
+						.getWhiteCastleQueen(), myGamestate
+						.getBlackCastleKing(), myGamestate
+						.getBlackCastleQueen(), 0, myGamestate
+						.getNumberOfFullMoves(), myGamestate
+						.getNumberOfHalfMoves()));
 
 			}
 
@@ -640,9 +758,9 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	protected static Vector<char[][]> BlackQueenMoves(long nextQueenBitboard,
-			long possibleMovesBitboard, Gamestate myGamestate) {
-		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
+	protected static Vector<GameState> BlackQueenMoves(long nextQueenBitboard,
+			long possibleMovesBitboard, FullGameState myGamestate) {
+		Vector<GameState> listOfMoves = new Vector<GameState>(20, 10);
 
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
@@ -677,7 +795,13 @@ public class MoveGenerator {
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
-				listOfMoves.add(temp);
+				listOfMoves.add(new GameState(temp, true, myGamestate
+						.getWhiteCastleKing(), myGamestate
+						.getWhiteCastleQueen(), myGamestate
+						.getBlackCastleKing(), myGamestate
+						.getBlackCastleQueen(), 0, myGamestate
+						.getNumberOfFullMoves(), myGamestate
+						.getNumberOfHalfMoves()));
 
 			}
 
@@ -688,9 +812,9 @@ public class MoveGenerator {
 		return listOfMoves;
 	}
 
-	protected static Vector<char[][]> BlackRookMoves(long nextRookBitboard,
-			long possibleMovesBitboard, Gamestate myGamestate) {
-		Vector<char[][]> listOfMoves = new Vector<char[][]>(20, 10);
+	protected static Vector<GameState> BlackRookMoves(long nextRookBitboard,
+			long possibleMovesBitboard, FullGameState myGamestate) {
+		Vector<GameState> listOfMoves = new Vector<GameState>(20, 10);
 
 		long nextMove;
 		while (possibleMovesBitboard != 0) {
@@ -725,8 +849,29 @@ public class MoveGenerator {
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
-				listOfMoves.add(temp);
-
+				if (fromCoord == 56) {
+					listOfMoves.add(new GameState(temp, true, myGamestate
+							.getWhiteCastleKing(), myGamestate
+							.getWhiteCastleQueen(), myGamestate
+							.getBlackCastleKing(), false, 0, myGamestate
+							.getNumberOfFullMoves(), myGamestate
+							.getNumberOfHalfMoves()));
+				} else if (fromCoord == 63) {
+					listOfMoves.add(new GameState(temp, true, myGamestate
+							.getWhiteCastleKing(), myGamestate
+							.getWhiteCastleQueen(), false, myGamestate
+							.getBlackCastleQueen(), 0, myGamestate
+							.getNumberOfFullMoves(), myGamestate
+							.getNumberOfHalfMoves()));
+				} else {
+					listOfMoves.add(new GameState(temp, true, myGamestate
+							.getWhiteCastleKing(), myGamestate
+							.getWhiteCastleQueen(), myGamestate
+							.getBlackCastleKing(), myGamestate
+							.getBlackCastleQueen(), 0, myGamestate
+							.getNumberOfFullMoves(), myGamestate
+							.getNumberOfHalfMoves()));
+				}
 			}
 
 			possibleMovesBitboard = Long.highestOneBit(possibleMovesBitboard)

@@ -50,11 +50,6 @@ public class ChessBoard {
 		long time = System.currentTimeMillis();
 		long timeNano = System.nanoTime();
 
-		newGame();
-		printBoard();
-		makeAIMove(Engine.AI_RANDOM, whiteToMove);
-		printBoard();
-
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
 		System.out.println("That took :"
@@ -233,6 +228,7 @@ public class ChessBoard {
 			return 4;
 		} else {
 			updateBitboards();
+			whiteToMove = !whiteToMove;
 			return 1;
 		}
 	}

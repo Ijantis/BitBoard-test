@@ -11,19 +11,12 @@ public class WhitePieces {
 
 	public static long getPawnMoves(long whitePawns, long occupiedSquares,
 			long blackPieces, long enPassantSquare) {
-		return getPawnMovesVertical(whitePawns, occupiedSquares,
-				enPassantSquare)
-				| getPawnMovesDiagonal(whitePawns, blackPieces);
+		return getPawnMovesVertical(whitePawns, occupiedSquares)
+				| getPawnMovesDiagonal(whitePawns, blackPieces, enPassantSquare);
 	}
 
 	public static long getPawnMovesVertical(long whitePawns,
-			long occupiedSquares, long enPassantSquare) {
-		long enPassantBitboard = 0;
-		// en passant
-		if (enPassantSquare >= 40 && enPassantSquare <= 47) {
-			enPassantBitboard = Long.parseLong("1", 2);
-			enPassantBitboard = enPassantBitboard << enPassantSquare;
-		}
+			long occupiedSquares) {
 
 		// Vertical single rank
 		long upOne = (whitePawns << 8) & ~occupiedSquares;
@@ -33,14 +26,26 @@ public class WhitePieces {
 		long pawnsNotBlocked = (((secondRankPawns << 8) & ~occupiedSquares) >>> 8);
 		long upTwo = pawnsNotBlocked << 16 & ~occupiedSquares;
 
-		return upOne | upTwo | enPassantBitboard;
+		return upOne | upTwo;
 	}
 
 	/*
 	 * Generate white pawn moves for attacking a piece
 	 */
-	public static long getPawnMovesDiagonal(long whitePawns, long blackPieces) {
-		return getPawnAttackingSquares(whitePawns) & blackPieces;
+	public static long getPawnMovesDiagonal(long whitePawns, long blackPieces,
+			long enPassantSquare) {
+
+		long enPassantBitboard = 0;
+		// en passant
+		if (enPassantSquare >= 40 && enPassantSquare <= 47) {
+			enPassantBitboard = Long.parseLong("1", 2);
+			enPassantBitboard = enPassantBitboard << enPassantSquare;
+		}
+
+		long attackingSquares = getPawnAttackingSquares(whitePawns);
+
+		return (attackingSquares & blackPieces)
+				| (attackingSquares & enPassantBitboard);
 	}
 
 	/*

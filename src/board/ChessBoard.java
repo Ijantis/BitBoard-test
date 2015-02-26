@@ -211,7 +211,7 @@ public class ChessBoard {
 				getWhiteAttackingSquares(), getBlackAttackingSquares());
 	}
 
-	public void makeAIMove(int difficulty, boolean playingWhite) {
+	public int makeAIMove(int difficulty, boolean playingWhite) {
 
 		GameState temp = Engine.makeMove(difficulty, playingWhite,
 				createGamestate());
@@ -222,6 +222,19 @@ public class ChessBoard {
 		blackCastleQueen = temp.isBlackCastleQueen();
 		updateBitboards();
 
+		if (isCheckmate()) {
+			updateBitboards();
+			if (whiteToMove) {
+				return 2;
+			} else {
+				return 3;
+			}
+		} else if (isStalemate()) {
+			return 4;
+		} else {
+			updateBitboards();
+			return 1;
+		}
 	}
 
 	/*

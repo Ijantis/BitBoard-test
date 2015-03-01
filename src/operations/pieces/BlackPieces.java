@@ -263,13 +263,13 @@ public class BlackPieces {
 		long castled = 0;
 
 		if (blackCastleKing
-				&& ((blackCastleKingSquares & whiteAttackingSquares) == 0)
+				&& (((blackKing | blackCastleKingSquares) & whiteAttackingSquares) == 0)
 				&& ((blackCastleKingSquares & blackPieces) == 0)) {
 			castled = castled | blackKing << 2;
 		}
 
 		if (blackCastleQueen
-				&& ((blackCastleQueenSquares & whiteAttackingSquares) == 0)
+				&& (((blackKing | blackCastleKingSquares) & whiteAttackingSquares) == 0)
 				&& ((blackCastleQueenSquares & blackPieces) == 0)) {
 			castled = castled | blackKing >>> 2;
 		}

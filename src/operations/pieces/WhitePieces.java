@@ -268,19 +268,18 @@ public class WhitePieces {
 		long castled = 0;
 
 		if (whiteCastleKing
-				&& ((whiteCastleKingSquares & blackAttackingSquares) == 0)
+				&& (((whiteKing | whiteCastleKingSquares) & blackAttackingSquares) == 0)
 				&& ((whiteCastleKingSquares & whitePieces) == 0)) {
 			castled = castled | whiteKing << 2;
 		}
 
 		if (whiteCastleQueen
-				&& ((whiteCastleQueenSquares & blackAttackingSquares) == 0)
+				&& (((whiteKing | whiteCastleKingSquares) & blackAttackingSquares) == 0)
 				&& ((whiteCastleQueenSquares & whitePieces) == 0)) {
 			castled = castled | whiteKing >>> 2;
 		}
 
-		return ((getKingAttackingSquares(whiteKing, whitePieces) | castled)
-				& ~whitePieces);
+		return ((getKingAttackingSquares(whiteKing, whitePieces) | castled) & ~whitePieces);
 	}
 
 	private static void printBitboard(long bitBoard) {

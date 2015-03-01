@@ -2,106 +2,257 @@ package ai.evaluation;
 
 import java.util.Vector;
 
+import board.FullGameState;
 import operations.BitboardOperations;
 import operations.MoveGenerator;
 
 public class Evaluator {
 
-	public static double evaluatePosition(long whitePawns, long whiteRooks,
-			long whiteKnights, long whiteBishops, long whiteQueens,
-			long whiteKing, long blackPawns, long blackRooks,
-			long blackKnights, long blackBishops, long blackQueens,
-			long blackKing, char[][] currentBoard, long whiteAttackingSquares,
-			long blackAttackingSquares, boolean whiteCastleKing,
-			boolean whiteCastleQueen, boolean blackCastleKing,
-			boolean blackCastleQueen) {
+	private static final long centralSquares = Long.parseLong(
+			"0000000000000000000000000001100000011000000000000000000000000000",
+			2);
 
-		double whiteScore = 0;
-		double blackScore = 0;
+	// USE GLOBAL VARIABLES FOR CHANGING STUFF IN THE EVALUATION FUNCTION
 
-		whiteScore += evaluateMaterial(whitePawns, whiteRooks, whiteKnights,
-				whiteBishops, whiteQueens, whiteKing);
-		blackScore += evaluateMaterial(blackPawns, blackRooks, blackKnights,
-				blackBishops, blackQueens, blackKing);
+	// for central control evaluate number of pieces in central square and extra
+	// points for pieces in central squares that are not under attack
 
-		whiteScore += evaluateDoubledPawns(whitePawns);
-		blackScore += evaluateDoubledPawns(blackPawns);
+	// piece specific positioning
 
-		whiteScore += evaluateIsolatedPawns(whitePawns);
-		blackScore += evaluateIsolatedPawns(blackPawns);
+	public static long evaluatePosition(FullGameState currentGameState) {
 
-		whiteScore += evaluateHangingPieces(whitePawns | whiteRooks
-				| whiteKnights | whiteBishops | whiteQueens,
-				whiteAttackingSquares);
-		blackScore += evaluateHangingPieces(blackPawns | blackRooks
-				| blackKnights | blackBishops | blackQueens,
-				blackAttackingSquares);
+		long whiteScore = 0;
+		long blackScore = 0;
 
-		whiteScore += MoveGenerator.generateWhiteLegalMoves(
-				currentBoard,
-				whitePawns,
-				whiteRooks,
-				whiteKnights,
-				whiteBishops,
-				whiteQueens,
-				whiteKing,
-				(blackBishops | blackKing | blackKnights | blackPawns
-						| blackQueens | blackRooks),
-				(whiteBishops | whiteKing | whiteKnights | whitePawns
-						| whiteQueens | whiteRooks), blackAttackingSquares,
-				blackPawns, blackRooks, blackKnights, blackBishops,
-				blackQueens, blackKing, whiteCastleKing, whiteCastleQueen)
-				.size() * 0.1;
+		Vector<FullGameState> whiteMoves = MoveGenerator
+				.generateWhiteLegalMoves(currentGameState);
+		Vector<FullGameState> blackMoves = MoveGenerator
+				.generateBlackLegalMoves(currentGameState);
 
-		blackScore += MoveGenerator.generateBlackLegalMoves(
-				currentBoard,
-				whitePawns,
-				whiteRooks,
-				whiteKnights,
-				whiteBishops,
-				whiteQueens,
-				whiteKing,
-				(blackBishops | blackKing | blackKnights | blackPawns
-						| blackQueens | blackRooks),
-				(whiteBishops | whiteKing | whiteKnights | whitePawns
-						| whiteQueens | whiteRooks), whiteAttackingSquares,
-				blackPawns, blackRooks, blackKnights, blackBishops,
-				blackQueens, blackKing, blackCastleKing, blackCastleQueen)
-				.size() * 0.1;
+		// checkmate gives a lot of points
+		if (currentGameState.isWhiteToMove()
+				&& (currentGameState.getWhiteKing() & currentGameState
+						.getBlackAttackingSquares()) != 0
+				&& whiteMoves.size() == 0) {
 
-		// problems with precision so this is needed
-		return Math.round((whiteScore - blackScore) * 100) / 100d;
+			blackScore += 50000;
+			return whiteScore - blackScore;
+			// black checkmated
+		} else if (!currentGameState.isWhiteToMove()
+				&& (currentGameState.getBlackKing() & currentGameState
+						.getWhiteAttackingSquares()) != 0
+				&& blackMoves.size() == 0) {
+			whiteScore += 50000;
+			return whiteScore - blackScore;
+		}
+
+		// material
+		whiteScore += evaluateWhiteMaterial(currentGameState);
+		blackScore += evaluateBlackMaterial(currentGameState);
+
+		// pawn structure
+		whiteScore += evaluateWhitePawnStructure(currentGameState);
+		blackScore += evaluateBlackPawnStructure(currentGameState);
+
+		// hanging pieces
+		whiteScore += evaluateWhiteProtectedHangingPieces(currentGameState);
+		blackScore += evaluateBlackProtectedHangingPieces(currentGameState);
+
+		// number of possible moves
+		// System.out.println("White mobility "
+		// + (MoveGenerator.generateWhiteLegalMoves(currentGameState)
+		// .size() * 15));
+		 whiteScore += MoveGenerator.generateWhiteLegalMoves(currentGameState)
+		 .size() * 15;
+		// System.out.println("Black mobility "
+		// + (MoveGenerator.generateBlackLegalMoves(currentGameState)
+		// .size() * 15));
+		blackScore += MoveGenerator.generateBlackLegalMoves(currentGameState)
+				.size() * 15;
+
+		whiteScore += evaluateWhiteCentralControl(currentGameState);
+		blackScore += evaluateBlackCentralControl(currentGameState);
+
+		// System.out.println("White score " + whiteScore);
+		// System.out.println("Black score " + blackScore);
+
+		return whiteScore - blackScore;
+
 	}
 
-	/*
-	 * Make this stronger. Count number of rooks etc. and evaluate based on
-	 * worth of the piece. Hanging queen worse than hanging pawn.
-	 */
-	private static double evaluateHangingPieces(long pieces,
-			long attackingSquares) {
+	// whiteScore += evaluateWhiteCentralControl(whiteAttackingSquares);
+	// blackScore += evaluateBlackCentralControl(blackAttackingSquares);
 
-		long protectedPieces = pieces & attackingSquares;
-		long hangingPieces = protectedPieces ^ pieces;
+	private static long evaluateWhiteCentralControl(
+			FullGameState currentGameState) {
+		long score = 0;
 
-		double score = 0;
+		score += Long.bitCount(currentGameState.getWhiteAttackingSquares()
+				& centralSquares) * 15;
 
-		score += Long.bitCount(protectedPieces) * 0.1;
-		score -= Long.bitCount(hangingPieces) * 0.2;
+		score += Long.bitCount(currentGameState.getWhitePieces()
+				& centralSquares) * 40;
 
+		// System.out.println("White central control " + score);
+
+		return score;
+	}
+
+	private static long evaluateBlackCentralControl(
+			FullGameState currentGameState) {
+		long score = 0;
+
+		score += Long.bitCount(currentGameState.getBlackAttackingSquares()
+				& centralSquares) * 15;
+
+		score += Long.bitCount(currentGameState.getBlackPieces()
+				& centralSquares) * 40;
+
+		// System.out.println("Black central control " + score);
+
+		return score;
+	}
+
+	private static long evaluateBlackProtectedHangingPieces(
+			FullGameState currentGameState) {
+		long score = 0;
+		long score1 = 0;
+
+		long protectedPieces = currentGameState.getBlackAttackingSquares()
+				& currentGameState.getBlackPieces();
+
+		score += Long.bitCount(currentGameState.getBlackPawns()
+				& protectedPieces) * 30;
+
+		score += Long
+				.bitCount((currentGameState.getBlackBishops() | currentGameState
+						.getBlackKnights()) & protectedPieces) * 30;
+
+		score += Long.bitCount(currentGameState.getBlackRooks()
+				& protectedPieces) * 50;
+
+		score += Long.bitCount(currentGameState.getBlackQueens()
+				& protectedPieces) * 65;
+
+		// System.out.println("Black protected pieces " + score);
+
+		long hangingPieces = currentGameState.getBlackPieces()
+				^ protectedPieces;
+
+		score1 += Long.bitCount(currentGameState.getBlackPawns()
+				& hangingPieces)
+				* -10;
+
+		score1 += Long
+				.bitCount((currentGameState.getBlackBishops() | currentGameState
+						.getBlackKnights()) & hangingPieces)
+				* -25;
+
+		score1 += Long.bitCount(currentGameState.getBlackRooks()
+				& hangingPieces)
+				* -40;
+
+		score1 += Long.bitCount(currentGameState.getBlackQueens()
+				& hangingPieces)
+				* -60;
+
+		// System.out.println("Black hanging pieces " + score1);
+		return score + score1;
+	}
+
+	private static long evaluateWhiteProtectedHangingPieces(
+			FullGameState currentGameState) {
+
+		long score = 0;
+		long score1 = 0;
+
+		long protectedPieces = currentGameState.getWhiteAttackingSquares()
+				& currentGameState.getWhitePieces();
+
+		score += Long.bitCount(currentGameState.getWhitePawns()
+				& protectedPieces) * 30;
+
+		score += Long
+				.bitCount((currentGameState.getWhiteBishops() | currentGameState
+						.getWhiteKnights()) & protectedPieces) * 30;
+
+		score += Long.bitCount(currentGameState.getWhiteRooks()
+				& protectedPieces) * 50;
+
+		score += Long.bitCount(currentGameState.getWhiteQueens()
+				& protectedPieces) * 65;
+
+		// System.out.println("White protected pieces " + score);
+
+		long hangingPieces = currentGameState.getWhitePieces()
+				^ protectedPieces;
+
+		score1 += Long.bitCount(currentGameState.getWhitePawns()
+				& hangingPieces)
+				* -10;
+
+		score1 += Long
+				.bitCount((currentGameState.getWhiteBishops() | currentGameState
+						.getWhiteKnights()) & hangingPieces)
+				* -25;
+
+		score1 += Long.bitCount(currentGameState.getWhiteRooks()
+				& hangingPieces)
+				* -40;
+
+		score1 += Long.bitCount(currentGameState.getWhiteQueens()
+				& hangingPieces)
+				* -60;
+
+		// System.out.println("White hanging pieces " + score1);
+		return score + score1;
+	}
+
+	private static long evaluateWhitePawnStructure(
+			FullGameState currentGameState) {
+		long score = 0;
+//		System.out.print("White ");
+		score += evaluatelongdPawns(currentGameState.getWhitePawns());
+//		System.out.print("White ");
+		score += evaluateIsolatedPawns(currentGameState.getWhitePawns());
+		return score;
+	}
+
+	private static long evaluateBlackPawnStructure(
+			FullGameState currentGameState) {
+		long score = 0;
+//		System.out.print("Black ");
+		score += evaluatelongdPawns(currentGameState.getBlackPawns());
+//		System.out.print("Black ");
+		score += evaluateIsolatedPawns(currentGameState.getBlackPawns());
+		return score;
+	}
+
+	private static long evaluateBlackCentralControl(long blackAttackingSquares) {
+		long score = 0;
+		score += Long.bitCount((blackAttackingSquares & centralSquares)) * 0.2;
+		// System.out.println("Black central control : " + score);
+		return score;
+	}
+
+	private static long evaluateWhiteCentralControl(long whiteAttackingSquares) {
+		long score = 0;
+		score += Long.bitCount((whiteAttackingSquares & centralSquares)) * 0.2;
+		// System.out.println("White central control :" + score);
 		return score;
 	}
 
 	// maybe use an array to keep track of the masked files
 	// first check if there are pawns in a file then check if adjacent files are
 	// empty
-	private static double evaluateIsolatedPawns(long pawns) {
-		double score = 0;
+	private static long evaluateIsolatedPawns(long pawns) {
+		long score = 0;
 
 		// evaluating the first file
 		int pawnsInFile = Long.bitCount(pawns & BitboardOperations.maskFile(1));
 		if (pawnsInFile != 0 && (pawns & BitboardOperations.maskFile(2)) == 0) {
-			score -= 0.2 * pawnsInFile;
-			System.out.println("isolated in 1");
+			score -= 20 * pawnsInFile;
+			// System.out.println("isolated in 1");
 		}
 
 		for (int file = 2; file < 8; file++) {
@@ -110,9 +261,9 @@ public class Evaluator {
 			} else {
 				if ((BitboardOperations.maskFile(file - 1) & pawns) == 0
 						&& (BitboardOperations.maskFile(file + 1) & pawns) == 0) {
-					score -= 0.2 * Long.bitCount(BitboardOperations
+					score -= 20 * Long.bitCount(BitboardOperations
 							.maskFile(file) & pawns);
-					System.out.println("Isolated pawn in file " + file);
+					// System.out.println("Isolated pawn in file " + file);
 				}
 			}
 		}
@@ -120,35 +271,53 @@ public class Evaluator {
 		// evaluating the eighth file
 		pawnsInFile = Long.bitCount(pawns & BitboardOperations.maskFile(8));
 		if (pawnsInFile != 0 && (pawns & BitboardOperations.maskFile(7)) == 0) {
-			score -= 0.2 * pawnsInFile;
-			System.out.println("isolated in 8");
+			score -= 20 * pawnsInFile;
+			// System.out.println("isolated in 8");
 		}
+		// System.out.println("Isolated pawns " + score);
 		return score;
 	}
 
-	private static double evaluateDoubledPawns(long pawns) {
-		double score = 0;
+	private static long evaluatelongdPawns(long pawns) {
+		long score = 0;
 		for (int file = 1; file < 9; file++) {
 			int pawnsInFile = 0;
 			pawnsInFile = Long.bitCount(pawns
 					& BitboardOperations.maskFile(file));
 			if (pawnsInFile > 1) {
-				score -= (pawnsInFile * 0.2) * (pawnsInFile - 1);
+				score -= (pawnsInFile * 20) * (pawnsInFile - 1);
 			}
 		}
+		// System.out.println("longd pawns : " + score);
 		return score;
 	}
 
-	private static double evaluateMaterial(long pawns, long rooks,
-			long knights, long bishops, long queens, long king) {
+	// return positive value
+	private static long evaluateWhiteMaterial(FullGameState myGameState) {
 
-		double score = 0;
+		long score = 0;
 
-		score += Long.bitCount(pawns);
-		score += Long.bitCount(rooks) * 5;
-		score += Long.bitCount(bishops) * 3;
-		score += Long.bitCount(knights) * 3;
-		score += Long.bitCount(queens) * 9;
+		score += Long.bitCount(myGameState.getWhitePawns()) * 100;
+		score += Long.bitCount(myGameState.getWhiteRooks()) * 500;
+		score += Long.bitCount(myGameState.getWhiteBishops()) * 300;
+		score += Long.bitCount(myGameState.getWhiteKnights()) * 300;
+		score += Long.bitCount(myGameState.getWhiteQueens()) * 900;
+		// System.out.println("White material " + score);
+		return score;
+	}
+
+	// returns negative value
+	private static long evaluateBlackMaterial(FullGameState myGameState) {
+
+		long score = 0;
+
+		score += Long.bitCount(myGameState.getBlackPawns()) * 100;
+		score += Long.bitCount(myGameState.getBlackRooks()) * 500;
+		score += Long.bitCount(myGameState.getBlackBishops()) * 300;
+		score += Long.bitCount(myGameState.getBlackKnights()) * 300;
+		score += Long.bitCount(myGameState.getBlackQueens()) * 900;
+
+		// System.out.println("Black material " + score);
 		return score;
 	}
 

@@ -7,7 +7,6 @@ import java.util.Vector;
 
 import operations.BitboardOperations;
 import operations.MoveGenerator;
-import operations.WhiteMoveGeneratorThread;
 import operations.pieces.BlackPieces;
 import operations.pieces.WhitePieces;
 import other.FENLoader;
@@ -34,120 +33,104 @@ public class ChessBoard {
 	// Lower case for BLACK
 	// 0,0 is top left 0,7 is top right 7,7 bottom right
 	private char[][] currentBoard = {
-			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'r' },
-			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'k' },
-			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'r' } };;
+			{ 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' },
+			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', ' ' },
+			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', ' ' },
+			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', ' ' },
+			{ 'K', 'P', ' ', ' ', ' ', ' ', 'p', 'k' },
+			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', ' ' },
+			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', ' ' },
+			{ 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' } };;
 
 	Vector<char[][]> threadedList;
 	Vector<char[][]> serialList;
 
 	public ChessBoard() {
-		long time = System.currentTimeMillis();
-		long timeNano = System.nanoTime();
-		newGame();
-
-		System.out.println("That took :" + (System.currentTimeMillis() - time)
-				+ "ms");
-		System.out.println("That took :"
-				+ ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
-
-	}
-
-	private void testThreaded() {
-		Thread temp = createWhiteMoveGenerator();
-		try {
-			temp.join();
-			Vector<char[][]> moves = (Vector<char[][]>) WhiteMoveGeneratorThread
-					.getStates().clone();
-			System.out.println(moves.size());
-			Vector<Thread> threads = new Vector<Thread>();
-
-			while (!moves.isEmpty()) {
-				currentBoard = moves.get(0);
-				updateBitboards();
-				threads.add(createWhiteMoveGenerator());
-				moves.remove(0);
-			}
-
-			for (Thread thread : threads) {
-				thread.join();
-			}
-
-			moves = (Vector<char[][]>) WhiteMoveGeneratorThread.getStates()
-					.clone();
-			threads.removeAllElements();
-
-			System.out.println(moves.size());
-			threadedList = (Vector<char[][]>) moves.clone();
-			while (!moves.isEmpty()) {
-				currentBoard = moves.get(0);
-				updateBitboards();
-				threads.add(createWhiteMoveGenerator());
-				moves.remove(0);
-			}
-
-			for (Thread thread : threads) {
-				thread.join();
-			}
-			moves = (Vector<char[][]>) WhiteMoveGeneratorThread.getStates()
-					.clone();
-			System.out.println(moves.size());
-			// while (!moves.isEmpty()) {
-			// currentBoard = moves.get(0);
-			// updateBitboards();
-			// threads.add(createWhiteMoveGenerator());
-			// moves.remove(0);
-			// }
-			//
-			// for (Thread thread : threads) {
-			// thread.join();
-			// }
-			// moves = (Vector<char[][]>) WhiteMoveGeneratorThread.getStates()
-			// .clone();
-
-			System.out.println(moves.size());
-
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	private double evaluatePosition() {
-		return Evaluator.evaluatePosition(whitePawns, whiteRooks, whiteKnights,
-				whiteBishops, whiteQueens, whiteKing, blackPawns, blackRooks,
-				blackKnights, blackBishops, blackQueens, blackKing,
-				currentBoard, getWhiteAttackingSquares(),
-				getBlackAttackingSquares(), whiteCastleKing, whiteCastleQueen,
-				blackCastleKing, blackCastleQueen);
-	}
-
-	private Thread createWhiteMoveGenerator() {
-		Thread WhiteMoveGeneratorThread = new Thread(
-				new WhiteMoveGeneratorThread(currentBoard, whitePawns,
-						whiteRooks, whiteKnights, whiteBishops, whiteQueens,
-						whiteKing, getBlackPieces(), getWhitePieces(),
-						getBlackAttackingSquares(), blackPawns, blackRooks,
-						blackKnights, blackBishops, blackQueens, blackKing));
-		WhiteMoveGeneratorThread.start();
-
-		return WhiteMoveGeneratorThread;
+//		long time = System.currentTimeMillis();
+//		long timeNano = System.nanoTime();
+//
+//		newGameFromFEN("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1");
+//		System.out.println(whiteToMove);
+//		System.out.println();
+//		System.out.println(whiteCastleKing);
+//		System.out.println(whiteCastleQueen);
+//		System.out.println(blackCastleKing);
+//		System.out.println(blackCastleQueen);
+//
+//		printBoard();
+//
+//		Vector<FullGameState> temp1 = MoveGenerator
+//				.generateBlackLegalMoves(createGamestate());
+//		Vector<FullGameState> temp2 = new Vector<FullGameState>();
+//
+//		System.out.println(temp1.size());
+//
+//		for (Iterator iterator = temp1.iterator(); iterator.hasNext();) {
+//			FullGameState fullGameState = (FullGameState) iterator.next();
+//
+//			temp2.addAll(MoveGenerator.generateWhiteLegalMoves(fullGameState));
+//
+//		}
+//
+//		System.out.println("Starting here");
+//		for (Iterator iterator = temp2.iterator(); iterator.hasNext();) {
+//			FullGameState fullGameState = (FullGameState) iterator.next();
+////			printBoard(fullGameState.getCurrentBoard());
+//		}
+//
+//		System.out.println(temp2.size());
+//		System.out.println("That took :" + (System.currentTimeMillis() - time)
+//				+ "ms");
+//		System.out.println("That took :"
+//				+ ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
 
 	}
 
-	private Vector<GameState> generateWhiteLegalMoves() {
+	private Vector<FullGameState> generateWhiteLegalMoves() {
 		FullGameState temp = createGamestate();
 		return MoveGenerator.generateWhiteLegalMoves(temp);
 	}
 
-	private Vector<GameState> generateBlackLegalMoves() {
+	private Vector<FullGameState> generateBlackLegalMoves() {
 		FullGameState temp = createGamestate();
 		return MoveGenerator.generateBlackLegalMoves(temp);
+	}
+
+	public int generateDepthOneMoves() {
+		if (whiteToMove) {
+			return generateWhiteLegalMoves().size();
+		} else {
+			return generateBlackLegalMoves().size();
+		}
+	}
+
+	public int generateDepthTwoMoves() {
+		if (whiteToMove) {
+
+			Vector<FullGameState> depthOne = MoveGenerator
+					.generateWhiteLegalMoves(createGamestate());
+
+			Vector<FullGameState> depthTwo = new Vector<FullGameState>();
+
+			while (!depthOne.isEmpty()) {
+				depthTwo.addAll(MoveGenerator.generateBlackLegalMoves(depthOne
+						.get(0)));
+				depthOne.remove(0);
+			}
+			return depthTwo.size();
+		} else {
+			Vector<FullGameState> depthOne = MoveGenerator
+					.generateBlackLegalMoves(createGamestate());
+
+			Vector<FullGameState> depthTwo = new Vector<FullGameState>();
+
+			while (!depthOne.isEmpty()) {
+				depthTwo.addAll(MoveGenerator.generateWhiteLegalMoves(depthOne
+						.get(0)));
+				depthOne.remove(0);
+			}
+			return depthTwo.size();
+		}
 	}
 
 	public void newGame() {
@@ -203,19 +186,18 @@ public class ChessBoard {
 				blackRooks, blackKnights, blackBishops, blackQueens, blackKing,
 				whiteToMove, whiteCastleKing, whiteCastleQueen,
 				blackCastleKing, blackCastleQueen, enPassantSquare,
-				numberOfFullMoves, numberOfHalfMoves,
-				getWhiteAttackingSquares(), getBlackAttackingSquares());
+				numberOfFullMoves, numberOfHalfMoves);
 	}
 
 	public int makeAIMove(int difficulty, boolean playingWhite) {
 
-		GameState temp = Engine.makeMove(difficulty, playingWhite,
+		FullGameState temp = Engine.makeMove(difficulty, playingWhite,
 				createGamestate());
 		currentBoard = temp.getCurrentBoard();
 		whiteCastleKing = temp.getWhiteCastleKing();
-		whiteCastleQueen = temp.isWhiteCastleQueen();
-		blackCastleKing = temp.isBlackCastleKing();
-		blackCastleQueen = temp.isBlackCastleQueen();
+		whiteCastleQueen = temp.getWhiteCastleQueen();
+		blackCastleKing = temp.getBlackCastleKing();
+		blackCastleQueen = temp.getBlackCastleQueen();
 		updateBitboards();
 
 		if (isCheckmate()) {
@@ -371,6 +353,7 @@ public class ChessBoard {
 							tempBoard[(int) (enPassantSquare + 8) % 8][(int) (enPassantSquare + 8) / 8] = ' ';
 						}
 						if (fromSquare <= 15) {
+							System.out.println("A QUEEN IS MADE");
 							tempBoard[(int) toSquare % 8][(int) toSquare / 8] = 'q';
 						}
 						break;
@@ -735,10 +718,10 @@ public class ChessBoard {
 	}
 
 	private void testMethodWhiteFirst() {
-		Vector<GameState> firstMove = generateWhiteLegalMoves();
-		Vector<GameState> secondMove = new Vector<GameState>();
-		Vector<GameState> thirdMove = new Vector<GameState>();
-		Vector<GameState> fourthMove = new Vector<GameState>();
+		Vector<FullGameState> firstMove = generateWhiteLegalMoves();
+		Vector<FullGameState> secondMove = new Vector<FullGameState>();
+		Vector<FullGameState> thirdMove = new Vector<FullGameState>();
+		Vector<FullGameState> fourthMove = new Vector<FullGameState>();
 
 		int firstSize, secondSize, thirdSize, fourthSize;
 
@@ -749,7 +732,6 @@ public class ChessBoard {
 			updateBitboards();
 			secondMove.addAll(generateBlackLegalMoves());
 			firstMove.remove(0);
-			printBoard();
 		}
 
 		secondSize = secondMove.size();
@@ -775,10 +757,10 @@ public class ChessBoard {
 	}
 
 	private void testMethodBlackFirst() {
-		Vector<GameState> firstMove = generateBlackLegalMoves();
-		Vector<GameState> secondMove = new Vector<GameState>();
-		Vector<GameState> thirdMove = new Vector<GameState>();
-		Vector<GameState> fourthMove = new Vector<GameState>();
+		Vector<FullGameState> firstMove = generateBlackLegalMoves();
+		Vector<FullGameState> secondMove = new Vector<FullGameState>();
+		Vector<FullGameState> thirdMove = new Vector<FullGameState>();
+		Vector<FullGameState> fourthMove = new Vector<FullGameState>();
 
 		int firstSize, secondSize, thirdSize, fourthSize;
 
@@ -790,7 +772,6 @@ public class ChessBoard {
 			updateBitboards();
 			secondMove.addAll(generateWhiteLegalMoves());
 			firstMove.remove(0);
-			printBoard();
 		}
 
 		secondSize = secondMove.size();
@@ -799,15 +780,15 @@ public class ChessBoard {
 			currentBoard = secondMove.get(0).getCurrentBoard();
 			enPassantSquare = secondMove.get(0).getEnPassantSquare();
 			updateBitboards();
-			// thirdMove.addAll(generateBlackLegalMoves());
+			thirdMove.addAll(generateBlackLegalMoves());
 			secondMove.remove(0);
-			printBoard();
 		}
 
 		thirdSize = thirdMove.size();
 		System.out.println(thirdSize);
 		while (!thirdMove.isEmpty()) {
 			currentBoard = thirdMove.get(0).getCurrentBoard();
+			enPassantSquare = thirdMove.get(0).getEnPassantSquare();
 			updateBitboards();
 			fourthMove.addAll(generateWhiteLegalMoves());
 			thirdMove.remove(0);
@@ -837,14 +818,12 @@ public class ChessBoard {
 		blackCastleKing = castlingPermissions[2];
 		blackCastleQueen = castlingPermissions[3];
 
-		// TODO: implement en passant
 		enPassantSquare = FENLoader.getEnPassantSquare(fenScanner.next());
 
 		numberOfHalfMoves = FENLoader.getHalfMoves(fenScanner.next());
 		numberOfFullMoves = FENLoader.getFullMoves(fenScanner.next());
 
 		updateBitboards();
-		printBoard();
 
 	}
 

@@ -1,5 +1,8 @@
 package board;
 
+import operations.pieces.BlackPieces;
+import operations.pieces.WhitePieces;
+
 /**
  * Keeps track of the en passant square and castling rights etc.
  * 
@@ -16,22 +19,22 @@ public class FullGameState {
 	private int numberOfHalfMoves = 0;
 	private char[][] currentBoard;
 
-	private long whiteAttackingSquares, blackAttackingSquares;
-
 	private long whitePawns, whiteRooks, whiteKnights, whiteBishops,
 			whiteQueens, whiteKing;
 	private long blackPawns, blackRooks, blackKnights, blackBishops,
 			blackQueens, blackKing;
 
-	public FullGameState(char[][] currentBoard, long whitePawns, long whiteRooks,
-			long whiteKnights, long whiteBishops, long whiteQueens,
-			long whiteKing, long blackPawns, long blackRooks,
+	private long whiteAttackingSquares = 0;
+	private long blackAttackingSquares = 0;
+
+	public FullGameState(char[][] currentBoard, long whitePawns,
+			long whiteRooks, long whiteKnights, long whiteBishops,
+			long whiteQueens, long whiteKing, long blackPawns, long blackRooks,
 			long blackKnights, long blackBishops, long blackQueens,
 			long blackKing, boolean whiteToMove, boolean whiteCastleKing,
 			boolean whiteCastleQueen, boolean blackCastleKing,
 			boolean blackCastleQueen, long enPassantSquare,
-			int numberOfFullMoves, int numberOfHalfMoves,
-			long whiteAttackingSquares, long blackAttackingSquares) {
+			int numberOfFullMoves, int numberOfHalfMoves) {
 
 		this.whitePawns = whitePawns;
 		this.whiteRooks = whiteRooks;
@@ -56,9 +59,6 @@ public class FullGameState {
 		this.enPassantSquare = enPassantSquare;
 		this.numberOfFullMoves = numberOfFullMoves;
 		this.numberOfHalfMoves = numberOfHalfMoves;
-
-		this.whiteAttackingSquares = whiteAttackingSquares;
-		this.blackAttackingSquares = blackAttackingSquares;
 
 		this.currentBoard = currentBoard;
 	}
@@ -157,15 +157,56 @@ public class FullGameState {
 				| whiteQueens | whiteRooks);
 	}
 
-	public long getBlackAttackingSquares() {
-		return blackAttackingSquares;
-	}
-
-	public long getWhiteAttackingSquares() {
-		return whiteAttackingSquares;
+	public long getAllPieces() {
+		return getBlackPieces() | getWhitePieces();
 	}
 
 	public long getOccupiedSquares() {
 		return getWhitePieces() | getBlackPieces();
 	}
+
+	public long getBlackAttackingSquares() {
+
+		if (blackAttackingSquares != 0) {
+			return blackAttackingSquares;
+		} else {
+
+			blackAttackingSquares = blackAttackingSquares
+					| BlackPieces.getPawnAttackingSquares(blackPawns)
+					| BlackPieces.getRookAttackingSquares(blackRooks,
+							getOccupiedSquares())
+					| BlackPieces.getKnightAttackingSquares(blackKnights)
+					| BlackPieces.getBishopAttackingSquares(blackBishops,
+							getOccupiedSquares())
+					| BlackPieces.getQueenAttackingSquares(blackQueens,
+							getOccupiedSquares())
+					| BlackPieces.getKingAttackingSquares(blackKing,
+							getBlackPieces());
+
+			return blackAttackingSquares;
+		}
+	}
+
+	public long getWhiteAttackingSquares() {
+
+		if (whiteAttackingSquares != 0) {
+			return whiteAttackingSquares;
+		} else {
+
+			whiteAttackingSquares = whiteAttackingSquares
+					| WhitePieces.getPawnAttackingSquares(whitePawns)
+					| WhitePieces.getRookAttackingSquares(whiteRooks,
+							getOccupiedSquares())
+					| WhitePieces.getKnightAttackingSquares(whiteKnights)
+					| WhitePieces.getBishopAttackingSquares(whiteBishops,
+							getOccupiedSquares())
+					| WhitePieces.getQueenAttackingSquares(whiteQueens,
+							getOccupiedSquares())
+					| WhitePieces.getKingAttackingSquares(whiteKing,
+							getWhitePieces());
+
+			return whiteAttackingSquares;
+		}
+	}
+
 }

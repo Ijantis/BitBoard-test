@@ -274,7 +274,7 @@ public class WhitePieces {
 		}
 
 		if (whiteCastleQueen
-				&& (((whiteKing | whiteCastleKingSquares) & blackAttackingSquares) == 0)
+				&& (((whiteKing | whiteCastleQueenSquares) & blackAttackingSquares) == 0)
 				&& ((whiteCastleQueenSquares & whitePieces) == 0)) {
 			castled = castled | whiteKing >>> 2;
 		}

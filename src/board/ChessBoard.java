@@ -46,43 +46,44 @@ public class ChessBoard {
 	Vector<char[][]> serialList;
 
 	public ChessBoard() {
-//		long time = System.currentTimeMillis();
-//		long timeNano = System.nanoTime();
-//
-//		newGameFromFEN("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1");
-//		System.out.println(whiteToMove);
-//		System.out.println();
-//		System.out.println(whiteCastleKing);
-//		System.out.println(whiteCastleQueen);
-//		System.out.println(blackCastleKing);
-//		System.out.println(blackCastleQueen);
-//
-//		printBoard();
-//
-//		Vector<FullGameState> temp1 = MoveGenerator
-//				.generateBlackLegalMoves(createGamestate());
-//		Vector<FullGameState> temp2 = new Vector<FullGameState>();
-//
-//		System.out.println(temp1.size());
-//
-//		for (Iterator iterator = temp1.iterator(); iterator.hasNext();) {
-//			FullGameState fullGameState = (FullGameState) iterator.next();
-//
-//			temp2.addAll(MoveGenerator.generateWhiteLegalMoves(fullGameState));
-//
-//		}
-//
-//		System.out.println("Starting here");
-//		for (Iterator iterator = temp2.iterator(); iterator.hasNext();) {
-//			FullGameState fullGameState = (FullGameState) iterator.next();
-////			printBoard(fullGameState.getCurrentBoard());
-//		}
-//
-//		System.out.println(temp2.size());
-//		System.out.println("That took :" + (System.currentTimeMillis() - time)
-//				+ "ms");
-//		System.out.println("That took :"
-//				+ ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
+		// long time = System.currentTimeMillis();
+		// long timeNano = System.nanoTime();
+		//
+		// newGameFromFEN("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1");
+		// System.out.println(whiteToMove);
+		// System.out.println();
+		// System.out.println(whiteCastleKing);
+		// System.out.println(whiteCastleQueen);
+		// System.out.println(blackCastleKing);
+		// System.out.println(blackCastleQueen);
+		//
+		// printBoard();
+		//
+		// Vector<FullGameState> temp1 = MoveGenerator
+		// .generateBlackLegalMoves(createGamestate());
+		// Vector<FullGameState> temp2 = new Vector<FullGameState>();
+		//
+		// System.out.println(temp1.size());
+		//
+		// for (Iterator iterator = temp1.iterator(); iterator.hasNext();) {
+		// FullGameState fullGameState = (FullGameState) iterator.next();
+		//
+		// temp2.addAll(MoveGenerator.generateWhiteLegalMoves(fullGameState));
+		//
+		// }
+		//
+		// System.out.println("Starting here");
+		// for (Iterator iterator = temp2.iterator(); iterator.hasNext();) {
+		// FullGameState fullGameState = (FullGameState) iterator.next();
+		// // printBoard(fullGameState.getCurrentBoard());
+		// }
+		//
+		// System.out.println(temp2.size());
+		// System.out.println("That took :" + (System.currentTimeMillis() -
+		// time)
+		// + "ms");
+		// System.out.println("That took :"
+		// + ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
 
 	}
 
@@ -130,6 +131,109 @@ public class ChessBoard {
 				depthOne.remove(0);
 			}
 			return depthTwo.size();
+		}
+	}
+
+	public int generateDepthThreeMoves() {
+		if (whiteToMove) {
+
+			Vector<FullGameState> depthOne = MoveGenerator
+					.generateWhiteLegalMoves(createGamestate());
+
+			Vector<FullGameState> depthTwo = new Vector<FullGameState>();
+			Vector<FullGameState> depthThree = new Vector<FullGameState>();
+
+			while (!depthOne.isEmpty()) {
+				depthTwo.addAll(MoveGenerator.generateBlackLegalMoves(depthOne
+						.get(0)));
+				depthOne.remove(0);
+			}
+
+			while (!depthTwo.isEmpty()) {
+				depthThree.addAll(MoveGenerator
+						.generateWhiteLegalMoves(depthTwo.get(0)));
+				depthTwo.remove(0);
+			}
+			return depthThree.size();
+		} else {
+			Vector<FullGameState> depthOne = MoveGenerator
+					.generateBlackLegalMoves(createGamestate());
+
+			Vector<FullGameState> depthTwo = new Vector<FullGameState>();
+			Vector<FullGameState> depthThree = new Vector<FullGameState>();
+
+			while (!depthOne.isEmpty()) {
+				depthTwo.addAll(MoveGenerator.generateWhiteLegalMoves(depthOne
+						.get(0)));
+				depthOne.remove(0);
+			}
+
+			while (!depthTwo.isEmpty()) {
+				depthThree.addAll(MoveGenerator
+						.generateBlackLegalMoves(depthTwo.get(0)));
+				depthTwo.remove(0);
+			}
+			return depthThree.size();
+		}
+	}
+
+	public int generateDepthFourMoves() {
+		if (whiteToMove) {
+
+			Vector<FullGameState> depthOne = MoveGenerator
+					.generateWhiteLegalMoves(createGamestate());
+
+			Vector<FullGameState> depthTwo = new Vector<FullGameState>();
+			Vector<FullGameState> depthThree = new Vector<FullGameState>();
+			Vector<FullGameState> depthFour = new Vector<FullGameState>();
+
+			while (!depthOne.isEmpty()) {
+				depthTwo.addAll(MoveGenerator.generateBlackLegalMoves(depthOne
+						.get(0)));
+				depthOne.remove(0);
+			}
+
+			while (!depthTwo.isEmpty()) {
+				depthThree.addAll(MoveGenerator
+						.generateWhiteLegalMoves(depthTwo.get(0)));
+				depthTwo.remove(0);
+			}
+
+			while (!depthThree.isEmpty()) {
+				depthFour.addAll(MoveGenerator
+						.generateBlackLegalMoves(depthThree.get(0)));
+				depthThree.remove(0);
+			}
+
+			return depthFour.size();
+		} else {
+			Vector<FullGameState> depthOne = MoveGenerator
+					.generateBlackLegalMoves(createGamestate());
+
+			Vector<FullGameState> depthTwo = new Vector<FullGameState>();
+			Vector<FullGameState> depthThree = new Vector<FullGameState>();
+			Vector<FullGameState> depthFour = new Vector<FullGameState>();
+
+			while (!depthOne.isEmpty()) {
+				depthTwo.addAll(MoveGenerator.generateWhiteLegalMoves(depthOne
+						.get(0)));
+				depthOne.remove(0);
+			}
+
+			while (!depthTwo.isEmpty()) {
+				depthThree.addAll(MoveGenerator
+						.generateBlackLegalMoves(depthTwo.get(0)));
+				depthTwo.remove(0);
+			}
+
+			while (!depthThree.isEmpty()) {
+				depthFour.addAll(MoveGenerator
+						.generateWhiteLegalMoves(depthThree.get(0)));
+				depthThree.remove(0);
+			}
+
+			return depthFour.size();
+
 		}
 	}
 

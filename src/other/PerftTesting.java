@@ -29,10 +29,13 @@ public class PerftTesting {
 
 				myScanner.useDelimiter(" ;");
 				myboard.newGameFromFEN(myScanner.next());
-				myScanner.next();
 				readDepth = Integer.parseInt(myScanner.next().substring(3));
-				int calcDepth = myboard.generateDepthTwoMoves();
+				readDepth = Integer.parseInt(myScanner.next().substring(3));
+				readDepth = Integer.parseInt(myScanner.next().substring(3));
+				readDepth = Integer.parseInt(myScanner.next().substring(3));
+				int calcDepth = myboard.generateDepthFourMoves();
 				if (readDepth != calcDepth) {
+					System.out.println();
 					System.out.println("mismatch");
 					System.out.println("calc depth " + calcDepth);
 					System.out.println("read depth " + readDepth);
@@ -43,7 +46,9 @@ public class PerftTesting {
 					System.out.println();
 					numberOfMismatches++;
 				}
-
+				System.out.println("calc depth " + calcDepth);
+				System.out.println("read depth " + readDepth);
+				System.out.println(count);
 				myScanner.nextLine();
 				count++;
 			}

@@ -9,6 +9,14 @@ import board.FullGameState;
 
 public class MoveGenerator {
 
+	private static final long topLeftCorner = Long.parseLong(
+			"100000000000000000000000000000000000000000000000000000000", 2);
+	private static final long topRightCorner = Long.parseLong(
+			"100000000000000000000000000000000000000000000000000000000000000",
+			2) << 1;
+	private static final long bottomLeftCorner = Long.parseLong("1", 2);
+	private static final long bottomRightCorner = Long.parseLong("10000000", 2);
+
 	/*
 	 * NOTE: Do not return a Vector<FullGameState> return squares numbers
 	 * instead.
@@ -130,38 +138,83 @@ public class MoveGenerator {
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
+				boolean canMove = true;
+				long rookBitboard = myGamestate.getWhiteRooks();
+
 				if (fromCoord == 4 && toCoord == 6) {
-					temp[5][0] = 'R';
-					temp[7][0] = ' ';
+					if (temp[7][0] != 'R') {
+						canMove = false;
+					} else {
+						temp[5][0] = 'R';
+						temp[7][0] = ' ';
+						rookBitboard = (~bottomRightCorner & rookBitboard)
+								| bottomRightCorner >>> 2;
+
+					}
+
 				} else if (fromCoord == 4 && toCoord == 2) {
-					temp[3][0] = 'R';
-					temp[0][0] = ' ';
+					if (temp[0][0] != 'R') {
+						canMove = false;
+					} else {
+						temp[3][0] = 'R';
+						temp[0][0] = ' ';
+						rookBitboard = (~bottomLeftCorner & rookBitboard)
+								| bottomLeftCorner << 3;
+					}
 				}
 
-				listOfMoves
-						.add(new FullGameState(
-								temp,
-								myGamestate.getWhitePawns(),
-								myGamestate.getWhiteRooks(),
-								myGamestate.getWhiteKnights(),
-								myGamestate.getWhiteBishops(),
-								myGamestate.getWhiteQueens(),
-								possiblePieceMoveBitboard,
-								(myGamestate.getBlackPawns() ^ possiblePieceMoveBitboard)
-										& myGamestate.getBlackPawns(),
-								(myGamestate.getBlackRooks() ^ possiblePieceMoveBitboard)
-										& myGamestate.getBlackRooks(),
-								(myGamestate.getBlackKnights() ^ possiblePieceMoveBitboard)
-										& myGamestate.getBlackKnights(),
-								(myGamestate.getBlackBishops() ^ possiblePieceMoveBitboard)
-										& myGamestate.getBlackBishops(),
-								(myGamestate.getBlackQueens() ^ possiblePieceMoveBitboard)
-										& myGamestate.getBlackQueens(),
-								myGamestate.getBlackKing(), false, false,
-								false, myGamestate.getBlackCastleKing(),
-								myGamestate.getBlackCastleQueen(), 0,
-								myGamestate.getNumberOfFullMoves(), myGamestate
-										.getNumberOfHalfMoves()));
+				// // king side
+				// if (fromCoord == 60 && toCoord == 62) {
+				// if (temp[7][7] != 'r') {
+				// canMove = false;
+				// } else {
+				// temp[5][7] = 'r';
+				// temp[7][7] = ' ';
+				// System.out.println("black kingside");
+				// rookBitboard = (~topRightCorner & rookBitboard)
+				// | topRightCorner >>> 2;
+				// }
+				// // queen side
+				// } else if (fromCoord == 60 && toCoord == 58) {
+				// if (temp[0][7] != 'r') {
+				// canMove = false;
+				// } else {
+				// temp[3][7] = 'r';
+				// temp[0][7] = ' ';
+				// System.out.println("black queenside");
+				// printBitboard(rookBitboard);
+				// rookBitboard = (~topLeftCorner & rookBitboard)
+				// | topLeftCorner << 3;
+				// }
+				// }
+
+				if (canMove) {
+
+					listOfMoves
+							.add(new FullGameState(
+									temp,
+									myGamestate.getWhitePawns(),
+									rookBitboard,
+									myGamestate.getWhiteKnights(),
+									myGamestate.getWhiteBishops(),
+									myGamestate.getWhiteQueens(),
+									possiblePieceMoveBitboard,
+									(myGamestate.getBlackPawns() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackPawns(),
+									(myGamestate.getBlackRooks() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackRooks(),
+									(myGamestate.getBlackKnights() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackKnights(),
+									(myGamestate.getBlackBishops() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackBishops(),
+									(myGamestate.getBlackQueens() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackQueens(),
+									myGamestate.getBlackKing(), false, false,
+									false, myGamestate.getBlackCastleKing(),
+									myGamestate.getBlackCastleQueen(), 0,
+									myGamestate.getNumberOfFullMoves(),
+									myGamestate.getNumberOfHalfMoves()));
+				}
 			}
 
 			possibleMovesBitboard = Long.highestOneBit(possibleMovesBitboard)
@@ -219,33 +272,166 @@ public class MoveGenerator {
 					enPassantSquare = 0;
 				}
 
-				listOfMoves
-						.add(new FullGameState(
-								temp,
-								possiblePieceMoveBitboard,
-								myGamestate.getWhiteRooks(),
-								myGamestate.getWhiteKnights(),
-								myGamestate.getWhiteBishops(),
-								myGamestate.getWhiteQueens(),
-								myGamestate.getWhiteKing(),
-								(myGamestate.getBlackPawns() ^ possiblePieceMoveBitboard)
-										& myGamestate.getBlackPawns(),
-								(myGamestate.getBlackRooks() ^ possiblePieceMoveBitboard)
-										& myGamestate.getBlackRooks(),
-								(myGamestate.getBlackKnights() ^ possiblePieceMoveBitboard)
-										& myGamestate.getBlackKnights(),
-								(myGamestate.getBlackBishops() ^ possiblePieceMoveBitboard)
-										& myGamestate.getBlackBishops(),
-								(myGamestate.getBlackQueens() ^ possiblePieceMoveBitboard)
-										& myGamestate.getBlackQueens(),
-								myGamestate.getBlackKing(), false, myGamestate
-										.getWhiteCastleKing(), myGamestate
-										.getWhiteCastleQueen(), myGamestate
-										.getBlackCastleKing(), myGamestate
-										.getBlackCastleQueen(),
-								enPassantSquare, myGamestate
-										.getNumberOfFullMoves(), myGamestate
-										.getNumberOfHalfMoves()));
+				if (toCoord >= 56) {
+					temp[toCoord % 8][toCoord / 8] = 'Q';
+
+					listOfMoves
+							.add(new FullGameState(
+									copyCurrentBoard(temp),
+									possiblePieceMoveBitboard
+											& BitboardOperations.clearRank(8),
+									myGamestate.getWhiteRooks(),
+									myGamestate.getWhiteKnights(),
+									myGamestate.getWhiteBishops(),
+									myGamestate.getWhiteQueens()
+											| (Long.parseLong("1", 2) << toCoord),
+									myGamestate.getWhiteKing(),
+									(myGamestate.getBlackPawns() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackPawns(),
+									(myGamestate.getBlackRooks() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackRooks(),
+									(myGamestate.getBlackKnights() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackKnights(),
+									(myGamestate.getBlackBishops() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackBishops(),
+									(myGamestate.getBlackQueens() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackQueens(),
+									myGamestate.getBlackKing(), false,
+									myGamestate.getWhiteCastleKing(),
+									myGamestate.getWhiteCastleQueen(),
+									myGamestate.getBlackCastleKing(),
+									myGamestate.getBlackCastleQueen(),
+									enPassantSquare, myGamestate
+											.getNumberOfFullMoves(),
+									myGamestate.getNumberOfHalfMoves()));
+
+					temp[toCoord % 8][toCoord / 8] = 'N';
+
+					listOfMoves
+							.add(new FullGameState(
+									copyCurrentBoard(temp),
+									possiblePieceMoveBitboard
+											& BitboardOperations.clearRank(8),
+									myGamestate.getWhiteRooks(),
+									myGamestate.getWhiteKnights()
+											| (Long.parseLong("1", 2) << toCoord),
+									myGamestate.getWhiteBishops(),
+									myGamestate.getWhiteQueens(),
+									myGamestate.getWhiteKing(),
+									(myGamestate.getBlackPawns() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackPawns(),
+									(myGamestate.getBlackRooks() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackRooks(),
+									(myGamestate.getBlackKnights() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackKnights(),
+									(myGamestate.getBlackBishops() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackBishops(),
+									(myGamestate.getBlackQueens() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackQueens(),
+									myGamestate.getBlackKing(), false,
+									myGamestate.getWhiteCastleKing(),
+									myGamestate.getWhiteCastleQueen(),
+									myGamestate.getBlackCastleKing(),
+									myGamestate.getBlackCastleQueen(),
+									enPassantSquare, myGamestate
+											.getNumberOfFullMoves(),
+									myGamestate.getNumberOfHalfMoves()));
+
+					temp[toCoord % 8][toCoord / 8] = 'B';
+
+					listOfMoves
+							.add(new FullGameState(
+									copyCurrentBoard(temp),
+									possiblePieceMoveBitboard
+											& BitboardOperations.clearRank(8),
+									myGamestate.getWhiteRooks(),
+									myGamestate.getWhiteKnights(),
+									myGamestate.getWhiteBishops()
+											| (Long.parseLong("1", 2) << toCoord),
+									myGamestate.getWhiteQueens(),
+									myGamestate.getWhiteKing(),
+									(myGamestate.getBlackPawns() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackPawns(),
+									(myGamestate.getBlackRooks() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackRooks(),
+									(myGamestate.getBlackKnights() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackKnights(),
+									(myGamestate.getBlackBishops() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackBishops(),
+									(myGamestate.getBlackQueens() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackQueens(),
+									myGamestate.getBlackKing(), false,
+									myGamestate.getWhiteCastleKing(),
+									myGamestate.getWhiteCastleQueen(),
+									myGamestate.getBlackCastleKing(),
+									myGamestate.getBlackCastleQueen(),
+									enPassantSquare, myGamestate
+											.getNumberOfFullMoves(),
+									myGamestate.getNumberOfHalfMoves()));
+
+					temp[toCoord % 8][toCoord / 8] = 'R';
+
+					listOfMoves
+							.add(new FullGameState(
+									temp,
+									possiblePieceMoveBitboard
+											& BitboardOperations.clearRank(8),
+									myGamestate.getWhiteRooks()
+											| (Long.parseLong("1", 2) << toCoord),
+									myGamestate.getWhiteKnights(),
+									myGamestate.getWhiteBishops(),
+									myGamestate.getWhiteQueens(),
+									myGamestate.getWhiteKing(),
+									(myGamestate.getBlackPawns() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackPawns(),
+									(myGamestate.getBlackRooks() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackRooks(),
+									(myGamestate.getBlackKnights() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackKnights(),
+									(myGamestate.getBlackBishops() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackBishops(),
+									(myGamestate.getBlackQueens() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackQueens(),
+									myGamestate.getBlackKing(), false,
+									myGamestate.getWhiteCastleKing(),
+									myGamestate.getWhiteCastleQueen(),
+									myGamestate.getBlackCastleKing(),
+									myGamestate.getBlackCastleQueen(),
+									enPassantSquare, myGamestate
+											.getNumberOfFullMoves(),
+									myGamestate.getNumberOfHalfMoves()));
+
+				} else {
+
+					listOfMoves
+							.add(new FullGameState(
+									temp,
+									possiblePieceMoveBitboard,
+									myGamestate.getWhiteRooks(),
+									myGamestate.getWhiteKnights(),
+									myGamestate.getWhiteBishops(),
+									myGamestate.getWhiteQueens(),
+									myGamestate.getWhiteKing(),
+									(myGamestate.getBlackPawns() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackPawns(),
+									(myGamestate.getBlackRooks() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackRooks(),
+									(myGamestate.getBlackKnights() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackKnights(),
+									(myGamestate.getBlackBishops() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackBishops(),
+									(myGamestate.getBlackQueens() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackQueens(),
+									myGamestate.getBlackKing(), false,
+									myGamestate.getWhiteCastleKing(),
+									myGamestate.getWhiteCastleQueen(),
+									myGamestate.getBlackCastleKing(),
+									myGamestate.getBlackCastleQueen(),
+									enPassantSquare, myGamestate
+											.getNumberOfFullMoves(),
+									myGamestate.getNumberOfHalfMoves()));
+
+				}
 
 			}
 
@@ -717,35 +903,55 @@ public class MoveGenerator {
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
+				boolean canMove = true;
+				long rookBitboard = myGamestate.getBlackRooks();
+
+				// king side
 				if (fromCoord == 60 && toCoord == 62) {
-					temp[5][7] = 'R';
-					temp[7][7] = ' ';
+					if (temp[7][7] != 'r') {
+						canMove = false;
+					} else {
+						temp[5][7] = 'r';
+						temp[7][7] = ' ';
+						rookBitboard = (~topRightCorner & rookBitboard)
+								| topRightCorner >>> 2;
+					}
+					// queen side
 				} else if (fromCoord == 60 && toCoord == 58) {
-					temp[3][7] = 'R';
-					temp[0][7] = ' ';
+					if (temp[0][7] != 'r') {
+						canMove = false;
+					} else {
+						temp[3][7] = 'r';
+						temp[0][7] = ' ';
+						rookBitboard = (~topLeftCorner & rookBitboard)
+								| topLeftCorner << 3;
+					}
 				}
 
-				listOfMoves.add(new FullGameState(temp, (myGamestate
-						.getWhitePawns() ^ possiblePieceMoveBitboard)
-						& myGamestate.getWhitePawns(), (myGamestate
-						.getWhiteRooks() ^ possiblePieceMoveBitboard)
-						& myGamestate.getWhiteRooks(), (myGamestate
-						.getWhiteKnights() ^ possiblePieceMoveBitboard)
-						& myGamestate.getWhiteKnights(), (myGamestate
-						.getWhiteBishops() ^ possiblePieceMoveBitboard)
-						& myGamestate.getWhiteBishops(), (myGamestate
-						.getWhiteQueens() ^ possiblePieceMoveBitboard)
-						& myGamestate.getWhiteQueens(), myGamestate
-						.getWhiteKing(), myGamestate.getBlackPawns(),
-						myGamestate.getBlackRooks(), myGamestate
-								.getBlackKnights(), myGamestate
-								.getBlackBishops(), myGamestate
-								.getBlackQueens(), possiblePieceMoveBitboard,
-						true, myGamestate.getWhiteCastleKing(), myGamestate
-								.getWhiteCastleQueen(), false, false, 0,
-						myGamestate.getNumberOfFullMoves(), myGamestate
-								.getNumberOfHalfMoves()));
+				if (canMove) {
 
+					listOfMoves.add(new FullGameState(temp, (myGamestate
+							.getWhitePawns() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhitePawns(), (myGamestate
+							.getWhiteRooks() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteRooks(), (myGamestate
+							.getWhiteKnights() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteKnights(), (myGamestate
+							.getWhiteBishops() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteBishops(), (myGamestate
+							.getWhiteQueens() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteQueens(), myGamestate
+							.getWhiteKing(), myGamestate.getBlackPawns(),
+							rookBitboard, myGamestate.getBlackKnights(),
+							myGamestate.getBlackBishops(), myGamestate
+									.getBlackQueens(),
+							possiblePieceMoveBitboard, true, myGamestate
+									.getWhiteCastleKing(), myGamestate
+									.getWhiteCastleQueen(), false, false, 0,
+							myGamestate.getNumberOfFullMoves(), myGamestate
+									.getNumberOfHalfMoves()));
+
+				}
 			}
 
 			possibleMovesBitboard = Long.highestOneBit(possibleMovesBitboard)
@@ -803,28 +1009,141 @@ public class MoveGenerator {
 					enPassantSquare = 0;
 				}
 
-				listOfMoves.add(new FullGameState(temp, (myGamestate
-						.getWhitePawns() ^ possiblePieceMoveBitboard)
-						& myGamestate.getWhitePawns(), (myGamestate
-						.getWhiteRooks() ^ possiblePieceMoveBitboard)
-						& myGamestate.getWhiteRooks(), (myGamestate
-						.getWhiteKnights() ^ possiblePieceMoveBitboard)
-						& myGamestate.getWhiteKnights(), (myGamestate
-						.getWhiteBishops() ^ possiblePieceMoveBitboard)
-						& myGamestate.getWhiteBishops(), (myGamestate
-						.getWhiteQueens() ^ possiblePieceMoveBitboard)
-						& myGamestate.getWhiteQueens(), myGamestate
-						.getWhiteKing(), possiblePieceMoveBitboard, myGamestate
-						.getBlackRooks(), myGamestate.getBlackKnights(),
-						myGamestate.getBlackBishops(), myGamestate
-								.getBlackQueens(), myGamestate.getBlackKing(),
-						true, myGamestate.getWhiteCastleKing(), myGamestate
-								.getWhiteCastleQueen(), myGamestate
-								.getBlackCastleKing(), myGamestate
-								.getBlackCastleQueen(), enPassantSquare,
-						myGamestate.getNumberOfFullMoves(), myGamestate
-								.getNumberOfHalfMoves()));
+				if (toCoord <= 7) {
+					temp[toCoord % 8][toCoord / 8] = 'q';
 
+					listOfMoves.add(new FullGameState(temp, (myGamestate
+							.getWhitePawns() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhitePawns(), (myGamestate
+							.getWhiteRooks() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteRooks(), (myGamestate
+							.getWhiteKnights() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteKnights(), (myGamestate
+							.getWhiteBishops() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteBishops(), (myGamestate
+							.getWhiteQueens() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteQueens(), myGamestate
+							.getWhiteKing(), possiblePieceMoveBitboard
+							& BitboardOperations.clearRank(8), myGamestate
+							.getBlackRooks(), myGamestate.getBlackKnights(),
+							myGamestate.getBlackBishops(), myGamestate
+									.getBlackQueens()
+									| (Long.parseLong("1", 2) << toCoord),
+							myGamestate.getBlackKing(), true, myGamestate
+									.getWhiteCastleKing(), myGamestate
+									.getWhiteCastleQueen(), myGamestate
+									.getBlackCastleKing(), myGamestate
+									.getBlackCastleQueen(), enPassantSquare,
+							myGamestate.getNumberOfFullMoves(), myGamestate
+									.getNumberOfHalfMoves()));
+
+					temp[toCoord % 8][toCoord / 8] = 'n';
+
+					listOfMoves.add(new FullGameState(temp, (myGamestate
+							.getWhitePawns() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhitePawns(), (myGamestate
+							.getWhiteRooks() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteRooks(), (myGamestate
+							.getWhiteKnights() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteKnights(), (myGamestate
+							.getWhiteBishops() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteBishops(), (myGamestate
+							.getWhiteQueens() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteQueens(), myGamestate
+							.getWhiteKing(), possiblePieceMoveBitboard
+							& BitboardOperations.clearRank(8), myGamestate
+							.getBlackRooks(), myGamestate.getBlackKnights()
+							| (Long.parseLong("1", 2) << toCoord), myGamestate
+							.getBlackBishops(), myGamestate.getBlackQueens(),
+							myGamestate.getBlackKing(), true, myGamestate
+									.getWhiteCastleKing(), myGamestate
+									.getWhiteCastleQueen(), myGamestate
+									.getBlackCastleKing(), myGamestate
+									.getBlackCastleQueen(), enPassantSquare,
+							myGamestate.getNumberOfFullMoves(), myGamestate
+									.getNumberOfHalfMoves()));
+
+					temp[toCoord % 8][toCoord / 8] = 'b';
+
+					listOfMoves.add(new FullGameState(temp, (myGamestate
+							.getWhitePawns() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhitePawns(), (myGamestate
+							.getWhiteRooks() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteRooks(), (myGamestate
+							.getWhiteKnights() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteKnights(), (myGamestate
+							.getWhiteBishops() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteBishops(), (myGamestate
+							.getWhiteQueens() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteQueens(), myGamestate
+							.getWhiteKing(), possiblePieceMoveBitboard
+							& BitboardOperations.clearRank(8), myGamestate
+							.getBlackRooks(), myGamestate.getBlackKnights(),
+							myGamestate.getBlackBishops()
+									| (Long.parseLong("1", 2) << toCoord),
+							myGamestate.getBlackQueens(), myGamestate
+									.getBlackKing(), true, myGamestate
+									.getWhiteCastleKing(), myGamestate
+									.getWhiteCastleQueen(), myGamestate
+									.getBlackCastleKing(), myGamestate
+									.getBlackCastleQueen(), enPassantSquare,
+							myGamestate.getNumberOfFullMoves(), myGamestate
+									.getNumberOfHalfMoves()));
+
+					temp[toCoord % 8][toCoord / 8] = 'r';
+
+					listOfMoves.add(new FullGameState(temp, (myGamestate
+							.getWhitePawns() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhitePawns(), (myGamestate
+							.getWhiteRooks() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteRooks(), (myGamestate
+							.getWhiteKnights() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteKnights(), (myGamestate
+							.getWhiteBishops() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteBishops(), (myGamestate
+							.getWhiteQueens() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteQueens(), myGamestate
+							.getWhiteKing(), possiblePieceMoveBitboard
+							& BitboardOperations.clearRank(8), myGamestate
+							.getBlackRooks()
+							| (Long.parseLong("1", 2) << toCoord), myGamestate
+							.getBlackKnights(), myGamestate.getBlackBishops(),
+							myGamestate.getBlackQueens(), myGamestate
+									.getBlackKing(), true, myGamestate
+									.getWhiteCastleKing(), myGamestate
+									.getWhiteCastleQueen(), myGamestate
+									.getBlackCastleKing(), myGamestate
+									.getBlackCastleQueen(), enPassantSquare,
+							myGamestate.getNumberOfFullMoves(), myGamestate
+									.getNumberOfHalfMoves()));
+
+				} else {
+
+					listOfMoves.add(new FullGameState(temp, (myGamestate
+							.getWhitePawns() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhitePawns(), (myGamestate
+							.getWhiteRooks() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteRooks(), (myGamestate
+							.getWhiteKnights() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteKnights(), (myGamestate
+							.getWhiteBishops() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteBishops(), (myGamestate
+							.getWhiteQueens() ^ possiblePieceMoveBitboard)
+							& myGamestate.getWhiteQueens(), myGamestate
+							.getWhiteKing(), possiblePieceMoveBitboard,
+							myGamestate.getBlackRooks(), myGamestate
+									.getBlackKnights(), myGamestate
+									.getBlackBishops(), myGamestate
+									.getBlackQueens(), myGamestate
+									.getBlackKing(), true, myGamestate
+									.getWhiteCastleKing(), myGamestate
+									.getWhiteCastleQueen(), myGamestate
+									.getBlackCastleKing(), myGamestate
+									.getBlackCastleQueen(), enPassantSquare,
+							myGamestate.getNumberOfFullMoves(), myGamestate
+									.getNumberOfHalfMoves()));
+
+				}
 			}
 
 			possibleMovesBitboard = Long.highestOneBit(possibleMovesBitboard)

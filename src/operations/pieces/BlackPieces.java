@@ -274,7 +274,7 @@ public class BlackPieces {
 			castled = castled | blackKing >>> 2;
 		}
 
-		return ((getKingAttackingSquares(blackKing, blackPieces) & ~whiteAttackingSquares) | castled)
+		return (getKingAttackingSquares(blackKing, blackPieces) | castled)
 				& ~blackPieces;
 	}
 

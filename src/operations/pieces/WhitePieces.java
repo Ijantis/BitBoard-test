@@ -279,8 +279,8 @@ public class WhitePieces {
 			castled = castled | whiteKing >>> 2;
 		}
 
-		return ((getKingAttackingSquares(whiteKing, whitePieces) & ~blackAttackingSquares) | castled)
-				& ~whitePieces;
+		return ((getKingAttackingSquares(whiteKing, whitePieces) | castled)
+				& ~whitePieces);
 	}
 
 	private static void printBitboard(long bitBoard) {

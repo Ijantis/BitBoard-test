@@ -1012,7 +1012,7 @@ public class MoveGenerator {
 				if (toCoord <= 7) {
 					temp[toCoord % 8][toCoord / 8] = 'q';
 
-					listOfMoves.add(new FullGameState(temp, (myGamestate
+					listOfMoves.add(new FullGameState(copyCurrentBoard(temp), (myGamestate
 							.getWhitePawns() ^ possiblePieceMoveBitboard)
 							& myGamestate.getWhitePawns(), (myGamestate
 							.getWhiteRooks() ^ possiblePieceMoveBitboard)
@@ -1039,7 +1039,7 @@ public class MoveGenerator {
 
 					temp[toCoord % 8][toCoord / 8] = 'n';
 
-					listOfMoves.add(new FullGameState(temp, (myGamestate
+					listOfMoves.add(new FullGameState(copyCurrentBoard(temp), (myGamestate
 							.getWhitePawns() ^ possiblePieceMoveBitboard)
 							& myGamestate.getWhitePawns(), (myGamestate
 							.getWhiteRooks() ^ possiblePieceMoveBitboard)
@@ -1065,7 +1065,7 @@ public class MoveGenerator {
 
 					temp[toCoord % 8][toCoord / 8] = 'b';
 
-					listOfMoves.add(new FullGameState(temp, (myGamestate
+					listOfMoves.add(new FullGameState(copyCurrentBoard(temp), (myGamestate
 							.getWhitePawns() ^ possiblePieceMoveBitboard)
 							& myGamestate.getWhitePawns(), (myGamestate
 							.getWhiteRooks() ^ possiblePieceMoveBitboard)
@@ -1092,7 +1092,7 @@ public class MoveGenerator {
 
 					temp[toCoord % 8][toCoord / 8] = 'r';
 
-					listOfMoves.add(new FullGameState(temp, (myGamestate
+					listOfMoves.add(new FullGameState(copyCurrentBoard(temp), (myGamestate
 							.getWhitePawns() ^ possiblePieceMoveBitboard)
 							& myGamestate.getWhitePawns(), (myGamestate
 							.getWhiteRooks() ^ possiblePieceMoveBitboard)

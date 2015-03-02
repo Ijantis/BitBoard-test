@@ -177,41 +177,48 @@ public class BlackPieces {
 	public static long getBishopAttackingSquares(long blackBishops,
 			long occupiedSquares) {
 
-		long topRightSquares = BitboardOperations
-				.getTopRightSquares(blackBishops);
-		long topRight = topRightSquares & occupiedSquares;
-		topRight = (topRight << 9) | (topRight << 18) | (topRight << 27)
-				| (topRight << 36) | (topRight << 45) | (topRight << 54);
-		topRight = topRight & topRightSquares;
-		topRight = topRight ^ topRightSquares;
+		long possibleMoves = 0;
+		while (blackBishops != 0) {
+			long nextBishop = Long.highestOneBit(blackBishops);
+			blackBishops = Long.highestOneBit(blackBishops) ^ blackBishops;
+			long topRightSquares = BitboardOperations
+					.getTopRightSquares(nextBishop);
+			long topRight = topRightSquares & occupiedSquares;
+			topRight = (topRight << 9) | (topRight << 18) | (topRight << 27)
+					| (topRight << 36) | (topRight << 45) | (topRight << 54);
+			topRight = topRight & topRightSquares;
+			topRight = topRight ^ topRightSquares;
 
-		long bottomLeftSquares = BitboardOperations
-				.getBottomLeftSquares(blackBishops);
-		long bottomLeft = bottomLeftSquares & occupiedSquares;
-		bottomLeft = (bottomLeft >>> 9) | (bottomLeft >>> 18)
-				| (bottomLeft >>> 27) | (bottomLeft >>> 36)
-				| (bottomLeft >>> 45) | (bottomLeft >>> 54);
-		bottomLeft = bottomLeft & bottomLeftSquares;
-		bottomLeft = bottomLeft ^ bottomLeftSquares;
+			long bottomLeftSquares = BitboardOperations
+					.getBottomLeftSquares(nextBishop);
+			long bottomLeft = bottomLeftSquares & occupiedSquares;
+			bottomLeft = (bottomLeft >>> 9) | (bottomLeft >>> 18)
+					| (bottomLeft >>> 27) | (bottomLeft >>> 36)
+					| (bottomLeft >>> 45) | (bottomLeft >>> 54);
+			bottomLeft = bottomLeft & bottomLeftSquares;
+			bottomLeft = bottomLeft ^ bottomLeftSquares;
 
-		long bottomRightSquares = BitboardOperations
-				.getBottomRightSquares(blackBishops);
-		long bottomRight = bottomRightSquares & occupiedSquares;
-		bottomRight = (bottomRight >>> 7) | (bottomRight >>> 14)
-				| (bottomRight >>> 21) | (bottomRight >>> 28)
-				| (bottomRight >>> 35) | (bottomRight >>> 42);
-		bottomRight = bottomRight & bottomRightSquares;
-		bottomRight = bottomRight ^ bottomRightSquares;
+			long bottomRightSquares = BitboardOperations
+					.getBottomRightSquares(nextBishop);
+			long bottomRight = bottomRightSquares & occupiedSquares;
+			bottomRight = (bottomRight >>> 7) | (bottomRight >>> 14)
+					| (bottomRight >>> 21) | (bottomRight >>> 28)
+					| (bottomRight >>> 35) | (bottomRight >>> 42);
+			bottomRight = bottomRight & bottomRightSquares;
+			bottomRight = bottomRight ^ bottomRightSquares;
 
-		long topLeftSquares = BitboardOperations
-				.getTopLeftSquares(blackBishops);
-		long topLeft = topLeftSquares & occupiedSquares;
-		topLeft = (topLeft << 7) | (topLeft << 14) | (topLeft << 21)
-				| (topLeft << 28) | (topLeft << 35) | (topLeft << 42);
-		topLeft = topLeft & topLeftSquares;
-		topLeft = topLeft ^ topLeftSquares;
+			long topLeftSquares = BitboardOperations
+					.getTopLeftSquares(nextBishop);
+			long topLeft = topLeftSquares & occupiedSquares;
+			topLeft = (topLeft << 7) | (topLeft << 14) | (topLeft << 21)
+					| (topLeft << 28) | (topLeft << 35) | (topLeft << 42);
+			topLeft = topLeft & topLeftSquares;
+			topLeft = topLeft ^ topLeftSquares;
 
-		return topRight | topLeft | bottomRight | bottomLeft;
+			possibleMoves = possibleMoves | topRight | topLeft | bottomRight
+					| bottomLeft;
+		}
+		return possibleMoves;
 	}
 
 	public static long getQueenAttackingSquares(long blackQueens,

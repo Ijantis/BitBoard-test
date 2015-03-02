@@ -30,7 +30,7 @@ public class Evaluator {
 				.generateBlackLegalMoves(currentGameState);
 
 		// checkmate gives a lot of points
-		if (currentGameState.isWhiteToMove()
+		if (currentGameState.getWhiteToMove()
 				&& (currentGameState.getWhiteKing() & currentGameState
 						.getBlackAttackingSquares()) != 0
 				&& whiteMoves.size() == 0) {
@@ -38,7 +38,7 @@ public class Evaluator {
 			blackScore += 50000;
 			return whiteScore - blackScore;
 			// black checkmated
-		} else if (!currentGameState.isWhiteToMove()
+		} else if (!currentGameState.getWhiteToMove()
 				&& (currentGameState.getBlackKing() & currentGameState
 						.getWhiteAttackingSquares()) != 0
 				&& blackMoves.size() == 0) {

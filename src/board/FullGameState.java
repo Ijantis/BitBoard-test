@@ -26,6 +26,17 @@ public class FullGameState {
 
 	private long whiteAttackingSquares = 0;
 	private long blackAttackingSquares = 0;
+	private long toSquare;
+	private long fromSquare;
+
+	public long getToSquare() {
+		return toSquare;
+	}
+
+	public long getFromSquare() {
+		return fromSquare;
+	}
+
 
 	public FullGameState(char[][] currentBoard, long whitePawns,
 			long whiteRooks, long whiteKnights, long whiteBishops,
@@ -34,7 +45,8 @@ public class FullGameState {
 			long blackKing, boolean whiteToMove, boolean whiteCastleKing,
 			boolean whiteCastleQueen, boolean blackCastleKing,
 			boolean blackCastleQueen, long enPassantSquare,
-			int numberOfFullMoves, int numberOfHalfMoves) {
+			int numberOfFullMoves, int numberOfHalfMoves, long fromSquare,
+			long toSquare) {
 
 		this.whitePawns = whitePawns;
 		this.whiteRooks = whiteRooks;
@@ -59,6 +71,9 @@ public class FullGameState {
 		this.enPassantSquare = enPassantSquare;
 		this.numberOfFullMoves = numberOfFullMoves;
 		this.numberOfHalfMoves = numberOfHalfMoves;
+
+		this.toSquare = toSquare;
+		this.fromSquare = fromSquare;
 
 		this.currentBoard = currentBoard;
 	}
@@ -111,7 +126,7 @@ public class FullGameState {
 		return blackKing;
 	}
 
-	public boolean isWhiteToMove() {
+	public boolean getWhiteToMove() {
 		return whiteToMove;
 	}
 

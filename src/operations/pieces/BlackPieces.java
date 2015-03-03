@@ -265,18 +265,18 @@ public class BlackPieces {
 
 	public static long getKingMoves(long blackKing, long blackPieces,
 			long whiteAttackingSquares, boolean blackCastleKing,
-			boolean blackCastleQueen) {
+			boolean blackCastleQueen, long whitePieces) {
 
 		long castled = 0;
 
 		if (blackCastleKing
 				&& (((blackKing | blackCastleKingSquares) & whiteAttackingSquares) == 0)
-				&& ((blackCastleKingSquares & blackPieces) == 0)) {
+				&& ((blackCastleKingSquares & (whitePieces | blackPieces)) == 0)) {
 			castled = castled | blackKing << 2;
 		}
 		if (blackCastleQueen
 				&& (((blackKing | blackCastleQueenSquares) & whiteAttackingSquares) == 0)
-				&& (((blackCastleQueenSquares >>> 1 | blackCastleQueenSquares) & blackPieces) == 0)) {
+				&& (((blackCastleQueenSquares >>> 1 | blackCastleQueenSquares) & (whitePieces | blackPieces)) == 0)) {
 			castled = castled | blackKing >>> 2;
 		}
 

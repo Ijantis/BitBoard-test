@@ -269,7 +269,6 @@ public class WhitePieces {
 			boolean whiteCastleQueen) {
 
 		long castled = 0;
-
 		if (whiteCastleKing
 				&& (((whiteKing | whiteCastleKingSquares) & blackAttackingSquares) == 0)
 				&& ((whiteCastleKingSquares & whitePieces) == 0)) {
@@ -278,7 +277,7 @@ public class WhitePieces {
 
 		if (whiteCastleQueen
 				&& (((whiteKing | whiteCastleQueenSquares) & blackAttackingSquares) == 0)
-				&& ((whiteCastleQueenSquares & whitePieces) == 0)) {
+				&& (((whiteCastleQueenSquares >>> 1 | whiteCastleQueenSquares) & whitePieces) == 0)) {
 			castled = castled | whiteKing >>> 2;
 		}
 

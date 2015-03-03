@@ -274,10 +274,9 @@ public class BlackPieces {
 				&& ((blackCastleKingSquares & blackPieces) == 0)) {
 			castled = castled | blackKing << 2;
 		}
-
 		if (blackCastleQueen
 				&& (((blackKing | blackCastleQueenSquares) & whiteAttackingSquares) == 0)
-				&& ((blackCastleQueenSquares & blackPieces) == 0)) {
+				&& (((blackCastleQueenSquares >>> 1 | blackCastleQueenSquares) & blackPieces) == 0)) {
 			castled = castled | blackKing >>> 2;
 		}
 

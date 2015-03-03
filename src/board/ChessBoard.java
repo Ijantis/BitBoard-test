@@ -52,46 +52,46 @@ public class ChessBoard {
 
 	public ChessBoard() {
 
-		// newGameFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-		//
-		// // printBoard();
-		// makeMove(14, 22);
-		// // printBoard();
-		// makeMove(51, 43);
-		// // printBoard();
-		// makeMove(5, 23);
-		// printBitboard(whiteBishops);
-		// System.out.println("Attack");
-		// printBitboard(WhitePieces.getBishopAttackingSquares(whiteBishops,
-		// getOccupiedSquares()));
-		// printBoard();
-		// System.out.println();
-		// System.out.println();
+		newGameFromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
 
-//		Vector<FullGameState> one = MoveGenerator
-//				.generateBlackLegalMoves(createGamestate());
-//
-//		Hashtable<String, Integer> storage = new Hashtable<>();
-//
-//		String key = "";
-//		System.out.println(one.size());
-//		for (int i = 0; i < one.size(); i++) {
-//			key = numberToAlgebra((int) one.get(i).getFromSquare()) + "-"
-//					+ numberToAlgebra((int) one.get(i).getToSquare());
-//			storage.put(key,
-//					getMoveDepth(one.get(i), 1, one.get(i).getWhiteToMove()));
-//		}
-//
-//		ArrayList<String> keySet = new ArrayList<String>(storage.keySet());
-//		Collections.sort(keySet);
-//		int count = 0;
-//		for (int i = 0; i < keySet.size(); i++) {
-//			String currentKey = keySet.get(i);
-//			System.out.println(currentKey + " " + storage.get(currentKey));
-//			count += storage.get(currentKey);
-//
-//		}
-//		System.out.println(count);
+//		printBoard();
+		makeMove(18, 1);
+//		printBoard();
+		makeMove(60, 62);
+//		printBoard();
+		makeMove(4, 2);
+//		printBoard();
+
+		// Vector<FullGameState> one = MoveGenerator
+		// .generateWhiteLegalMoves(createGamestate());
+		//
+		// Hashtable<String, Integer> storage = new Hashtable<>();
+		//
+		// int depth = 0;
+		// String key = "";
+		// System.out.println(one.size());
+		// for (int i = 0; i < one.size(); i++) {
+		// key = numberToAlgebra((int) one.get(i).getFromSquare()) + "-"
+		// + numberToAlgebra((int) one.get(i).getToSquare());
+		// if (depth == 0) {
+		// storage.put(key, 1);
+		// } else {
+		// storage.put(
+		// key,
+		// getMoveDepth(one.get(i), 0, one.get(i).getWhiteToMove()));
+		// }
+		// }
+		//
+		// ArrayList<String> keySet = new ArrayList<String>(storage.keySet());
+		// Collections.sort(keySet);
+		// int count = 0;
+		// for (int i = 0; i < keySet.size(); i++) {
+		// String currentKey = keySet.get(i);
+		// System.out.println(currentKey + " " + storage.get(currentKey));
+		// count += storage.get(currentKey);
+		//
+		// }
+		// System.out.println(count);
 	}
 
 	private int getMoveDepth(FullGameState currentState, int depth,

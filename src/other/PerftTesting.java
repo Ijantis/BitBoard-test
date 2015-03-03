@@ -32,8 +32,8 @@ public class PerftTesting {
 				readDepth = Integer.parseInt(myScanner.next().substring(3));
 				readDepth = Integer.parseInt(myScanner.next().substring(3));
 				readDepth = Integer.parseInt(myScanner.next().substring(3));
-				readDepth = Integer.parseInt(myScanner.next().substring(3));
-				long calcDepth = myboard.generateDepthFourMoves();
+				// readDepth = Integer.parseInt(myScanner.next().substring(3));
+				long calcDepth = myboard.generateDepthThreeMoves();
 				if (readDepth != calcDepth) {
 					System.out.println();
 					System.out.println("mismatch");

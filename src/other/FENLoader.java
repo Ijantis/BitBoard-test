@@ -178,7 +178,6 @@ public class FENLoader {
 		}
 
 		enPassantSquare += (Long.parseLong(next.charAt(1) + "") - 1) * 8;
-		System.out.println(enPassantSquare);
 		return enPassantSquare;
 	}
 }

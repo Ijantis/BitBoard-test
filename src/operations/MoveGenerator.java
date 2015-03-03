@@ -2,6 +2,7 @@ package operations;
 
 import java.util.Vector;
 
+import main.GameLoop;
 import operations.pieces.BlackPieces;
 import operations.pieces.WhitePieces;
 import board.BoardManager;
@@ -90,11 +91,13 @@ public class MoveGenerator {
 			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
-		long kingMovesBitboard = WhitePieces.getKingMoves(
-				myGamestate.getWhiteKing(), myGamestate.getWhitePieces(),
-				myGamestate.getBlackAttackingSquares(),
-				myGamestate.getWhiteCastleKing(),
-				myGamestate.getWhiteCastleQueen());
+		long kingMovesBitboard = WhitePieces
+				.getKingMoves(myGamestate.getWhiteKing(),
+						myGamestate.getWhitePieces(),
+						myGamestate.getBlackAttackingSquares(),
+						myGamestate.getWhiteCastleKing(),
+						myGamestate.getWhiteCastleQueen(),
+						myGamestate.getBlackPieces());
 		possibleStates.addAll(whiteKingMoves(myGamestate.getWhiteKing(),
 				kingMovesBitboard, myGamestate));
 
@@ -236,9 +239,11 @@ public class MoveGenerator {
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
+				boolean enPassantMade = false;
 				if (toCoord == myGamestate.getEnPassantSquare()) {
 					temp[(int) (((myGamestate.getEnPassantSquare() - 8) % 8))][(int) (((myGamestate
 							.getEnPassantSquare() - 8) / 8))] = ' ';
+					enPassantMade = true;
 				}
 
 				long enPassantSquare;
@@ -248,9 +253,40 @@ public class MoveGenerator {
 					enPassantSquare = 0;
 				}
 
-				if (toCoord >= 56) {
+				if (enPassantMade) {
+					listOfMoves
+							.add(new FullGameState(
+									temp,
+									possiblePieceMoveBitboard,
+									myGamestate.getWhiteRooks(),
+									myGamestate.getWhiteKnights(),
+									myGamestate.getWhiteBishops(),
+									myGamestate.getWhiteQueens(),
+									myGamestate.getWhiteKing(),
+									BitboardOperations
+											.getPositionBitboard(myGamestate
+													.getEnPassantSquare()) >>> 8
+											^ myGamestate.getBlackPawns()
+											& myGamestate.getBlackPawns(),
+									(myGamestate.getBlackRooks() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackRooks(),
+									(myGamestate.getBlackKnights() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackKnights(),
+									(myGamestate.getBlackBishops() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackBishops(),
+									(myGamestate.getBlackQueens() ^ possiblePieceMoveBitboard)
+											& myGamestate.getBlackQueens(),
+									myGamestate.getBlackKing(), false,
+									myGamestate.getWhiteCastleKing(),
+									myGamestate.getWhiteCastleQueen(),
+									myGamestate.getBlackCastleKing(),
+									myGamestate.getBlackCastleQueen(),
+									enPassantSquare, myGamestate
+											.getNumberOfFullMoves(),
+									myGamestate.getNumberOfHalfMoves(),
+									fromCoord, toCoord));
+				} else if (toCoord >= 56) {
 					temp[toCoord % 8][toCoord / 8] = 'Q';
-
 					listOfMoves
 							.add(new FullGameState(
 									copyCurrentBoard(temp),
@@ -841,11 +877,13 @@ public class MoveGenerator {
 			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
-		long kingMovesBitboard = BlackPieces.getKingMoves(
-				myGamestate.getBlackKing(), myGamestate.getBlackPieces(),
-				myGamestate.getWhiteAttackingSquares(),
-				myGamestate.getBlackCastleKing(),
-				myGamestate.getBlackCastleQueen());
+		long kingMovesBitboard = BlackPieces
+				.getKingMoves(myGamestate.getBlackKing(),
+						myGamestate.getBlackPieces(),
+						myGamestate.getWhiteAttackingSquares(),
+						myGamestate.getBlackCastleKing(),
+						myGamestate.getBlackCastleQueen(),
+						myGamestate.getWhitePieces());
 		possibleStates.addAll(BlackKingMoves(myGamestate.getBlackKing(),
 				kingMovesBitboard, myGamestate));
 
@@ -988,9 +1026,11 @@ public class MoveGenerator {
 				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
 				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
+				boolean enPassantMade = false;
 				if (toCoord == myGamestate.getEnPassantSquare()) {
 					temp[(int) (((myGamestate.getEnPassantSquare() + 8) % 8))][(int) (((myGamestate
 							.getEnPassantSquare() + 8) / 8))] = ' ';
+					enPassantMade = true;
 				}
 
 				long enPassantSquare;
@@ -1000,7 +1040,40 @@ public class MoveGenerator {
 					enPassantSquare = 0;
 				}
 
-				if (toCoord <= 7) {
+				if (enPassantMade) {
+					listOfMoves
+							.add(new FullGameState(
+									temp,
+									BitboardOperations
+											.getPositionBitboard(myGamestate
+													.getEnPassantSquare()) << 8
+											^ myGamestate.getWhitePawns(),
+									(myGamestate.getWhiteRooks() ^ possiblePieceMoveBitboard)
+											& myGamestate.getWhiteRooks(),
+									(myGamestate.getWhiteKnights() ^ possiblePieceMoveBitboard)
+											& myGamestate.getWhiteKnights(),
+									(myGamestate.getWhiteBishops() ^ possiblePieceMoveBitboard)
+											& myGamestate.getWhiteBishops(),
+									(myGamestate.getWhiteQueens() ^ possiblePieceMoveBitboard)
+											& myGamestate.getWhiteQueens(),
+									myGamestate.getWhiteKing(),
+									possiblePieceMoveBitboard, myGamestate
+											.getBlackRooks(), myGamestate
+											.getBlackKnights(), myGamestate
+											.getBlackBishops(), myGamestate
+											.getBlackQueens(), myGamestate
+											.getBlackKing(), true, myGamestate
+											.getWhiteCastleKing(), myGamestate
+											.getWhiteCastleQueen(), myGamestate
+											.getBlackCastleKing(), myGamestate
+											.getBlackCastleQueen(),
+									enPassantSquare, myGamestate
+											.getNumberOfFullMoves(),
+									myGamestate.getNumberOfHalfMoves(),
+									fromCoord, toCoord));
+				}
+
+				else if (toCoord <= 7) {
 					temp[toCoord % 8][toCoord / 8] = 'q';
 
 					listOfMoves

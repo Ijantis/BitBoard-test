@@ -1,15 +1,12 @@
 package board;
 
-import java.awt.List;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Vector;
 
+import main.GameLoop;
 import operations.BitboardOperations;
 import operations.MoveGenerator;
 import operations.pieces.BlackPieces;
@@ -17,7 +14,6 @@ import operations.pieces.WhitePieces;
 import other.FENLoader;
 //import other.HashGenerator;
 import ai.Engine;
-import ai.evaluation.Evaluator;
 
 public class ChessBoard {
 
@@ -52,33 +48,50 @@ public class ChessBoard {
 
 	public ChessBoard() {
 
-		newGameFromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
-
-//		printBoard();
-		makeMove(18, 1);
-//		printBoard();
-		makeMove(60, 62);
-//		printBoard();
-		makeMove(4, 2);
-//		printBoard();
-
-		// Vector<FullGameState> one = MoveGenerator
-		// .generateWhiteLegalMoves(createGamestate());
+		// newGameFromFEN("8/PPPk4/8/8/8/8/4Kppp/8 b - - 0 1");
+		//
+		// printBoard();
+		//
+		// Vector<FullGameState> keyGenerator = MoveGenerator
+		// .generateBlackLegalMoves(createGamestate());
+		// FullGameState currentState = createGamestate();
 		//
 		// Hashtable<String, Integer> storage = new Hashtable<>();
-		//
-		// int depth = 0;
+		// int depth = 1;
 		// String key = "";
-		// System.out.println(one.size());
-		// for (int i = 0; i < one.size(); i++) {
-		// key = numberToAlgebra((int) one.get(i).getFromSquare()) + "-"
-		// + numberToAlgebra((int) one.get(i).getToSquare());
+		// System.out.println(keyGenerator.size());
+		//
 		// if (depth == 0) {
+		// for (int i = 0; i < keyGenerator.size(); i++) {
+		// key = numberToAlgebra((int) keyGenerator.get(i).getFromSquare())
+		// + "-"
+		// + numberToAlgebra((int) keyGenerator.get(i)
+		// .getToSquare());
+		// if (storage.containsKey(key)) {
+		// storage.put(key, storage.get(key) + 1);
+		// } else {
 		// storage.put(key, 1);
+		// }
+		// }
+		// } else {
+		// for (int i = 0; i < keyGenerator.size(); i++) {
+		// key = numberToAlgebra((int) keyGenerator.get(i).getFromSquare())
+		// + "-"
+		// + numberToAlgebra((int) keyGenerator.get(i)
+		// .getToSquare());
+		// if (storage.containsKey(key)) {
+		// storage.put(
+		// key,
+		// storage.get(key)
+		// + getMoveDepth(currentState, depth - 1,
+		// currentState.getWhiteToMove()));
 		// } else {
 		// storage.put(
 		// key,
-		// getMoveDepth(one.get(i), 0, one.get(i).getWhiteToMove()));
+		// getMoveDepth(currentState, depth - 1,
+		// currentState.getWhiteToMove()));
+		// }
+		//
 		// }
 		// }
 		//
@@ -92,6 +105,7 @@ public class ChessBoard {
 		//
 		// }
 		// System.out.println(count);
+		// System.out.println(keyGenerator.size());
 	}
 
 	private int getMoveDepth(FullGameState currentState, int depth,
@@ -99,12 +113,12 @@ public class ChessBoard {
 
 		Vector<FullGameState> currentMoves = new Vector<FullGameState>();
 
-		while (depth != 0) {
+		do {
 			if (whiteToMove) {
 				currentMoves = MoveGenerator
 						.generateWhiteLegalMoves(currentState);
 				int count = 0;
-				if (depth == 1) {
+				if (depth == 0) {
 					return currentMoves.size();
 				}
 				for (int i = 0; i < currentMoves.size(); i++) {
@@ -117,7 +131,7 @@ public class ChessBoard {
 				currentMoves = MoveGenerator
 						.generateBlackLegalMoves(currentState);
 				int count = 0;
-				if (depth == 1) {
+				if (depth == 0) {
 					return currentMoves.size();
 				}
 				for (int i = 0; i < currentMoves.size(); i++) {
@@ -125,10 +139,10 @@ public class ChessBoard {
 							!whiteToMove);
 				}
 				return count;
-			}
 
-		}
-		return currentMoves.size();
+			}
+		} while (depth != 0);
+
 	}
 
 	private String numberToAlgebra(int number) {
@@ -271,10 +285,91 @@ public class ChessBoard {
 
 			long count = 0;
 			while (!depthThree.isEmpty()) {
-				// depthFour.addAll(MoveGenerator
-				// .generateBlackLegalMoves(depthThree.get(0)));
-				count += MoveGenerator.generateBlackLegalMoves(
-						depthThree.get(0)).size();
+				FullGameState next = depthThree.get(0);
+				Vector<FullGameState> nextDepth = MoveGenerator
+						.generateBlackLegalMoves(next);
+				while (!nextDepth.isEmpty()) {
+					count += MoveGenerator.generateWhiteLegalMoves(
+							nextDepth.get(0)).size();
+					nextDepth.remove(0);
+				}
+				depthThree.remove(0);
+			}
+			System.out.println("That took :"
+					+ (System.currentTimeMillis() - time) + "ms");
+			System.out.println("That took :"
+					+ ((System.nanoTime() - timeNano) / 1000)
+					+ " micro seconds");
+			return count;
+		} else {
+			Vector<FullGameState> depthOne = MoveGenerator
+					.generateBlackLegalMoves(createGamestate());
+
+			Vector<FullGameState> depthTwo = new Vector<FullGameState>();
+			Vector<FullGameState> depthThree = new Vector<FullGameState>();
+			Vector<FullGameState> depthFour = new Vector<FullGameState>();
+
+			while (!depthOne.isEmpty()) {
+				depthTwo.addAll(MoveGenerator.generateWhiteLegalMoves(depthOne
+						.get(0)));
+				depthOne.remove(0);
+			}
+
+			while (!depthTwo.isEmpty()) {
+				depthThree.addAll(MoveGenerator
+						.generateBlackLegalMoves(depthTwo.get(0)));
+				depthTwo.remove(0);
+			}
+
+			long count = 0;
+			while (!depthThree.isEmpty()) {
+				FullGameState next = depthThree.get(0);
+				Vector<FullGameState> nextDepth = MoveGenerator
+						.generateWhiteLegalMoves(next);
+				while (!nextDepth.isEmpty()) {
+					count += MoveGenerator.generateWhiteLegalMoves(
+							nextDepth.get(0)).size();
+					nextDepth.remove(0);
+				}
+				depthThree.remove(0);
+			}
+			System.out.println("That took :"
+					+ (System.currentTimeMillis() - time) + "ms");
+			System.out.println("That took :"
+					+ ((System.nanoTime() - timeNano) / 1000)
+					+ " micro seconds");
+			return count;
+		}
+
+	}
+
+	public long generateDepthFiveMoves() {
+		long time = System.currentTimeMillis();
+		long timeNano = System.nanoTime();
+		if (whiteToMove) {
+
+			Vector<FullGameState> depthOne = MoveGenerator
+					.generateWhiteLegalMoves(createGamestate());
+
+			Vector<FullGameState> depthTwo = new Vector<FullGameState>();
+			Vector<FullGameState> depthThree = new Vector<FullGameState>();
+			Vector<FullGameState> depthFour = new Vector<FullGameState>();
+			while (!depthOne.isEmpty()) {
+				depthTwo.addAll(MoveGenerator.generateBlackLegalMoves(depthOne
+						.get(0)));
+				depthOne.remove(0);
+			}
+
+			while (!depthTwo.isEmpty()) {
+				depthThree.addAll(MoveGenerator
+						.generateWhiteLegalMoves(depthTwo.get(0)));
+				depthTwo.remove(0);
+			}
+
+			long count = 0;
+			while (!depthThree.isEmpty()) {
+				depthFour.addAll(MoveGenerator
+						.generateBlackLegalMoves(depthThree.get(0)));
 				depthThree.remove(0);
 			}
 			System.out.println("That took :"
@@ -663,7 +758,7 @@ public class ChessBoard {
 		case 'K':
 			return WhitePieces.getKingMoves(fromBitboard, getWhitePieces(),
 					getBlackAttackingSquares(), whiteCastleKing,
-					whiteCastleQueen);
+					whiteCastleQueen, getBlackPieces());
 		case 'p':
 			return BlackPieces.getPawnMoves(fromBitboard, getOccupiedSquares(),
 					getWhitePieces(), enPassantSquare);
@@ -681,7 +776,7 @@ public class ChessBoard {
 		case 'k':
 			return BlackPieces.getKingMoves(fromBitboard, getBlackPieces(),
 					getWhiteAttackingSquares(), blackCastleKing,
-					blackCastleQueen);
+					blackCastleQueen, getWhitePieces());
 		}
 		return 0L;
 	}

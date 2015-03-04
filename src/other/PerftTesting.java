@@ -10,9 +10,9 @@ public class PerftTesting {
 
 	public static void main(String[] args) {
 
-		// new PerftTesting();
+		new PerftTesting();
 
-		new ChessBoard();
+		// new ChessBoard();
 
 	}
 
@@ -29,6 +29,7 @@ public class PerftTesting {
 
 				myScanner.useDelimiter(" ;");
 				myboard.newGameFromFEN(myScanner.next());
+				readDepth = Integer.parseInt(myScanner.next().substring(3));
 				readDepth = Integer.parseInt(myScanner.next().substring(3));
 				readDepth = Integer.parseInt(myScanner.next().substring(3));
 				readDepth = Integer.parseInt(myScanner.next().substring(3));

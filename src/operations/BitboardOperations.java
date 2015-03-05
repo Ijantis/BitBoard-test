@@ -7,18 +7,7 @@ public class BitboardOperations {
 	 */
 	public static long getPositionBitboard(long position) {
 
-		String temp = "1";
-
-		for (int i = 0; i < position; i++) {
-			temp += "0";
-		}
-
-		if (temp.length() == 64) {
-			temp = temp.substring(0, temp.length() - 1);
-			return Long.parseLong(temp, 2) * 2;
-		} else {
-			return Long.parseLong(temp, 2);
-		}
+		return 1L << position;
 
 	}
 
@@ -104,18 +93,23 @@ public class BitboardOperations {
 	}
 
 	public static long maskRank(int rankToMask) {
-		String temp = "0000000000000000000000000000000000000000000000000000000011111111";
-		long maskedRank = Long.parseLong(temp, 2);
-		maskedRank = maskedRank << (8 * (rankToMask - 1));
-		return maskedRank;
+		long temp = 255L;
+		return temp << (8 * (rankToMask - 1));
 	}
 
+	/**
+	 * 
+	 * @param fileToMask
+	 *            input between 1 and 8
+	 * @return
+	 */
 	public static long maskFile(int fileToMask) {
 
-		String temp = "0000000100000001000000010000000100000001000000010000000100000001";
-		long maskedFile = Long.parseLong(temp, 2);
-		maskedFile = maskedFile << (fileToMask - 1);
-		return maskedFile;
+		// String temp =
+		// "0000000100000001000000010000000100000001000000010000000100000001";
+		// equivalent
+		long temp = 72340172838076673L;
+		return temp << (fileToMask - 1);
 	}
 
 	/*
@@ -209,5 +203,24 @@ public class BitboardOperations {
 			downSquares = downSquares | temp;
 		}
 		return downSquares;
+	}
+
+	private static void printBitboard(long bitBoard) {
+		String stringBitBoard = Long.toBinaryString(bitBoard);
+		System.out.println("Value : " + stringBitBoard);
+		while (stringBitBoard.length() != 64) {
+			stringBitBoard = "0" + stringBitBoard;
+		}
+
+		for (int i = 0; i < 8; i++) {
+			StringBuilder stringReverser = new StringBuilder(
+					stringBitBoard.substring(i * 8, ((i + 1) * 8)));
+			stringReverser.reverse();
+			for (int j = 0; j < stringReverser.toString().length(); j++) {
+				System.out.print(stringReverser.toString().charAt(j) + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
 	}
 }

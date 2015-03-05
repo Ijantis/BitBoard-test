@@ -45,43 +45,16 @@ public class WhitePieceMoves {
 							& myGamestate.getBlackQueens(),
 					myGamestate.getBlackKing(), true);
 			if (isValid) {
-				char[][] temp = copyCurrentBoard(myGamestate.getCurrentBoard());
 				int fromCoord = Long.toBinaryString(nextKingBitboard).length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
-				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
-				temp[fromCoord % 8][fromCoord / 8] = ' ';
-
 				boolean canMove = true;
 				long rookBitboard = myGamestate.getWhiteRooks();
-
-				if (fromCoord == 4 && toCoord == 6) {
-					if (temp[7][0] != 'R') {
-						canMove = false;
-					} else {
-						temp[5][0] = 'R';
-						temp[7][0] = ' ';
-						rookBitboard = (~bottomRightCorner & rookBitboard)
-								| bottomRightCorner >>> 2;
-
-					}
-
-				} else if (fromCoord == 4 && toCoord == 2) {
-					if (temp[0][0] != 'R') {
-						canMove = false;
-					} else {
-						temp[3][0] = 'R';
-						temp[0][0] = ' ';
-						rookBitboard = (~bottomLeftCorner & rookBitboard)
-								| bottomLeftCorner << 3;
-					}
-				}
 
 				if (canMove) {
 
 					listOfMoves
 							.add(new FullGameState(
-									temp,
 									myGamestate.getWhitePawns(),
 									rookBitboard,
 									myGamestate.getWhiteKnights(),
@@ -143,17 +116,11 @@ public class WhitePieceMoves {
 							& myGamestate.getBlackQueens(),
 					myGamestate.getBlackKing(), true);
 			if (isValid) {
-				char[][] temp = copyCurrentBoard(myGamestate.getCurrentBoard());
 				int fromCoord = Long.toBinaryString(nextPawnBitboard).length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
-				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
-				temp[fromCoord % 8][fromCoord / 8] = ' ';
-
 				boolean enPassantMade = false;
 				if (toCoord == myGamestate.getEnPassantSquare()) {
-					temp[(int) (((myGamestate.getEnPassantSquare() - 8) % 8))][(int) (((myGamestate
-							.getEnPassantSquare() - 8) / 8))] = ' ';
 					enPassantMade = true;
 				}
 
@@ -167,7 +134,6 @@ public class WhitePieceMoves {
 				if (enPassantMade) {
 					listOfMoves
 							.add(new FullGameState(
-									temp,
 									possiblePieceMoveBitboard,
 									myGamestate.getWhiteRooks(),
 									myGamestate.getWhiteKnights(),
@@ -197,10 +163,9 @@ public class WhitePieceMoves {
 									myGamestate.getNumberOfHalfMoves(),
 									fromCoord, toCoord));
 				} else if (toCoord >= 56) {
-					temp[toCoord % 8][toCoord / 8] = 'Q';
+
 					listOfMoves
 							.add(new FullGameState(
-									copyCurrentBoard(temp),
 									possiblePieceMoveBitboard
 											& BitboardOperations.clearRank(8),
 									myGamestate.getWhiteRooks(),
@@ -229,11 +194,8 @@ public class WhitePieceMoves {
 									myGamestate.getNumberOfHalfMoves(),
 									fromCoord, toCoord));
 
-					temp[toCoord % 8][toCoord / 8] = 'N';
-
 					listOfMoves
 							.add(new FullGameState(
-									copyCurrentBoard(temp),
 									possiblePieceMoveBitboard
 											& BitboardOperations.clearRank(8),
 									myGamestate.getWhiteRooks(),
@@ -262,11 +224,8 @@ public class WhitePieceMoves {
 									myGamestate.getNumberOfHalfMoves(),
 									fromCoord, toCoord));
 
-					temp[toCoord % 8][toCoord / 8] = 'B';
-
 					listOfMoves
 							.add(new FullGameState(
-									copyCurrentBoard(temp),
 									possiblePieceMoveBitboard
 											& BitboardOperations.clearRank(8),
 									myGamestate.getWhiteRooks(),
@@ -295,11 +254,8 @@ public class WhitePieceMoves {
 									myGamestate.getNumberOfHalfMoves(),
 									fromCoord, toCoord));
 
-					temp[toCoord % 8][toCoord / 8] = 'R';
-
 					listOfMoves
 							.add(new FullGameState(
-									temp,
 									possiblePieceMoveBitboard
 											& BitboardOperations.clearRank(8),
 									myGamestate.getWhiteRooks()
@@ -332,7 +288,6 @@ public class WhitePieceMoves {
 
 					listOfMoves
 							.add(new FullGameState(
-									temp,
 									possiblePieceMoveBitboard,
 									myGamestate.getWhiteRooks(),
 									myGamestate.getWhiteKnights(),
@@ -399,17 +354,12 @@ public class WhitePieceMoves {
 							& myGamestate.getBlackQueens(),
 					myGamestate.getBlackKing(), true);
 			if (isValid) {
-				char[][] temp = copyCurrentBoard(myGamestate.getCurrentBoard());
 				int fromCoord = Long.toBinaryString(nextKnightBitboard)
 						.length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
-				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
-				temp[fromCoord % 8][fromCoord / 8] = ' ';
-
 				listOfMoves
 						.add(new FullGameState(
-								temp,
 								myGamestate.getWhitePawns(),
 								myGamestate.getWhiteRooks(),
 								possiblePieceMoveBitboard,
@@ -474,17 +424,12 @@ public class WhitePieceMoves {
 					myGamestate.getBlackKing(), true);
 
 			if (isValid) {
-				char[][] temp = copyCurrentBoard(myGamestate.getCurrentBoard());
 				int fromCoord = Long.toBinaryString(nextBishopBitboard)
 						.length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
-				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
-				temp[fromCoord % 8][fromCoord / 8] = ' ';
-
 				listOfMoves
 						.add(new FullGameState(
-								temp,
 								myGamestate.getWhitePawns(),
 								myGamestate.getWhiteRooks(),
 								myGamestate.getWhiteKnights(),
@@ -550,16 +495,12 @@ public class WhitePieceMoves {
 					myGamestate.getBlackKing(), true);
 
 			if (isValid) {
-				char[][] temp = copyCurrentBoard(myGamestate.getCurrentBoard());
 				int fromCoord = Long.toBinaryString(nextQueenBitboard).length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
-				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
-				temp[fromCoord % 8][fromCoord / 8] = ' ';
-
-				listOfMoves.add(new FullGameState(temp, myGamestate
-						.getWhitePawns(), myGamestate.getWhiteRooks(),
-						myGamestate.getWhiteKnights(), myGamestate
+				listOfMoves.add(new FullGameState(myGamestate.getWhitePawns(),
+						myGamestate.getWhiteRooks(), myGamestate
+								.getWhiteKnights(), myGamestate
 								.getWhiteBishops(), possiblePieceMoveBitboard,
 						myGamestate.getWhiteKing(), (myGamestate
 								.getBlackPawns() ^ possiblePieceMoveBitboard)
@@ -620,17 +561,12 @@ public class WhitePieceMoves {
 							& myGamestate.getBlackQueens(),
 					myGamestate.getBlackKing(), true);
 			if (isValid) {
-				char[][] temp = copyCurrentBoard(myGamestate.getCurrentBoard());
 				int fromCoord = Long.toBinaryString(nextRookBitboard).length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
-
-				temp[toCoord % 8][toCoord / 8] = temp[fromCoord % 8][fromCoord / 8];
-				temp[fromCoord % 8][fromCoord / 8] = ' ';
 
 				if (fromCoord == 0) {
 					listOfMoves
 							.add(new FullGameState(
-									temp,
 									myGamestate.getWhitePawns(),
 									possiblePieceMoveBitboard,
 									myGamestate.getWhiteKnights(),
@@ -657,7 +593,6 @@ public class WhitePieceMoves {
 				} else if (fromCoord == 7) {
 					listOfMoves
 							.add(new FullGameState(
-									temp,
 									myGamestate.getWhitePawns(),
 									possiblePieceMoveBitboard,
 									myGamestate.getWhiteKnights(),
@@ -684,7 +619,6 @@ public class WhitePieceMoves {
 				} else {
 					listOfMoves
 							.add(new FullGameState(
-									temp,
 									myGamestate.getWhitePawns(),
 									possiblePieceMoveBitboard,
 									myGamestate.getWhiteKnights(),

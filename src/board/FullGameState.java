@@ -17,7 +17,6 @@ public class FullGameState {
 	private long enPassantSquare = 100;
 	private int numberOfFullMoves = 1;
 	private int numberOfHalfMoves = 0;
-	private char[][] currentBoard;
 
 	private long whitePawns, whiteRooks, whiteKnights, whiteBishops,
 			whiteQueens, whiteKing;
@@ -37,12 +36,11 @@ public class FullGameState {
 		return fromSquare;
 	}
 
-
-	public FullGameState(char[][] currentBoard, long whitePawns,
-			long whiteRooks, long whiteKnights, long whiteBishops,
-			long whiteQueens, long whiteKing, long blackPawns, long blackRooks,
-			long blackKnights, long blackBishops, long blackQueens,
-			long blackKing, boolean whiteToMove, boolean whiteCastleKing,
+	public FullGameState(long whitePawns, long whiteRooks, long whiteKnights,
+			long whiteBishops, long whiteQueens, long whiteKing,
+			long blackPawns, long blackRooks, long blackKnights,
+			long blackBishops, long blackQueens, long blackKing,
+			boolean whiteToMove, boolean whiteCastleKing,
 			boolean whiteCastleQueen, boolean blackCastleKing,
 			boolean blackCastleQueen, long enPassantSquare,
 			int numberOfFullMoves, int numberOfHalfMoves, long fromSquare,
@@ -75,7 +73,6 @@ public class FullGameState {
 		this.toSquare = toSquare;
 		this.fromSquare = fromSquare;
 
-		this.currentBoard = currentBoard;
 	}
 
 	public long getWhitePawns() {
@@ -156,10 +153,6 @@ public class FullGameState {
 
 	public int getNumberOfHalfMoves() {
 		return numberOfHalfMoves;
-	}
-
-	public char[][] getCurrentBoard() {
-		return currentBoard;
 	}
 
 	public long getBlackPieces() {

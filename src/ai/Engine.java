@@ -92,7 +92,6 @@ public class Engine {
 				}
 
 			}
-			printBoard(depthOne.get(bestIndex).getCurrentBoard());
 			return depthOne.get(bestIndex);
 		}
 	}

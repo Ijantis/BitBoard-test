@@ -13,13 +13,13 @@ public class Engine {
 	public static final int AI_VERY_EASY = 1;
 
 	public static FullGameState makeMove(int difficulty, boolean playingWhite,
-			FullGameState gamestate) {
+			FullGameState currentGameState) {
 
 		switch (difficulty) {
 		case AI_RANDOM:
-			return makeRandomMove(playingWhite, gamestate);
+			return makeRandomMove(playingWhite, currentGameState);
 		case AI_VERY_EASY:
-			return makeEvaluatedMove(playingWhite, gamestate);
+			return makeEvaluatedMove(playingWhite, currentGameState);
 		default:
 			return null;
 		}
@@ -27,39 +27,75 @@ public class Engine {
 	}
 
 	private static FullGameState makeEvaluatedMove(boolean playingWhite,
-			FullGameState gamestate) {
+			FullGameState currentGameState) {
 
 		Vector<FullGameState> listOfMoves = new Vector<FullGameState>();
 
 		if (playingWhite) {
-			listOfMoves = generateWhiteLegalMoves(gamestate);
+
+			listOfMoves = MoveGenerator
+					.generateWhiteLegalMoves(currentGameState);
 
 			long bestScore = Long.MIN_VALUE;
 			long currentScore;
 			int bestIndex = 0;
+
 			for (int i = 0; i < listOfMoves.size(); i++) {
-				currentScore = Evaluator.evaluatePosition(listOfMoves.get(i));
-				if (currentScore > bestScore) {
-					bestScore = currentScore;
-					bestIndex = i;
+				Vector<FullGameState> nextDepth = new Vector<FullGameState>();
+				nextDepth = MoveGenerator.generateBlackLegalMoves(listOfMoves
+						.get(i));
+				if (nextDepth.size() == 0) {
+					currentScore = Evaluator.evaluatePosition(listOfMoves
+							.get(i));
+					if (currentScore > bestScore) {
+						bestScore = currentScore;
+						bestIndex = i;
+					}
 				}
+				for (int j = 0; j < nextDepth.size(); j++) {
+					currentScore = Evaluator.evaluatePosition(nextDepth.get(j));
+					if (currentScore > bestScore) {
+						System.out.println(currentScore);
+						System.out.println(bestScore);
+						printBoard(nextDepth.get(j).getCurrentBoard());
+						bestScore = currentScore;
+						bestIndex = i;
+					}
+				}
+
 			}
-
 			return listOfMoves.get(bestIndex);
-
 		} else {
-			listOfMoves = generateBlackLegalMoves(gamestate);
+
+			listOfMoves = MoveGenerator
+					.generateBlackLegalMoves(currentGameState);
 
 			long bestScore = Long.MAX_VALUE;
 			long currentScore;
 			int bestIndex = 0;
+
 			for (int i = 0; i < listOfMoves.size(); i++) {
-				currentScore = Evaluator.evaluatePosition(listOfMoves.get(i));
-				if (currentScore < bestScore) {
-					bestScore = currentScore;
-					bestIndex = i;
+				Vector<FullGameState> nextDepth = new Vector<FullGameState>();
+				nextDepth = MoveGenerator.generateWhiteLegalMoves(listOfMoves
+						.get(i));
+				if (nextDepth.size() == 0) {
+					currentScore = Evaluator.evaluatePosition(listOfMoves
+							.get(i));
+					if (currentScore < bestScore) {
+						bestScore = currentScore;
+						bestIndex = i;
+					}
 				}
+				for (int j = 0; j < nextDepth.size(); j++) {
+					currentScore = Evaluator.evaluatePosition(nextDepth.get(j));
+					if (currentScore < bestScore) {
+						bestScore = currentScore;
+						bestIndex = i;
+					}
+				}
+
 			}
+			printBoard(listOfMoves.get(bestIndex).getCurrentBoard());
 			return listOfMoves.get(bestIndex);
 		}
 	}

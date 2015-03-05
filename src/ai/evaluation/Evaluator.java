@@ -1,5 +1,6 @@
 package ai.evaluation;
 
+import java.awt.BufferCapabilities.FlipContents;
 import java.util.Vector;
 
 import board.FullGameState;
@@ -11,6 +12,78 @@ public class Evaluator {
 	private static final long centralSquares = Long.parseLong(
 			"0000000000000000000000000001100000011000000000000000000000000000",
 			2);
+	private static int pawnMaterial = 100;
+	private static int rookMaterial = 500;
+	private static int knightMaterial = 300;
+	private static int bishopMaterial = 300;
+	private static int queenMaterial = 900;
+	private static int attackingCentralSquare = 20;
+	private static int occupyingCentralSquare = 40;
+	private static int mobility = 20;
+
+	// taken from
+	// http://chessprogramming.wikispaces.com/Simplified+evaluation+function
+
+	static int pawnBoard[][] = { { 0, 5, 5, 0, 5, 10, 50, 0 },
+			{ 0, 10, -5, 0, 5, 10, 50, 0 }, { 0, 10, -10, 0, 10, 20, 50, 0 },
+			{ 0, -20, 0, 20, 25, 30, 50, 0 }, { 0, -20, 0, 20, 25, 30, 50, 0 },
+			{ 0, 10, -10, 0, 10, 20, 50, 0 }, { 0, 10, -5, 0, 5, 10, 50, 0 },
+			{ 0, 5, 5, 0, 5, 10, 50, 0 } };;
+
+	static int rookBoard[][] = { { 0, -5, -5, -5, -5, -5, 5, 0 },
+			{ 0, 0, 0, 0, 0, 0, 10, 0 }, { 0, 0, 0, 0, 0, 0, 10, 0 },
+			{ 5, 0, 0, 0, 0, 0, 10, 0 }, { 5, 0, 0, 0, 0, 0, 10, 0 },
+			{ 0, 0, 0, 0, 0, 0, 10, 0 }, { 0, 0, 0, 0, 0, 0, 10, 0 },
+			{ -5, -5, -5, -5, -5, -5, 5, 0 }, };;
+
+	static int knightBoard[][] = { { -50, -40, -30, -30, -30, -30, -40, -50 },
+			{ -40, -20, 5, 0, 5, 0, -20, -40 },
+			{ -30, 0, 10, 15, 15, 10, 0, -30 },
+			{ -30, 5, 15, 20, 20, 15, 0, -30 },
+			{ -30, 5, 15, 20, 20, 15, 0, -30 },
+			{ -30, 0, 10, 15, 15, 10, 0, -30 },
+			{ -40, -20, 5, 0, 5, 0, -20, -40 },
+			{ -50, -40, -30, -30, -30, -30, -40, -50 }, };;
+
+	static int bishopBoard[][] = { { -20, -10, -10, -10, -10, -10, -10, -20 },
+			{ -10, 5, 10, 0, 5, 0, 0, -10 }, { -10, 0, 10, 10, 5, 5, 0, -10 },
+			{ -10, 10, 10, 10, 10, 10, 0, -10 },
+			{ -10, 10, 10, 10, 10, 10, 0, -10 },
+			{ -10, 0, 10, 10, 5, 5, 0, -10 }, { -10, 5, 10, 0, 5, 0, 0, -10 },
+			{ -20, -10, -10, -10, -10, -10, -10, -20 }, };;
+
+	static final int queenBoard[][] = {
+			{ -20, -10, -10, 0, -5, -10, -10, -20 },
+			{ -10, 0, 5, 0, 0, 0, 0, -10 }, { -10, 5, 5, 5, 5, 5, 0, -10 },
+			{ -5, 0, 5, 5, 5, 5, 0, -5 }, { -5, 0, 5, 5, 5, 5, 0, -5 },
+			{ -10, 0, 5, 5, 5, 5, 0, -10 }, { -10, 0, 0, 0, 0, 0, 0, -10 },
+			{ -20, -10, -10, -5, -5, -10, -10, -20 }, };;
+
+	static final int kingMidGameBoard[][] = {
+			{ 20, 20, -10, -20, -30, -30, -30, -30 },
+			{ 30, 20, -20, -30, -40, -40, -40, -40 },
+			{ 10, 0, -20, -30, -40, -40, -40, -40 },
+			{ 0, 0, -20, -40, -50, -50, -50, -50 },
+			{ 0, 0, -20, -40, -40, -50, -50, -50 },
+			{ 10, 0, -20, -30, -40, -40, -40, -40 },
+			{ 30, 20, -20, -30, -40, -40, -40, -40 },
+			{ 20, 20, -10, -20, -30, -30, -30, -30 }, };;
+
+	static final int kingLateGameBoard[][] = {
+			{ -50, -30, -30, -30, -30, -30, -30, -50 },
+			{ -30, -30, -10, -10, -10, -10, -20, -40 },
+			{ -30, 0, 20, 30, 30, 20, -10, -30 },
+			{ -30, 0, 30, 40, 40, 30, 0, -20 },
+			{ -30, 0, 30, 40, 40, 30, 0, -20 },
+			{ -30, 0, 20, 30, 30, 20, -10, -30 },
+			{ -30, -30, -10, -10, -10, -10, -20, -40 },
+			{ -50, -30, -30, -30, -30, -30, -30, -50 }, };;
+
+	static final int template[][] = { { 0, 0, 0, 0, 0, 0, 0, 0 },
+			{ 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0 },
+			{ 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0 },
+			{ 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0, 0, 0 },
+			{ 0, 0, 0, 0, 0, 0, 0, 0 }, };;
 
 	// USE GLOBAL VARIABLES FOR CHANGING STUFF IN THE EVALUATION FUNCTION
 
@@ -34,7 +107,6 @@ public class Evaluator {
 				&& (currentGameState.getWhiteKing() & currentGameState
 						.getBlackAttackingSquares()) != 0
 				&& whiteMoves.size() == 0) {
-
 			blackScore += 50000;
 			return whiteScore - blackScore;
 			// black checkmated
@@ -59,25 +131,103 @@ public class Evaluator {
 		blackScore += evaluateBlackProtectedHangingPieces(currentGameState);
 
 		// number of possible moves
-		// System.out.println("White mobility "
-		// + (MoveGenerator.generateWhiteLegalMoves(currentGameState)
-		// .size() * 15));
-		 whiteScore += MoveGenerator.generateWhiteLegalMoves(currentGameState)
-		 .size() * 15;
-		// System.out.println("Black mobility "
-		// + (MoveGenerator.generateBlackLegalMoves(currentGameState)
-		// .size() * 15));
+		whiteScore += MoveGenerator.generateWhiteLegalMoves(currentGameState)
+				.size() * mobility;
 		blackScore += MoveGenerator.generateBlackLegalMoves(currentGameState)
-				.size() * 15;
+				.size() * mobility;
 
 		whiteScore += evaluateWhiteCentralControl(currentGameState);
 		blackScore += evaluateBlackCentralControl(currentGameState);
+
+		// this evaluates negtively for black
+		whiteScore += evaluatePositional(currentGameState.getCurrentBoard(),
+				Long.bitCount(currentGameState.getAllPieces()));
 
 		// System.out.println("White score " + whiteScore);
 		// System.out.println("Black score " + blackScore);
 
 		return whiteScore - blackScore;
 
+	}
+
+	private static long evaluatePositional(char[][] currentBoard,
+			int numberOfPieces) {
+
+		int score = 0;
+
+		for (int i = 0; i < currentBoard.length; i++) {
+			switch (currentBoard[i / 8][i % 8]) {
+
+			case 'P':
+				score += pawnBoard[i / 8][i % 8];
+				break;
+			case 'R':
+				score += rookBoard[i / 8][i % 8];
+				break;
+			case 'N':
+				score += knightBoard[i / 8][i % 8];
+				break;
+			case 'B':
+				score += bishopBoard[i / 8][i % 8];
+				break;
+			case 'Q':
+				score += queenBoard[i / 8][i % 8];
+				break;
+			case 'K':
+				if (numberOfPieces > 7) {
+					score += kingMidGameBoard[i / 8][i % 8];
+				} else {
+					score += kingLateGameBoard[i / 8][i % 8];
+				}
+				break;
+			case 'p':
+				score -= pawnBoard[flipCoordinates(i / 8)][flipCoordinates(i % 8)];
+				break;
+			case 'r':
+				score -= rookBoard[flipCoordinates(i / 8)][flipCoordinates(i % 8)];
+				break;
+			case 'n':
+				score -= knightBoard[flipCoordinates(i / 8)][flipCoordinates(i % 8)];
+				break;
+			case 'b':
+				score -= bishopBoard[flipCoordinates(i / 8)][flipCoordinates(i % 8)];
+				break;
+			case 'q':
+				score -= queenBoard[flipCoordinates(i / 8)][flipCoordinates(i % 8)];
+				break;
+			case 'k':
+				if (numberOfPieces > 7) {
+					score -= kingMidGameBoard[flipCoordinates(i / 8)][flipCoordinates(i % 8)];
+				} else {
+					score -= kingLateGameBoard[flipCoordinates(i / 8)][flipCoordinates(i % 8)];
+				}
+				break;
+			}
+		}
+		return score * 2;
+	}
+
+	private static int flipCoordinates(int coord) {
+		switch (coord) {
+		case 0:
+			return 7;
+		case 1:
+			return 6;
+		case 2:
+			return 5;
+		case 3:
+			return 4;
+		case 4:
+			return 3;
+		case 5:
+			return 2;
+		case 6:
+			return 1;
+		case 7:
+			return 0;
+		}
+
+		return 0;
 	}
 
 	// whiteScore += evaluateWhiteCentralControl(whiteAttackingSquares);
@@ -88,10 +238,12 @@ public class Evaluator {
 		long score = 0;
 
 		score += Long.bitCount(currentGameState.getWhiteAttackingSquares()
-				& centralSquares) * 15;
+				& centralSquares)
+				* attackingCentralSquare;
 
 		score += Long.bitCount(currentGameState.getWhitePieces()
-				& centralSquares) * 40;
+				& centralSquares)
+				* occupyingCentralSquare;
 
 		// System.out.println("White central control " + score);
 
@@ -103,10 +255,12 @@ public class Evaluator {
 		long score = 0;
 
 		score += Long.bitCount(currentGameState.getBlackAttackingSquares()
-				& centralSquares) * 15;
+				& centralSquares)
+				* attackingCentralSquare;
 
 		score += Long.bitCount(currentGameState.getBlackPieces()
-				& centralSquares) * 40;
+				& centralSquares)
+				* occupyingCentralSquare;
 
 		// System.out.println("Black central control " + score);
 
@@ -211,9 +365,9 @@ public class Evaluator {
 	private static long evaluateWhitePawnStructure(
 			FullGameState currentGameState) {
 		long score = 0;
-//		System.out.print("White ");
+		// System.out.print("White ");
 		score += evaluatelongdPawns(currentGameState.getWhitePawns());
-//		System.out.print("White ");
+		// System.out.print("White ");
 		score += evaluateIsolatedPawns(currentGameState.getWhitePawns());
 		return score;
 	}
@@ -221,9 +375,9 @@ public class Evaluator {
 	private static long evaluateBlackPawnStructure(
 			FullGameState currentGameState) {
 		long score = 0;
-//		System.out.print("Black ");
+		// System.out.print("Black ");
 		score += evaluatelongdPawns(currentGameState.getBlackPawns());
-//		System.out.print("Black ");
+		// System.out.print("Black ");
 		score += evaluateIsolatedPawns(currentGameState.getBlackPawns());
 		return score;
 	}
@@ -297,12 +451,11 @@ public class Evaluator {
 
 		long score = 0;
 
-		score += Long.bitCount(myGameState.getWhitePawns()) * 100;
-		score += Long.bitCount(myGameState.getWhiteRooks()) * 500;
-		score += Long.bitCount(myGameState.getWhiteBishops()) * 300;
-		score += Long.bitCount(myGameState.getWhiteKnights()) * 300;
-		score += Long.bitCount(myGameState.getWhiteQueens()) * 900;
-		// System.out.println("White material " + score);
+		score += Long.bitCount(myGameState.getWhitePawns()) * pawnMaterial;
+		score += Long.bitCount(myGameState.getWhiteRooks()) * rookMaterial;
+		score += Long.bitCount(myGameState.getWhiteBishops()) * bishopMaterial;
+		score += Long.bitCount(myGameState.getWhiteKnights()) * knightMaterial;
+		score += Long.bitCount(myGameState.getWhiteQueens()) * queenMaterial;
 		return score;
 	}
 
@@ -311,13 +464,11 @@ public class Evaluator {
 
 		long score = 0;
 
-		score += Long.bitCount(myGameState.getBlackPawns()) * 100;
-		score += Long.bitCount(myGameState.getBlackRooks()) * 500;
-		score += Long.bitCount(myGameState.getBlackBishops()) * 300;
-		score += Long.bitCount(myGameState.getBlackKnights()) * 300;
-		score += Long.bitCount(myGameState.getBlackQueens()) * 900;
-
-		// System.out.println("Black material " + score);
+		score += Long.bitCount(myGameState.getBlackPawns()) * pawnMaterial;
+		score += Long.bitCount(myGameState.getBlackRooks()) * rookMaterial;
+		score += Long.bitCount(myGameState.getBlackBishops()) * bishopMaterial;
+		score += Long.bitCount(myGameState.getBlackKnights()) * knightMaterial;
+		score += Long.bitCount(myGameState.getBlackQueens()) * queenMaterial;
 		return score;
 	}
 

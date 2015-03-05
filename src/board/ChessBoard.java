@@ -14,6 +14,7 @@ import operations.pieces.WhitePieces;
 import other.FENLoader;
 //import other.HashGenerator;
 import ai.Engine;
+import ai.evaluation.Evaluator;
 
 public class ChessBoard {
 
@@ -30,37 +31,36 @@ public class ChessBoard {
 	private int numberOfFullMoves = 1;
 	private int numberOfHalfMoves = 0;
 
-	static int pawnBoard[][] = { { 0, 0, 0, 0, 0, 0, 0, 0 },
-			{ 50, 50, 50, 50, 50, 50, 50, 50 },
-			{ 10, 10, 20, 30, 30, 20, 10, 10 }, { 5, 5, 10, 25, 25, 10, 5, 5 },
-			{ 0, 0, 0, 20, 20, 0, 0, 0 }, { 5, -5, -10, 0, 0, -10, -5, 5 },
-			{ 5, 10, 10, -20, -20, 10, 10, 5 }, { 0, 0, 0, 0, 0, 0, 0, 0 } };
-
 	// Upper case for WHITE
 	// Lower case for BLACK
 	// 0,0 is top left 0,7 is top right 7,7 bottom right
 	private char[][] currentBoard = {
-			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-			{ ' ', 'Q', ' ', ' ', ' ', ' ', ' ', ' ' },
-			{ ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-			{ 'k', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-			{ ' ', ' ', 'K', ' ', ' ', ' ', ' ', ' ' } };;
+			{ 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' },
+			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', 'n' },
+			{ 'B', 'P', 'N', ' ', ' ', ' ', 'p', 'b' },
+			{ 'Q', 'P', ' ', ' ', 'q', ' ', ' ', ' ' },
+			{ 'K', ' ', ' ', ' ', ' ', ' ', 'p', 'k' },
+			{ 'B', 'P', ' ', ' ', ' ', ' ', 'p', 'b' },
+			{ 'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n' },
+			{ 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' } };;
 
 	Vector<char[][]> threadedList;
 	Vector<char[][]> serialList;
 
 	public ChessBoard() {
-		
-		updateBitboards();
-		clearCastlingRights();
-		
-		makeMove(6, 7);
+		long time = System.currentTimeMillis();
+		long timeNano = System.nanoTime();
+
+		newGame();
+		makeMove(12, 28);
 		printBoard();
-		makeAIMove(Engine.AI_VERY_EASY, whiteToMove);
+		makeAIMove(Engine.AI_VERY_EASY, false);
 		printBoard();
+
+		System.out.println("That took :" + (System.currentTimeMillis() - time)
+				+ "ms");
+		System.out.println("That took :"
+				+ ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
 
 	}
 

@@ -29,65 +29,62 @@ public class Engine {
 	private static FullGameState makeEvaluatedMove(boolean playingWhite,
 			FullGameState currentGameState) {
 
-		Vector<FullGameState> listOfMoves = new Vector<FullGameState>();
+		Vector<FullGameState> depthOne = new Vector<FullGameState>();
 
 		if (playingWhite) {
 
-			listOfMoves = MoveGenerator
+			depthOne = MoveGenerator
 					.generateWhiteLegalMoves(currentGameState);
 
 			long bestScore = Long.MIN_VALUE;
 			long currentScore;
 			int bestIndex = 0;
 
-			for (int i = 0; i < listOfMoves.size(); i++) {
-				Vector<FullGameState> nextDepth = new Vector<FullGameState>();
-				nextDepth = MoveGenerator.generateBlackLegalMoves(listOfMoves
+			for (int i = 0; i < depthOne.size(); i++) {
+				Vector<FullGameState> depthTwo = new Vector<FullGameState>();
+				depthTwo = MoveGenerator.generateBlackLegalMoves(depthOne
 						.get(i));
-				if (nextDepth.size() == 0) {
-					currentScore = Evaluator.evaluatePosition(listOfMoves
+				if (depthTwo.size() == 0) {
+					currentScore = Evaluator.evaluatePosition(depthOne
 							.get(i));
 					if (currentScore > bestScore) {
 						bestScore = currentScore;
 						bestIndex = i;
 					}
 				}
-				for (int j = 0; j < nextDepth.size(); j++) {
-					currentScore = Evaluator.evaluatePosition(nextDepth.get(j));
+				for (int j = 0; j < depthTwo.size(); j++) {
+					currentScore = Evaluator.evaluatePosition(depthTwo.get(j));
 					if (currentScore > bestScore) {
-						System.out.println(currentScore);
-						System.out.println(bestScore);
-						printBoard(nextDepth.get(j).getCurrentBoard());
 						bestScore = currentScore;
 						bestIndex = i;
 					}
 				}
 
 			}
-			return listOfMoves.get(bestIndex);
+			return depthOne.get(bestIndex);
 		} else {
 
-			listOfMoves = MoveGenerator
+			depthOne = MoveGenerator
 					.generateBlackLegalMoves(currentGameState);
 
 			long bestScore = Long.MAX_VALUE;
 			long currentScore;
 			int bestIndex = 0;
 
-			for (int i = 0; i < listOfMoves.size(); i++) {
-				Vector<FullGameState> nextDepth = new Vector<FullGameState>();
-				nextDepth = MoveGenerator.generateWhiteLegalMoves(listOfMoves
+			for (int i = 0; i < depthOne.size(); i++) {
+				Vector<FullGameState> depthTwo = new Vector<FullGameState>();
+				depthTwo = MoveGenerator.generateWhiteLegalMoves(depthOne
 						.get(i));
-				if (nextDepth.size() == 0) {
-					currentScore = Evaluator.evaluatePosition(listOfMoves
+				if (depthTwo.size() == 0) {
+					currentScore = Evaluator.evaluatePosition(depthOne
 							.get(i));
 					if (currentScore < bestScore) {
 						bestScore = currentScore;
 						bestIndex = i;
 					}
 				}
-				for (int j = 0; j < nextDepth.size(); j++) {
-					currentScore = Evaluator.evaluatePosition(nextDepth.get(j));
+				for (int j = 0; j < depthTwo.size(); j++) {
+					currentScore = Evaluator.evaluatePosition(depthTwo.get(j));
 					if (currentScore < bestScore) {
 						bestScore = currentScore;
 						bestIndex = i;
@@ -95,8 +92,8 @@ public class Engine {
 				}
 
 			}
-			printBoard(listOfMoves.get(bestIndex).getCurrentBoard());
-			return listOfMoves.get(bestIndex);
+			printBoard(depthOne.get(bestIndex).getCurrentBoard());
+			return depthOne.get(bestIndex);
 		}
 	}
 

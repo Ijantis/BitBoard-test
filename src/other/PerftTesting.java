@@ -10,17 +10,17 @@ public class PerftTesting {
 
 	public static void main(String[] args) {
 
-		new PerftTesting();
+		// new PerftTesting();
 
-		// new ChessBoard();
+		new ChessBoard();
 
 	}
 
 	public PerftTesting() {
 
-		int count = 1;
-		int numberOfMismatches = 0;
-		int readDepth = 0;
+		long count = 1;
+		long numberOfMismatches = 0;
+		long readDepth = 0;
 		Scanner myScanner;
 		ChessBoard myboard = new ChessBoard();
 		try {
@@ -29,12 +29,12 @@ public class PerftTesting {
 
 				myScanner.useDelimiter(" ;");
 				myboard.newGameFromFEN(myScanner.next());
-				readDepth = Integer.parseInt(myScanner.next().substring(3));
-				readDepth = Integer.parseInt(myScanner.next().substring(3));
-				readDepth = Integer.parseInt(myScanner.next().substring(3));
-				readDepth = Integer.parseInt(myScanner.next().substring(3));
-				readDepth = Integer.parseInt(myScanner.next().substring(3));
-				long calcDepth = myboard.generateDepthFourMoves();
+				readDepth = Long.parseLong(myScanner.next().substring(3));
+				readDepth = Long.parseLong(myScanner.next().substring(3));
+				readDepth = Long.parseLong(myScanner.next().substring(3));
+				readDepth = Long.parseLong(myScanner.next().substring(3));
+				readDepth = Long.parseLong(myScanner.next().substring(3));
+				long calcDepth = myboard.generateDepthMoves(5);
 				if (readDepth != calcDepth) {
 					System.out.println();
 					System.out.println("mismatch");

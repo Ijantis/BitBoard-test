@@ -15,176 +15,167 @@ public class MoveGenerator {
 	 * instead.
 	 */
 	public static ArrayList<FullGameState> generateWhiteLegalMoves(
-			FullGameState myGamestate) {
+			FullGameState currentGameState) {
 
 		ArrayList<FullGameState> possibleStates = new ArrayList<FullGameState>();
 		long temp;
 
-		temp = myGamestate.getWhitePawns();
+		temp = currentGameState.getWhitePawns();
 		while (temp != 0) {
 
 			long nextPawn = Long.highestOneBit(temp);
 			long bitboardOfMoves = WhitePieces.getPawnMoves(nextPawn,
-					myGamestate.getOccupiedSquares(),
-					myGamestate.getBlackPieces(),
-					myGamestate.getEnPassantSquare());
+					currentGameState.getOccupiedSquares(),
+					currentGameState.getBlackPieces(),
+					currentGameState.getEnPassantSquare());
 			possibleStates.addAll(WhitePieceMoves.whitePawnMoves(nextPawn,
-					bitboardOfMoves, myGamestate));
+					bitboardOfMoves, currentGameState));
 
 			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
-		temp = myGamestate.getWhiteKnights();
+		temp = currentGameState.getWhiteKnights();
 		while (temp != 0) {
 
 			long nextKnight = Long.highestOneBit(temp);
 			long bitboardOfMoves = WhitePieces.getKnightMoves(nextKnight,
-					myGamestate.getWhitePieces());
+					currentGameState.getWhitePieces());
 			possibleStates.addAll(WhitePieceMoves.whiteKnightMoves(nextKnight,
-					bitboardOfMoves, myGamestate));
+					bitboardOfMoves, currentGameState));
 
 			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
-		temp = myGamestate.getWhiteBishops();
+		temp = currentGameState.getWhiteBishops();
 		while (temp != 0) {
 			long nextBishop = Long.highestOneBit(temp);
 			long bitboardOfMoves = WhitePieces.getBishopMoves(nextBishop,
-					myGamestate.getOccupiedSquares(),
-					myGamestate.getWhitePieces());
+					currentGameState.getOccupiedSquares(),
+					currentGameState.getWhitePieces());
 			possibleStates.addAll(WhitePieceMoves.whiteBishopMoves(nextBishop,
-					bitboardOfMoves, myGamestate));
+					bitboardOfMoves, currentGameState));
 
 			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
-		temp = myGamestate.getWhiteQueens();
+		temp = currentGameState.getWhiteQueens();
 		while (temp != 0) {
 			long nextQueen = Long.highestOneBit(temp);
 			long bitboardOfMoves = WhitePieces.getQueenMoves(nextQueen,
-					myGamestate.getOccupiedSquares(),
-					myGamestate.getWhitePieces());
+					currentGameState.getOccupiedSquares(),
+					currentGameState.getWhitePieces());
 			possibleStates.addAll(WhitePieceMoves.whiteQueenMoves(nextQueen,
-					bitboardOfMoves, myGamestate));
+					bitboardOfMoves, currentGameState));
 
 			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
-		temp = myGamestate.getWhiteRooks();
+		temp = currentGameState.getWhiteRooks();
 		while (temp != 0) {
 			long nextRook = Long.highestOneBit(temp);
 			long bitboardOfMoves = WhitePieces.getRookMoves(nextRook,
-					myGamestate.getOccupiedSquares(),
-					myGamestate.getWhitePieces());
+					currentGameState.getOccupiedSquares(),
+					currentGameState.getWhitePieces());
 			possibleStates.addAll(WhitePieceMoves.whiteRookMoves(nextRook,
-					bitboardOfMoves, myGamestate));
+					bitboardOfMoves, currentGameState));
 
 			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
-		long kingMovesBitboard = WhitePieces
-				.getKingMoves(myGamestate.getWhiteKing(),
-						myGamestate.getWhitePieces(),
-						myGamestate.getBlackAttackingSquares(),
-						myGamestate.getWhiteCastleKing(),
-						myGamestate.getWhiteCastleQueen(),
-						myGamestate.getBlackPieces());
+		long kingMovesBitboard = WhitePieces.getKingMoves(
+				currentGameState.getWhiteKing(),
+				currentGameState.getWhitePieces(),
+				currentGameState.getBlackAttackingSquares(),
+				currentGameState.getWhiteCastleKing(),
+				currentGameState.getWhiteCastleQueen(),
+				currentGameState.getBlackPieces());
 		possibleStates.addAll(WhitePieceMoves.whiteKingMoves(
-				myGamestate.getWhiteKing(), kingMovesBitboard, myGamestate));
+				currentGameState.getWhiteKing(), kingMovesBitboard,
+				currentGameState));
 
 		return possibleStates;
 	}
 
 	public static ArrayList<FullGameState> generateBlackLegalMoves(
-			FullGameState myGamestate) {
+			FullGameState currentGameState) {
 
 		ArrayList<FullGameState> possibleStates = new ArrayList<FullGameState>();
 		long temp;
 
-		temp = myGamestate.getBlackPawns();
+		temp = currentGameState.getBlackPawns();
 		while (temp != 0) {
 
 			long nextPawn = Long.highestOneBit(temp);
 			long bitboardOfMoves = BlackPieces.getPawnMoves(nextPawn,
-					myGamestate.getOccupiedSquares(),
-					myGamestate.getWhitePieces(),
-					myGamestate.getEnPassantSquare());
+					currentGameState.getOccupiedSquares(),
+					currentGameState.getWhitePieces(),
+					currentGameState.getEnPassantSquare());
 			possibleStates.addAll(BlackPieceMoves.BlackPawnMoves(nextPawn,
-					bitboardOfMoves, myGamestate));
+					bitboardOfMoves, currentGameState));
 
 			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
-		temp = myGamestate.getBlackKnights();
+		temp = currentGameState.getBlackKnights();
 		while (temp != 0) {
 
 			long nextKnight = Long.highestOneBit(temp);
 			long bitboardOfMoves = BlackPieces.getKnightMoves(nextKnight,
-					myGamestate.getBlackPieces());
+					currentGameState.getBlackPieces());
 			possibleStates.addAll(BlackPieceMoves.BlackKnightMoves(nextKnight,
-					bitboardOfMoves, myGamestate));
+					bitboardOfMoves, currentGameState));
 
 			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
-		temp = myGamestate.getBlackBishops();
+		temp = currentGameState.getBlackBishops();
 		while (temp != 0) {
 			long nextBishop = Long.highestOneBit(temp);
 			long bitboardOfMoves = BlackPieces.getBishopMoves(nextBishop,
-					myGamestate.getOccupiedSquares(),
-					myGamestate.getBlackPieces());
+					currentGameState.getOccupiedSquares(),
+					currentGameState.getBlackPieces());
 			possibleStates.addAll(BlackPieceMoves.BlackBishopMoves(nextBishop,
-					bitboardOfMoves, myGamestate));
+					bitboardOfMoves, currentGameState));
 
 			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
-		temp = myGamestate.getBlackQueens();
+		temp = currentGameState.getBlackQueens();
 		while (temp != 0) {
 			long nextQueen = Long.highestOneBit(temp);
 			long bitboardOfMoves = BlackPieces.getQueenMoves(nextQueen,
-					myGamestate.getOccupiedSquares(),
-					myGamestate.getBlackPieces());
+					currentGameState.getOccupiedSquares(),
+					currentGameState.getBlackPieces());
 			possibleStates.addAll(BlackPieceMoves.BlackQueenMoves(nextQueen,
-					bitboardOfMoves, myGamestate));
+					bitboardOfMoves, currentGameState));
 
 			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
-		temp = myGamestate.getBlackRooks();
+		temp = currentGameState.getBlackRooks();
 		while (temp != 0) {
 			long nextRook = Long.highestOneBit(temp);
 			long bitboardOfMoves = BlackPieces.getRookMoves(nextRook,
-					myGamestate.getOccupiedSquares(),
-					myGamestate.getBlackPieces());
+					currentGameState.getOccupiedSquares(),
+					currentGameState.getBlackPieces());
 			possibleStates.addAll(BlackPieceMoves.BlackRookMoves(nextRook,
-					bitboardOfMoves, myGamestate));
+					bitboardOfMoves, currentGameState));
 
 			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
-		long kingMovesBitboard = BlackPieces
-				.getKingMoves(myGamestate.getBlackKing(),
-						myGamestate.getBlackPieces(),
-						myGamestate.getWhiteAttackingSquares(),
-						myGamestate.getBlackCastleKing(),
-						myGamestate.getBlackCastleQueen(),
-						myGamestate.getWhitePieces());
+		long kingMovesBitboard = BlackPieces.getKingMoves(
+				currentGameState.getBlackKing(),
+				currentGameState.getBlackPieces(),
+				currentGameState.getWhiteAttackingSquares(),
+				currentGameState.getBlackCastleKing(),
+				currentGameState.getBlackCastleQueen(),
+				currentGameState.getWhitePieces());
 		possibleStates.addAll(BlackPieceMoves.BlackKingMoves(
-				myGamestate.getBlackKing(), kingMovesBitboard, myGamestate));
+				currentGameState.getBlackKing(), kingMovesBitboard,
+				currentGameState));
 
 		return possibleStates;
-	}
-
-	private static char[][] copyCurrentBoard(char[][] currentBoard) {
-		char[][] temp = new char[currentBoard.length][currentBoard.length];
-
-		for (int x = 0; x < temp.length; x++) {
-			for (int y = 0; y < temp.length; y++) {
-				temp[x][y] = currentBoard[x][y];
-			}
-		}
-		return temp;
 	}
 
 	private static void printBitboard(long bitBoard) {

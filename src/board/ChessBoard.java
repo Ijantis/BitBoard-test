@@ -3,8 +3,9 @@ package board;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
+import java.util.Random;
 import java.util.Scanner;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import main.GameLoop;
 import operations.BitboardOperations;
@@ -44,18 +45,16 @@ public class ChessBoard {
 			{ 'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n' },
 			{ 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' } };;
 
-	Vector<char[][]> threadedList;
-	Vector<char[][]> serialList;
+	ArrayList<char[][]> threadedList;
+	ArrayList<char[][]> serialList;
 
 	public ChessBoard() {
 		long time = System.currentTimeMillis();
 		long timeNano = System.nanoTime();
 
 		newGame();
-		makeMove(12, 28);
-		printBoard();
-		makeAIMove(Engine.AI_VERY_EASY, false);
-		printBoard();
+
+		System.out.println(generateDepthMoves(4));
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -65,7 +64,7 @@ public class ChessBoard {
 	}
 
 	private void generateMoveDepthDivide(int depth) {
-		Vector<FullGameState> keyGenerator = MoveGenerator
+		ArrayList<FullGameState> keyGenerator = MoveGenerator
 				.generateBlackLegalMoves(createGamestate());
 		FullGameState currentState = createGamestate();
 
@@ -127,7 +126,7 @@ public class ChessBoard {
 	private int generateMoveDepth(FullGameState currentState, int depth,
 			boolean whiteToMove) {
 
-		Vector<FullGameState> currentMoves = new Vector<FullGameState>();
+		ArrayList<FullGameState> currentMoves = new ArrayList<FullGameState>();
 
 		do {
 			if (whiteToMove) {
@@ -186,12 +185,12 @@ public class ChessBoard {
 		return null;
 	}
 
-	private Vector<FullGameState> generateWhiteLegalMoves() {
+	private ArrayList<FullGameState> generateWhiteLegalMoves() {
 		FullGameState temp = createGamestate();
 		return MoveGenerator.generateWhiteLegalMoves(temp);
 	}
 
-	private Vector<FullGameState> generateBlackLegalMoves() {
+	private ArrayList<FullGameState> generateBlackLegalMoves() {
 		FullGameState temp = createGamestate();
 		return MoveGenerator.generateBlackLegalMoves(temp);
 	}
@@ -781,10 +780,10 @@ public class ChessBoard {
 	}
 
 	private void testMethodWhiteFirst() {
-		Vector<FullGameState> firstMove = generateWhiteLegalMoves();
-		Vector<FullGameState> secondMove = new Vector<FullGameState>();
-		Vector<FullGameState> thirdMove = new Vector<FullGameState>();
-		Vector<FullGameState> fourthMove = new Vector<FullGameState>();
+		ArrayList<FullGameState> firstMove = generateWhiteLegalMoves();
+		ArrayList<FullGameState> secondMove = new ArrayList<FullGameState>();
+		ArrayList<FullGameState> thirdMove = new ArrayList<FullGameState>();
+		ArrayList<FullGameState> fourthMove = new ArrayList<FullGameState>();
 
 		int firstSize, secondSize, thirdSize, fourthSize;
 
@@ -820,10 +819,10 @@ public class ChessBoard {
 	}
 
 	private void testMethodBlackFirst() {
-		Vector<FullGameState> firstMove = generateBlackLegalMoves();
-		Vector<FullGameState> secondMove = new Vector<FullGameState>();
-		Vector<FullGameState> thirdMove = new Vector<FullGameState>();
-		Vector<FullGameState> fourthMove = new Vector<FullGameState>();
+		ArrayList<FullGameState> firstMove = generateBlackLegalMoves();
+		ArrayList<FullGameState> secondMove = new ArrayList<FullGameState>();
+		ArrayList<FullGameState> thirdMove = new ArrayList<FullGameState>();
+		ArrayList<FullGameState> fourthMove = new ArrayList<FullGameState>();
 
 		int firstSize, secondSize, thirdSize, fourthSize;
 

@@ -150,7 +150,7 @@ public class FENLoader {
 		long enPassantSquare = 0;
 
 		if (next.equals("-")) {
-			return 0;
+			return 100;
 		}
 
 		switch (next.charAt(0)) {

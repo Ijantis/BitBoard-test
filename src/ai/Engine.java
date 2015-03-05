@@ -1,7 +1,7 @@
 package ai;
 
 import java.util.Random;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import ai.evaluation.Evaluator;
 import board.FullGameState;
@@ -29,7 +29,7 @@ public class Engine {
 	private static FullGameState makeEvaluatedMove(boolean playingWhite,
 			FullGameState currentGameState) {
 
-		Vector<FullGameState> depthOne = new Vector<FullGameState>();
+		ArrayList<FullGameState> depthOne = new ArrayList<FullGameState>();
 
 		if (playingWhite) {
 
@@ -41,7 +41,7 @@ public class Engine {
 			int bestIndex = 0;
 
 			for (int i = 0; i < depthOne.size(); i++) {
-				Vector<FullGameState> depthTwo = new Vector<FullGameState>();
+				ArrayList<FullGameState> depthTwo = new ArrayList<FullGameState>();
 				depthTwo = MoveGenerator.generateBlackLegalMoves(depthOne
 						.get(i));
 				if (depthTwo.size() == 0) {
@@ -72,7 +72,7 @@ public class Engine {
 			int bestIndex = 0;
 
 			for (int i = 0; i < depthOne.size(); i++) {
-				Vector<FullGameState> depthTwo = new Vector<FullGameState>();
+				ArrayList<FullGameState> depthTwo = new ArrayList<FullGameState>();
 				depthTwo = MoveGenerator.generateWhiteLegalMoves(depthOne
 						.get(i));
 				if (depthTwo.size() == 0) {
@@ -101,7 +101,7 @@ public class Engine {
 	private static FullGameState makeRandomMove(boolean playingWhite,
 			FullGameState gamestate) {
 
-		Vector<FullGameState> listOfMoves = new Vector<FullGameState>();
+		ArrayList<FullGameState> listOfMoves = new ArrayList<FullGameState>();
 
 		if (playingWhite) {
 			listOfMoves = generateWhiteLegalMoves(gamestate);
@@ -114,13 +114,13 @@ public class Engine {
 
 	}
 
-	private static Vector<FullGameState> generateWhiteLegalMoves(
+	private static ArrayList<FullGameState> generateWhiteLegalMoves(
 			FullGameState gamestate) {
 
 		return MoveGenerator.generateWhiteLegalMoves(gamestate);
 	}
 
-	private static Vector<FullGameState> generateBlackLegalMoves(
+	private static ArrayList<FullGameState> generateBlackLegalMoves(
 			FullGameState gamestate) {
 		return MoveGenerator.generateBlackLegalMoves(gamestate);
 	}

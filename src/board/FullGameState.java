@@ -14,7 +14,7 @@ public class FullGameState {
 
 	private boolean whiteToMove, whiteCastleKing, whiteCastleQueen,
 			blackCastleKing, blackCastleQueen;
-	private long enPassantSquare = 0;
+	private long enPassantSquare = 100;
 	private int numberOfFullMoves = 1;
 	private int numberOfHalfMoves = 0;
 	private char[][] currentBoard;

@@ -250,7 +250,7 @@ public class MoveGenerator {
 				if (fromCoord == toCoord - 16) {
 					enPassantSquare = toCoord - 8;
 				} else {
-					enPassantSquare = 0;
+					enPassantSquare = 100;
 				}
 
 				if (enPassantMade) {
@@ -1037,9 +1037,8 @@ public class MoveGenerator {
 				if (fromCoord == toCoord + 16) {
 					enPassantSquare = toCoord + 8;
 				} else {
-					enPassantSquare = 0;
+					enPassantSquare = 100;
 				}
-
 				if (enPassantMade) {
 					listOfMoves
 							.add(new FullGameState(
@@ -1072,10 +1071,9 @@ public class MoveGenerator {
 									myGamestate.getNumberOfHalfMoves(),
 									fromCoord, toCoord));
 				}
-
+			
 				else if (toCoord <= 7) {
 					temp[toCoord % 8][toCoord / 8] = 'q';
-
 					listOfMoves
 							.add(new FullGameState(
 									copyCurrentBoard(temp),
@@ -1091,7 +1089,7 @@ public class MoveGenerator {
 											& myGamestate.getWhiteQueens(),
 									myGamestate.getWhiteKing(),
 									possiblePieceMoveBitboard
-											& BitboardOperations.clearRank(8),
+											& BitboardOperations.clearRank(1),
 									myGamestate.getBlackRooks(),
 									myGamestate.getBlackKnights(),
 									myGamestate.getBlackBishops(),
@@ -1124,7 +1122,7 @@ public class MoveGenerator {
 											& myGamestate.getWhiteQueens(),
 									myGamestate.getWhiteKing(),
 									possiblePieceMoveBitboard
-											& BitboardOperations.clearRank(8),
+											& BitboardOperations.clearRank(1),
 									myGamestate.getBlackRooks(),
 									myGamestate.getBlackKnights()
 											| (Long.parseLong("1", 2) << toCoord),
@@ -1157,7 +1155,7 @@ public class MoveGenerator {
 											& myGamestate.getWhiteQueens(),
 									myGamestate.getWhiteKing(),
 									possiblePieceMoveBitboard
-											& BitboardOperations.clearRank(8),
+											& BitboardOperations.clearRank(1),
 									myGamestate.getBlackRooks(),
 									myGamestate.getBlackKnights(),
 									myGamestate.getBlackBishops()
@@ -1190,7 +1188,7 @@ public class MoveGenerator {
 											& myGamestate.getWhiteQueens(),
 									myGamestate.getWhiteKing(),
 									possiblePieceMoveBitboard
-											& BitboardOperations.clearRank(8),
+											& BitboardOperations.clearRank(1),
 									myGamestate.getBlackRooks()
 											| (Long.parseLong("1", 2) << toCoord),
 									myGamestate.getBlackKnights(), myGamestate

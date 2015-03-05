@@ -1,6 +1,7 @@
 package ai.evaluation;
 
 import java.awt.BufferCapabilities.FlipContents;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import board.FullGameState;
@@ -105,9 +106,9 @@ public class Evaluator {
 		long whiteScore = 0;
 		long blackScore = 0;
 
-		Vector<FullGameState> whiteMoves = MoveGenerator
+		ArrayList<FullGameState> whiteMoves = MoveGenerator
 				.generateWhiteLegalMoves(currentGameState);
-		Vector<FullGameState> blackMoves = MoveGenerator
+		ArrayList<FullGameState> blackMoves = MoveGenerator
 				.generateBlackLegalMoves(currentGameState);
 
 		// checkmate gives a lot of points
@@ -412,10 +413,11 @@ public class Evaluator {
 
 	private static int evaluateDoublePawns(long pawns) {
 		int score = 0;
-		for (int file = 1; file < 9; file++) {
+		long maskedFile = BitboardOperations.maskFile(1);
+		for (int file = 0; file < 8; file++) {
 			int pawnsInFile = 0;
 			pawnsInFile = Long.bitCount(pawns
-					& BitboardOperations.maskFile(file));
+					& (maskedFile << file));
 			if (pawnsInFile > 1) {
 				score -= (pawnsInFile * 20) * (pawnsInFile - 1);
 			}

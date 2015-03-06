@@ -26,8 +26,10 @@ public class WhitePieceMoves {
 
 			// this is the bitboard after having moved the piece to the next
 			// move
+			
 			long possiblePieceMoveBitboard = (nextKingBitboard ^ nextMove)
 					^ myGamestate.getWhiteKing();
+			
 			boolean isValid = BoardManager.IsSelfCheck(
 					myGamestate.getWhitePawns(), myGamestate.getWhiteRooks(),
 					myGamestate.getWhiteKnights(),
@@ -48,9 +50,24 @@ public class WhitePieceMoves {
 				int fromCoord = Long.toBinaryString(nextKingBitboard).length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
 
-				boolean canMove = true;
 				long rookBitboard = myGamestate.getWhiteRooks();
-
+				boolean canMove = true;
+				
+				if (fromCoord == 4 && toCoord == 6) {
+					if ((rookBitboard & bottomRightCorner) == 0) {
+						canMove = false;
+					} else {
+						rookBitboard = (~bottomRightCorner & rookBitboard)
+								| bottomRightCorner >>> 2;
+					}
+				} else if (fromCoord == 4 && toCoord == 2) {
+					if ((rookBitboard & bottomLeftCorner) == 0) {
+						canMove = false;
+					} else {
+						rookBitboard = (~bottomLeftCorner & rookBitboard)
+								| bottomLeftCorner << 3;
+					}
+				}
 				if (canMove) {
 
 					listOfMoves
@@ -92,29 +109,42 @@ public class WhitePieceMoves {
 		ArrayList<FullGameState> listOfMoves = new ArrayList<FullGameState>();
 
 		long nextMove;
+		boolean isValid = false;
 		while (possibleMovesBitboard != 0) {
 			nextMove = Long.highestOneBit(possibleMovesBitboard);
-
-			// this is the bitboard after having moved the piece to the next
-			// move
 			long possiblePieceMoveBitboard = (nextPawnBitboard ^ nextMove)
 					^ myGamestate.getWhitePawns();
-			boolean isValid = BoardManager.IsSelfCheck(
-					possiblePieceMoveBitboard, myGamestate.getWhiteRooks(),
-					myGamestate.getWhiteKnights(),
-					myGamestate.getWhiteBishops(),
-					myGamestate.getWhiteQueens(), myGamestate.getWhiteKing(),
-					(myGamestate.getBlackPawns() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackPawns(),
-					(myGamestate.getBlackRooks() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackRooks(),
-					(myGamestate.getBlackKnights() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackKnights(),
-					(myGamestate.getBlackBishops() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackBishops(),
-					(myGamestate.getBlackQueens() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackQueens(),
-					myGamestate.getBlackKing(), true);
+
+			// If the piece is not under attack we dont need to check whether
+			// the move puts the same colour king in check
+			if ((nextPawnBitboard & myGamestate.getBlackAttackingSquares()) == 0
+					&& (myGamestate.getWhiteKing() & myGamestate
+							.getBlackAttackingSquares()) == 0) {
+				isValid = true;
+			} else {
+
+				// this is the bitboard after having moved the piece to the next
+				// move
+				isValid = BoardManager
+						.IsSelfCheck(
+								possiblePieceMoveBitboard,
+								myGamestate.getWhiteRooks(),
+								myGamestate.getWhiteKnights(),
+								myGamestate.getWhiteBishops(),
+								myGamestate.getWhiteQueens(),
+								myGamestate.getWhiteKing(),
+								(myGamestate.getBlackPawns() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackPawns(),
+								(myGamestate.getBlackRooks() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackRooks(),
+								(myGamestate.getBlackKnights() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackKnights(),
+								(myGamestate.getBlackBishops() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackBishops(),
+								(myGamestate.getBlackQueens() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackQueens(),
+								myGamestate.getBlackKing(), true);
+			}
 			if (isValid) {
 				int fromCoord = Long.toBinaryString(nextPawnBitboard).length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
@@ -331,6 +361,7 @@ public class WhitePieceMoves {
 		ArrayList<FullGameState> listOfMoves = new ArrayList<FullGameState>();
 
 		long nextMove;
+		boolean isValid = false;
 		while (possibleMovesBitboard != 0) {
 			nextMove = Long.highestOneBit(possibleMovesBitboard);
 
@@ -338,21 +369,32 @@ public class WhitePieceMoves {
 			// move
 			long possiblePieceMoveBitboard = (nextKnightBitboard ^ nextMove)
 					^ myGamestate.getWhiteKnights();
-			boolean isValid = BoardManager.IsSelfCheck(
-					myGamestate.getWhitePawns(), myGamestate.getWhiteRooks(),
-					possiblePieceMoveBitboard, myGamestate.getWhiteBishops(),
-					myGamestate.getWhiteQueens(), myGamestate.getWhiteKing(),
-					(myGamestate.getBlackPawns() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackPawns(),
-					(myGamestate.getBlackRooks() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackRooks(),
-					(myGamestate.getBlackKnights() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackKnights(),
-					(myGamestate.getBlackBishops() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackBishops(),
-					(myGamestate.getBlackQueens() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackQueens(),
-					myGamestate.getBlackKing(), true);
+			if ((nextKnightBitboard & myGamestate.getBlackAttackingSquares()) == 0
+					&& (myGamestate.getWhiteKing() & myGamestate
+							.getBlackAttackingSquares()) == 0) {
+				isValid = true;
+			} else {
+
+				isValid = BoardManager
+						.IsSelfCheck(
+								myGamestate.getWhitePawns(),
+								myGamestate.getWhiteRooks(),
+								possiblePieceMoveBitboard,
+								myGamestate.getWhiteBishops(),
+								myGamestate.getWhiteQueens(),
+								myGamestate.getWhiteKing(),
+								(myGamestate.getBlackPawns() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackPawns(),
+								(myGamestate.getBlackRooks() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackRooks(),
+								(myGamestate.getBlackKnights() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackKnights(),
+								(myGamestate.getBlackBishops() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackBishops(),
+								(myGamestate.getBlackQueens() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackQueens(),
+								myGamestate.getBlackKing(), true);
+			}
 			if (isValid) {
 				int fromCoord = Long.toBinaryString(nextKnightBitboard)
 						.length() - 1;
@@ -400,28 +442,40 @@ public class WhitePieceMoves {
 		ArrayList<FullGameState> listOfMoves = new ArrayList<FullGameState>();
 
 		long nextMove;
+		boolean isValid = false;
 		while (possibleMovesBitboard != 0) {
 			nextMove = Long.highestOneBit(possibleMovesBitboard);
-
-			// this is the bitboard after having moved the piece to the next
-			// move
 			long possiblePieceMoveBitboard = (nextBishopBitboard ^ nextMove)
 					^ myGamestate.getWhiteBishops();
-			boolean isValid = BoardManager.IsSelfCheck(
-					myGamestate.getWhitePawns(), myGamestate.getWhiteRooks(),
-					myGamestate.getWhiteKnights(), possiblePieceMoveBitboard,
-					myGamestate.getWhiteQueens(), myGamestate.getWhiteKing(),
-					(myGamestate.getBlackPawns() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackPawns(),
-					(myGamestate.getBlackRooks() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackRooks(),
-					(myGamestate.getBlackKnights() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackKnights(),
-					(myGamestate.getBlackBishops() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackBishops(),
-					(myGamestate.getBlackQueens() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackQueens(),
-					myGamestate.getBlackKing(), true);
+
+			if ((nextBishopBitboard & myGamestate.getBlackAttackingSquares()) == 0
+					&& (myGamestate.getWhiteKing() & myGamestate
+							.getBlackAttackingSquares()) == 0) {
+				isValid = true;
+			} else {
+
+				// this is the bitboard after having moved the piece to the next
+				// move
+				isValid = BoardManager
+						.IsSelfCheck(
+								myGamestate.getWhitePawns(),
+								myGamestate.getWhiteRooks(),
+								myGamestate.getWhiteKnights(),
+								possiblePieceMoveBitboard,
+								myGamestate.getWhiteQueens(),
+								myGamestate.getWhiteKing(),
+								(myGamestate.getBlackPawns() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackPawns(),
+								(myGamestate.getBlackRooks() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackRooks(),
+								(myGamestate.getBlackKnights() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackKnights(),
+								(myGamestate.getBlackBishops() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackBishops(),
+								(myGamestate.getBlackQueens() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackQueens(),
+								myGamestate.getBlackKing(), true);
+			}
 
 			if (isValid) {
 				int fromCoord = Long.toBinaryString(nextBishopBitboard)
@@ -470,6 +524,7 @@ public class WhitePieceMoves {
 		ArrayList<FullGameState> listOfMoves = new ArrayList<FullGameState>();
 
 		long nextMove;
+		boolean isValid = false;
 		while (possibleMovesBitboard != 0) {
 			nextMove = Long.highestOneBit(possibleMovesBitboard);
 
@@ -477,22 +532,33 @@ public class WhitePieceMoves {
 			// move
 			long possiblePieceMoveBitboard = (nextQueenBitboard ^ nextMove)
 					^ myGamestate.getWhiteQueens();
-			boolean isValid = BoardManager.IsSelfCheck(
-					myGamestate.getWhitePawns(), myGamestate.getWhiteRooks(),
-					myGamestate.getWhiteKnights(),
-					myGamestate.getWhiteBishops(), possiblePieceMoveBitboard,
-					myGamestate.getWhiteKing(),
-					(myGamestate.getBlackPawns() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackPawns(),
-					(myGamestate.getBlackRooks() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackRooks(),
-					(myGamestate.getBlackKnights() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackKnights(),
-					(myGamestate.getBlackBishops() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackBishops(),
-					(myGamestate.getBlackQueens() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackQueens(),
-					myGamestate.getBlackKing(), true);
+
+			if ((nextQueenBitboard & myGamestate.getBlackAttackingSquares()) == 0
+					&& (myGamestate.getWhiteKing() & myGamestate
+							.getBlackAttackingSquares()) == 0) {
+				isValid = true;
+			} else {
+
+				isValid = BoardManager
+						.IsSelfCheck(
+								myGamestate.getWhitePawns(),
+								myGamestate.getWhiteRooks(),
+								myGamestate.getWhiteKnights(),
+								myGamestate.getWhiteBishops(),
+								possiblePieceMoveBitboard,
+								myGamestate.getWhiteKing(),
+								(myGamestate.getBlackPawns() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackPawns(),
+								(myGamestate.getBlackRooks() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackRooks(),
+								(myGamestate.getBlackKnights() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackKnights(),
+								(myGamestate.getBlackBishops() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackBishops(),
+								(myGamestate.getBlackQueens() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackQueens(),
+								myGamestate.getBlackKing(), true);
+			}
 
 			if (isValid) {
 				int fromCoord = Long.toBinaryString(nextQueenBitboard).length() - 1;
@@ -536,6 +602,7 @@ public class WhitePieceMoves {
 		ArrayList<FullGameState> listOfMoves = new ArrayList<FullGameState>();
 
 		long nextMove;
+		boolean isValid = false;
 		while (possibleMovesBitboard != 0) {
 			nextMove = Long.highestOneBit(possibleMovesBitboard);
 
@@ -543,23 +610,31 @@ public class WhitePieceMoves {
 			// move
 			long possiblePieceMoveBitboard = (nextRookBitboard ^ nextMove)
 					^ myGamestate.getWhiteRooks();
-
-			boolean isValid = BoardManager.IsSelfCheck(
-					myGamestate.getWhitePawns(), possiblePieceMoveBitboard,
-					myGamestate.getWhiteKnights(),
-					myGamestate.getWhiteBishops(),
-					myGamestate.getWhiteQueens(), myGamestate.getWhiteKing(),
-					(myGamestate.getBlackPawns() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackPawns(),
-					(myGamestate.getBlackRooks() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackRooks(),
-					(myGamestate.getBlackKnights() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackKnights(),
-					(myGamestate.getBlackBishops() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackBishops(),
-					(myGamestate.getBlackQueens() ^ possiblePieceMoveBitboard)
-							& myGamestate.getBlackQueens(),
-					myGamestate.getBlackKing(), true);
+			if ((nextRookBitboard & myGamestate.getBlackAttackingSquares()) == 0
+					&& (myGamestate.getWhiteKing() & myGamestate
+							.getBlackAttackingSquares()) == 0) {
+				isValid = true;
+			} else {
+				isValid = BoardManager
+						.IsSelfCheck(
+								myGamestate.getWhitePawns(),
+								possiblePieceMoveBitboard,
+								myGamestate.getWhiteKnights(),
+								myGamestate.getWhiteBishops(),
+								myGamestate.getWhiteQueens(),
+								myGamestate.getWhiteKing(),
+								(myGamestate.getBlackPawns() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackPawns(),
+								(myGamestate.getBlackRooks() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackRooks(),
+								(myGamestate.getBlackKnights() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackKnights(),
+								(myGamestate.getBlackBishops() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackBishops(),
+								(myGamestate.getBlackQueens() ^ possiblePieceMoveBitboard)
+										& myGamestate.getBlackQueens(),
+								myGamestate.getBlackKing(), true);
+			}
 			if (isValid) {
 				int fromCoord = Long.toBinaryString(nextRookBitboard).length() - 1;
 				int toCoord = Long.toBinaryString(nextMove).length() - 1;
@@ -663,6 +738,25 @@ public class WhitePieceMoves {
 			}
 		}
 		return temp;
+	}
+	
+	private static void printBitboard(long bitBoard) {
+		String stringBitBoard = Long.toBinaryString(bitBoard);
+		System.out.println("Value : " + stringBitBoard);
+		while (stringBitBoard.length() != 64) {
+			stringBitBoard = "0" + stringBitBoard;
+		}
+
+		for (int i = 0; i < 8; i++) {
+			StringBuilder stringReverser = new StringBuilder(
+					stringBitBoard.substring(i * 8, ((i + 1) * 8)));
+			stringReverser.reverse();
+			for (int j = 0; j < stringReverser.toString().length(); j++) {
+				System.out.print(stringReverser.toString().charAt(j) + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
 	}
 
 }

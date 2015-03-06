@@ -49,28 +49,29 @@ public class ChessBoard {
 		long time = System.currentTimeMillis();
 		long timeNano = System.nanoTime();
 
-		// newGame();
-		//
-		// clearChessBoard();
-		// clearCastlingRights();
-		//
-		// currentBoard[4][1] = 'P';
-		// currentBoard[2][1] = 'P';
-		// currentBoard[3][2] = 'q';
-		//
-		// updateBitboards();
-		// printBoard();
-		//
-		// printBitboard(WhitePieces.getPawnMoves(whitePawns,
-		// getOccupiedSquares(), getBlackPieces(), enPassantSquare));
-		//
-		// System.out.println(generateDepthMoves(1));
-		//
-		// System.out.println("That took :" + (System.currentTimeMillis() -
-		// time)
-		// + "ms");
-		// System.out.println("That took :"
-		// + ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
+//		newGameFromFEN("4k3/8/8/8/8/8/8/R3K3 w Q - 0 1");
+//
+//		ArrayList<FullGameState> depthOne = MoveGenerator
+//				.generateWhiteLegalMoves(createGamestate());
+//
+//		ArrayList<FullGameState> depthTwo = new ArrayList<>();
+//
+//		for (int i = 0; i < depthOne.size(); i++) {
+//			depthTwo.addAll(MoveGenerator.generateBlackLegalMoves(depthOne
+//					.get(i)));
+//			printBoardFromBitboards(depthOne.get(i));
+//		}
+//
+//		System.out.println(depthOne.size());
+//
+//		for (int i = 0; i < depthTwo.size(); i++) {
+//			printBoardFromBitboards(depthTwo.get(i));
+//		}
+
+		System.out.println("That took :" + (System.currentTimeMillis() - time)
+				+ "ms");
+		System.out.println("That took :"
+				+ ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
 
 	}
 
@@ -273,6 +274,11 @@ public class ChessBoard {
 		blackCastleKing = temp.getBlackCastleKing();
 		blackCastleQueen = temp.getBlackCastleQueen();
 		updateBitboards();
+
+		currentBoard[(int) (temp.getToSquare() % 8)][(int) (temp.getToSquare() / 8)] = currentBoard[(int) (temp
+				.getFromSquare() % 8)][(int) (temp.getFromSquare() / 8)];
+		currentBoard[(int) (temp.getFromSquare() % 8)][(int) (temp
+				.getFromSquare() / 8)] = ' ';
 
 		if (isCheckmate()) {
 			updateBitboards();
@@ -830,4 +836,90 @@ public class ChessBoard {
 		blackCastleKing = false;
 		blackCastleQueen = false;
 	}
+
+	private void printBoardFromBitboards(FullGameState state) {
+
+		char[][] tempBoard = new char[8][8];
+		for (int i = 0; i < 64; i++) {
+			tempBoard[i % 8][i / 8] = ' ';
+		}
+
+		long temp = state.getWhiteKing();
+
+		int nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+		tempBoard[nextLength % 8][nextLength / 8] = 'K';
+
+		temp = state.getWhitePawns();
+		while (temp != 0) {
+
+			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+			tempBoard[nextLength % 8][nextLength / 8] = 'P';
+			temp = Long.highestOneBit(temp) ^ temp;
+		}
+
+		temp = state.getWhiteRooks();
+		while (temp != 0) {
+
+			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+			tempBoard[nextLength % 8][nextLength / 8] = 'R';
+			temp = Long.highestOneBit(temp) ^ temp;
+		}
+
+		temp = state.getWhiteKnights();
+		while (temp != 0) {
+
+			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+			tempBoard[nextLength % 8][nextLength / 8] = 'N';
+			temp = Long.highestOneBit(temp) ^ temp;
+		}
+
+		temp = state.getWhiteQueens();
+		while (temp != 0) {
+
+			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+			tempBoard[nextLength % 8][nextLength / 8] = 'Q';
+			temp = Long.highestOneBit(temp) ^ temp;
+		}
+
+		temp = state.getBlackKing();
+		nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+
+		tempBoard[nextLength % 8][nextLength / 8] = 'k';
+
+		temp = state.getBlackPawns();
+		while (temp != 0) {
+
+			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+			tempBoard[nextLength % 8][nextLength / 8] = 'p';
+			temp = Long.highestOneBit(temp) ^ temp;
+		}
+
+		temp = state.getBlackRooks();
+		while (temp != 0) {
+
+			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+			tempBoard[nextLength % 8][nextLength / 8] = 'r';
+			temp = Long.highestOneBit(temp) ^ temp;
+		}
+
+		temp = state.getBlackKnights();
+		while (temp != 0) {
+
+			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+			tempBoard[nextLength % 8][nextLength / 8] = 'n';
+			temp = Long.highestOneBit(temp) ^ temp;
+		}
+
+		temp = state.getBlackQueens();
+		while (temp != 0) {
+
+			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+			tempBoard[nextLength % 8][nextLength / 8] = 'q';
+			temp = Long.highestOneBit(temp) ^ temp;
+		}
+
+		printBoard(tempBoard);
+
+	}
+
 }

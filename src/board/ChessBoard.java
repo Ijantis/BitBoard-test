@@ -37,29 +37,40 @@ public class ChessBoard {
 	// 0,0 is top left 0,7 is top right 7,7 bottom right
 	private char[][] currentBoard = {
 			{ 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' },
-			{ ' ', 'P', ' ', ' ', ' ', ' ', 'p', 'n' },
-			{ 'B', 'P', 'N', ' ', ' ', ' ', 'p', 'b' },
-			{ 'Q', 'P', ' ', ' ', 'q', ' ', ' ', ' ' },
-			{ 'K', ' ', ' ', ' ', ' ', ' ', 'p', 'k' },
+			{ 'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n' },
+			{ 'B', 'P', ' ', ' ', ' ', ' ', 'p', 'b' },
+			{ 'Q', 'P', ' ', ' ', ' ', ' ', 'p', 'q' },
+			{ 'K', 'P', ' ', ' ', ' ', ' ', 'p', 'k' },
 			{ 'B', 'P', ' ', ' ', ' ', ' ', 'p', 'b' },
 			{ 'N', 'P', ' ', ' ', ' ', ' ', 'p', 'n' },
 			{ 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' } };;
-
-	ArrayList<char[][]> threadedList;
-	ArrayList<char[][]> serialList;
 
 	public ChessBoard() {
 		long time = System.currentTimeMillis();
 		long timeNano = System.nanoTime();
 
-		newGame();
-
-		System.out.println(generateDepthMoves(4));
-
-		System.out.println("That took :" + (System.currentTimeMillis() - time)
-				+ "ms");
-		System.out.println("That took :"
-				+ ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
+		// newGame();
+		//
+		// clearChessBoard();
+		// clearCastlingRights();
+		//
+		// currentBoard[4][1] = 'P';
+		// currentBoard[2][1] = 'P';
+		// currentBoard[3][2] = 'q';
+		//
+		// updateBitboards();
+		// printBoard();
+		//
+		// printBitboard(WhitePieces.getPawnMoves(whitePawns,
+		// getOccupiedSquares(), getBlackPieces(), enPassantSquare));
+		//
+		// System.out.println(generateDepthMoves(1));
+		//
+		// System.out.println("That took :" + (System.currentTimeMillis() -
+		// time)
+		// + "ms");
+		// System.out.println("That took :"
+		// + ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
 
 	}
 
@@ -243,9 +254,9 @@ public class ChessBoard {
 
 	public FullGameState createGamestate() {
 
-		return new FullGameState(copyCurrentBoard(), whitePawns, whiteRooks,
-				whiteKnights, whiteBishops, whiteQueens, whiteKing, blackPawns,
-				blackRooks, blackKnights, blackBishops, blackQueens, blackKing,
+		return new FullGameState(whitePawns, whiteRooks, whiteKnights,
+				whiteBishops, whiteQueens, whiteKing, blackPawns, blackRooks,
+				blackKnights, blackBishops, blackQueens, blackKing,
 				whiteToMove, whiteCastleKing, whiteCastleQueen,
 				blackCastleKing, blackCastleQueen, enPassantSquare,
 				numberOfFullMoves, numberOfHalfMoves, 0, 0);
@@ -255,7 +266,8 @@ public class ChessBoard {
 
 		FullGameState temp = Engine.makeMove(difficulty, playingWhite,
 				createGamestate());
-		currentBoard = temp.getCurrentBoard();
+		// TODO: Create a method that looks at the bitboards and creates a 2d
+		// array
 		whiteCastleKing = temp.getWhiteCastleKing();
 		whiteCastleQueen = temp.getWhiteCastleQueen();
 		blackCastleKing = temp.getBlackCastleKing();
@@ -779,88 +791,6 @@ public class ChessBoard {
 
 	}
 
-	private void testMethodWhiteFirst() {
-		ArrayList<FullGameState> firstMove = generateWhiteLegalMoves();
-		ArrayList<FullGameState> secondMove = new ArrayList<FullGameState>();
-		ArrayList<FullGameState> thirdMove = new ArrayList<FullGameState>();
-		ArrayList<FullGameState> fourthMove = new ArrayList<FullGameState>();
-
-		int firstSize, secondSize, thirdSize, fourthSize;
-
-		firstSize = firstMove.size();
-		System.out.println(firstSize);
-		while (!firstMove.isEmpty()) {
-			currentBoard = firstMove.get(0).getCurrentBoard();
-			updateBitboards();
-			secondMove.addAll(generateBlackLegalMoves());
-			firstMove.remove(0);
-		}
-
-		secondSize = secondMove.size();
-		System.out.println(secondSize);
-		while (!secondMove.isEmpty()) {
-			currentBoard = secondMove.get(0).getCurrentBoard();
-			updateBitboards();
-			thirdMove.addAll(generateWhiteLegalMoves());
-			secondMove.remove(0);
-		}
-
-		thirdSize = thirdMove.size();
-		System.out.println(thirdSize);
-		while (!thirdMove.isEmpty()) {
-			currentBoard = thirdMove.get(0).getCurrentBoard();
-			updateBitboards();
-			fourthMove.addAll(generateBlackLegalMoves());
-			thirdMove.remove(0);
-		}
-
-		fourthSize = fourthMove.size();
-		System.out.println(fourthSize);
-	}
-
-	private void testMethodBlackFirst() {
-		ArrayList<FullGameState> firstMove = generateBlackLegalMoves();
-		ArrayList<FullGameState> secondMove = new ArrayList<FullGameState>();
-		ArrayList<FullGameState> thirdMove = new ArrayList<FullGameState>();
-		ArrayList<FullGameState> fourthMove = new ArrayList<FullGameState>();
-
-		int firstSize, secondSize, thirdSize, fourthSize;
-
-		firstSize = firstMove.size();
-		System.out.println(firstSize);
-		while (!firstMove.isEmpty()) {
-			currentBoard = firstMove.get(0).getCurrentBoard();
-			enPassantSquare = firstMove.get(0).getEnPassantSquare();
-			updateBitboards();
-			secondMove.addAll(generateWhiteLegalMoves());
-			firstMove.remove(0);
-		}
-
-		secondSize = secondMove.size();
-		System.out.println(secondSize);
-		while (!secondMove.isEmpty()) {
-			currentBoard = secondMove.get(0).getCurrentBoard();
-			enPassantSquare = secondMove.get(0).getEnPassantSquare();
-			updateBitboards();
-			thirdMove.addAll(generateBlackLegalMoves());
-			secondMove.remove(0);
-		}
-
-		thirdSize = thirdMove.size();
-		System.out.println(thirdSize);
-		while (!thirdMove.isEmpty()) {
-			currentBoard = thirdMove.get(0).getCurrentBoard();
-			enPassantSquare = thirdMove.get(0).getEnPassantSquare();
-			updateBitboards();
-			fourthMove.addAll(generateWhiteLegalMoves());
-			thirdMove.remove(0);
-		}
-
-		fourthSize = fourthMove.size();
-		System.out.println(fourthSize);
-
-	}
-
 	/*
 	 * 1. Piece placement 2. Active colour 3. Castling 4. En passant 5. Halfmove
 	 * clock 6. Full move number
@@ -886,6 +816,7 @@ public class ChessBoard {
 		numberOfFullMoves = FENLoader.getFullMoves(fenScanner.next());
 
 		updateBitboards();
+		fenScanner.close();
 
 	}
 
@@ -899,16 +830,4 @@ public class ChessBoard {
 		blackCastleKing = false;
 		blackCastleQueen = false;
 	}
-
-	private static char[][] copyCurrentBoard(char[][] currentBoard) {
-		char[][] temp = new char[currentBoard.length][currentBoard.length];
-
-		for (int x = 0; x < temp.length; x++) {
-			for (int y = 0; y < temp.length; y++) {
-				temp[x][y] = currentBoard[x][y];
-			}
-		}
-		return temp;
-	}
-
 }

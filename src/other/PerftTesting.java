@@ -10,9 +10,9 @@ public class PerftTesting {
 
 	public static void main(String[] args) {
 
-		// new PerftTesting();
+		new PerftTesting();
 
-		new ChessBoard();
+		// new ChessBoard();
 
 	}
 

@@ -22,7 +22,6 @@ public class MoveGenerator {
 
 		temp = currentGameState.getWhitePawns();
 		while (temp != 0) {
-
 			long nextPawn = Long.highestOneBit(temp);
 			long bitboardOfMoves = WhitePieces.getPawnMoves(nextPawn,
 					currentGameState.getOccupiedSquares(),

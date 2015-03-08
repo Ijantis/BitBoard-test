@@ -50,14 +50,16 @@ public class ChessBoard {
 			{ 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' } };;
 
 	public ChessBoard() {
-		// long time = System.currentTimeMillis();
-		// long timeNano = System.nanoTime();
-		//
-		// System.out.println("That took :" + (System.currentTimeMillis() -
-		// time)
-		// + "ms");
-		// System.out.println("That took :"
-		// + ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
+		long time = System.currentTimeMillis();
+		long timeNano = System.nanoTime();
+
+		newGame();
+		generateDepthMoves(5);
+
+		System.out.println("That took :" + (System.currentTimeMillis() - time)
+				+ "ms");
+		System.out.println("That took :"
+				+ ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
 
 	}
 
@@ -348,9 +350,9 @@ public class ChessBoard {
 				boolean isValid;
 				if (Character
 						.isUpperCase(tempBoard[(int) (toSquare % 8)][(int) (toSquare / 8)])) {
-					isValid = BoardManager.IsSelfCheck(tempBoard, true);
+					isValid = BoardManager.isSelfCheck(tempBoard, true);
 				} else {
-					isValid = BoardManager.IsSelfCheck(tempBoard, false);
+					isValid = BoardManager.isSelfCheck(tempBoard, false);
 				}
 
 				// If the move is going to be made this if statement is entered.

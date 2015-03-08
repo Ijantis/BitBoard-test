@@ -5,69 +5,73 @@ import operations.pieces.WhitePieces;
 
 public class BoardManager {
 
-	private static long whitePawns, whiteRooks, whiteKnights, whiteBishops,
-			whiteQueens, whiteKing;
-	private static long blackPawns, blackRooks, blackKnights, blackBishops,
-			blackQueens, blackKing;
-
 	public static boolean IsSelfCheck(long whitePawns, long whiteRooks,
 			long whiteKnights, long whiteBishops, long whiteQueens,
 			long whiteKing, long blackPawns, long blackRooks,
 			long blackKnights, long blackBishops, long blackQueens,
 			long blackKing, boolean checkForWhite) {
 
-		BoardManager.whitePawns = whitePawns;
-		BoardManager.whiteRooks = whiteRooks;
-		BoardManager.whiteKnights = whiteKnights;
-		BoardManager.whiteBishops = whiteBishops;
-		BoardManager.whiteQueens = whiteQueens;
-		BoardManager.whiteKing = whiteKing;
+		long blackPieces = (blackBishops | blackKing | blackKnights
+				| blackPawns | blackQueens | blackRooks);
 
-		BoardManager.blackPawns = blackPawns;
-		BoardManager.blackRooks = blackRooks;
-		BoardManager.blackKnights = blackKnights;
-		BoardManager.blackBishops = blackBishops;
-		BoardManager.blackQueens = blackQueens;
-		BoardManager.blackKing = blackKing;
+		long whitePieces = (whiteBishops | whiteKing | whiteKnights
+				| whitePawns | whiteQueens | whiteRooks);
+
+		long occupiedSquares = whitePieces | blackPieces;
 
 		if (checkForWhite) {
-			return (whiteKing & getBlackAttackingSquares()) == 0;
+			long blackAttackingSquares = 0L;
+
+			blackAttackingSquares = blackAttackingSquares
+					| BlackPieces.getPawnAttackingSquares(blackPawns)
+					| BlackPieces.getRookAttackingSquares(blackRooks,
+							occupiedSquares)
+					| BlackPieces.getKnightAttackingSquares(blackKnights)
+					| BlackPieces.getBishopAttackingSquares(blackBishops,
+							occupiedSquares)
+					| BlackPieces.getQueenAttackingSquares(blackQueens,
+							occupiedSquares)
+					| BlackPieces.getKingAttackingSquares(blackKing,
+							blackPieces);
+
+			return (whiteKing & blackAttackingSquares) == 0;
 		} else {
-			return (blackKing & getWhiteAttackingSquares()) == 0;
+			long whiteAttackingSquares = 0L;
+
+			whiteAttackingSquares = whiteAttackingSquares
+					| WhitePieces.getPawnAttackingSquares(whitePawns)
+					| WhitePieces.getRookAttackingSquares(whiteRooks,
+							occupiedSquares)
+					| WhitePieces.getKnightAttackingSquares(whiteKnights)
+					| WhitePieces.getBishopAttackingSquares(whiteBishops,
+							occupiedSquares)
+					| WhitePieces.getQueenAttackingSquares(whiteQueens,
+							occupiedSquares)
+					| WhitePieces.getKingAttackingSquares(whiteKing,
+							whitePieces);
+
+			return (blackKing & whiteAttackingSquares) == 0;
 		}
 
 	}
 
-	public static boolean IsSelfCheck(char[][] tempBoard, boolean checkForWhite) {
+	public static boolean isSelfCheck(char[][] boardToCheck,
+			boolean checkForWhite) {
 
-		clearBitboards();
-		generateBitBoards(tempBoard);
+		long whitePawns = 0L;
+		long whiteRooks = 0L;
+		long whiteBishops = 0L;
+		long whiteKnights = 0L;
+		long whiteQueens = 0L;
+		long whiteKing = 0L;
 
-		if (checkForWhite) {
-			return (whiteKing & getBlackAttackingSquares()) == 0;
-		} else {
-			return (blackKing & getWhiteAttackingSquares()) == 0;
-		}
+		long blackPawns = 0L;
+		long blackRooks = 0L;
+		long blackBishops = 0L;
+		long blackKnights = 0L;
+		long blackQueens = 0L;
+		long blackKing = 0L;
 
-	}
-
-	private static void clearBitboards() {
-		BoardManager.whitePawns = 0;
-		BoardManager.whiteRooks = 0;
-		BoardManager.whiteKnights = 0;
-		BoardManager.whiteBishops = 0;
-		BoardManager.whiteQueens = 0;
-		BoardManager.whiteKing = 0;
-
-		BoardManager.blackPawns = 0;
-		BoardManager.blackRooks = 0;
-		BoardManager.blackKnights = 0;
-		BoardManager.blackBishops = 0;
-		BoardManager.blackQueens = 0;
-		BoardManager.blackKing = 0;
-	}
-
-	private static void generateBitBoards(char[][] boardToCheck) {
 		long currentPiece = 1;
 		for (int i = 0; i < 64; i++) {
 			switch (boardToCheck[i % 8][i / 8]) {
@@ -113,6 +117,10 @@ public class BoardManager {
 			currentPiece = currentPiece << 1;
 		}
 
+		return IsSelfCheck(whitePawns, whiteRooks, whiteKnights, whiteBishops,
+				whiteQueens, whiteKing, blackPawns, blackRooks, blackKnights,
+				blackBishops, blackQueens, blackKing, checkForWhite);
+
 	}
 
 	private static void printBitboard(long bitBoard) {
@@ -149,78 +157,4 @@ public class BoardManager {
 		System.out.println();
 	}
 
-	protected static boolean isWhiteKingInCheck() {
-
-		long blackMoves = getBlackAttackingSquares();
-
-		if ((blackMoves & whiteKing) == 0) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-
-	protected static boolean isBlackKingInCheck() {
-
-		long whiteMoves = getWhiteAttackingSquares();
-
-		if ((whiteMoves & blackKing) == 0) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-
-	// move this method to WhitePieces.java
-	protected static long getWhiteAttackingSquares() {
-		long attackedSquares = 0L;
-
-		attackedSquares = attackedSquares
-				| WhitePieces.getPawnAttackingSquares(whitePawns)
-				| WhitePieces.getRookAttackingSquares(whiteRooks,
-						getOccupiedSquares())
-				| WhitePieces.getKnightAttackingSquares(whiteKnights)
-				| WhitePieces.getBishopAttackingSquares(whiteBishops,
-						getOccupiedSquares())
-				| WhitePieces.getQueenAttackingSquares(whiteQueens,
-						getOccupiedSquares())
-				| WhitePieces.getKingAttackingSquares(whiteKing,
-						getWhitePieces());
-
-		return attackedSquares;
-	}
-
-	// move this method to BlackPieces.java
-	protected static long getBlackAttackingSquares() {
-
-		long attackedSquares = 0L;
-
-		attackedSquares = attackedSquares
-				| BlackPieces.getPawnAttackingSquares(blackPawns)
-				| BlackPieces.getRookAttackingSquares(blackRooks,
-						getOccupiedSquares())
-				| BlackPieces.getKnightAttackingSquares(blackKnights)
-				| BlackPieces.getBishopAttackingSquares(blackBishops,
-						getOccupiedSquares())
-				| BlackPieces.getQueenAttackingSquares(blackQueens,
-						getOccupiedSquares())
-				| BlackPieces.getKingAttackingSquares(blackKing,
-						getBlackPieces());
-
-		return attackedSquares;
-	}
-
-	protected static long getWhitePieces() {
-		return (whiteBishops | whiteKing | whiteKnights | whitePawns
-				| whiteQueens | whiteRooks);
-	}
-
-	protected static long getBlackPieces() {
-		return (blackBishops | blackKing | blackKnights | blackPawns
-				| blackQueens | blackRooks);
-	}
-
-	protected static long getOccupiedSquares() {
-		return (getWhitePieces() | getBlackPieces());
-	}
 }

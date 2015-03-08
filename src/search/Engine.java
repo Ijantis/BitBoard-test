@@ -1,12 +1,12 @@
-package ai;
+package search;
 
 import java.util.Random;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import ai.evaluation.Evaluator;
+import evaluation.Evaluator;
+import movegen.MoveGenerator;
 import board.FullGameState;
-import operations.MoveGenerator;
 
 public class Engine {
 

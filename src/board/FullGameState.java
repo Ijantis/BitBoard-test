@@ -1,7 +1,7 @@
 package board;
 
-import operations.pieces.BlackPieces;
-import operations.pieces.WhitePieces;
+import bitboards.BlackPieces;
+import bitboards.WhitePieces;
 
 /**
  * Keeps track of the en passant square and castling rights etc.

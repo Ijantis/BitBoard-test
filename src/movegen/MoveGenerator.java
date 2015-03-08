@@ -1,10 +1,10 @@
-package operations;
+package movegen;
 
 import java.util.ArrayList;
 
 import main.GameLoop;
-import operations.pieces.BlackPieces;
-import operations.pieces.WhitePieces;
+import bitboards.BlackPieces;
+import bitboards.WhitePieces;
 import board.BoardManager;
 import board.FullGameState;
 

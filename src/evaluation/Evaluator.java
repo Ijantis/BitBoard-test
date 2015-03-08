@@ -1,12 +1,12 @@
-package ai.evaluation;
+package evaluation;
 
 import java.awt.BufferCapabilities.FlipContents;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import movegen.MoveGenerator;
+import bitboards.BitboardOperations;
 import board.FullGameState;
-import operations.BitboardOperations;
-import operations.MoveGenerator;
 
 public class Evaluator {
 

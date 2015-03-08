@@ -8,15 +8,15 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import evaluation.Evaluator;
+import bitboards.BitboardOperations;
+import bitboards.BlackPieces;
+import bitboards.WhitePieces;
 import main.GameLoop;
-import operations.BitboardOperations;
-import operations.MoveGenerator;
-import operations.pieces.BlackPieces;
-import operations.pieces.WhitePieces;
+import movegen.MoveGenerator;
 import other.FENLoader;
 //import other.HashGenerator;
-import ai.Engine;
-import ai.evaluation.Evaluator;
+import search.Engine;
 
 public class ChessBoard {
 

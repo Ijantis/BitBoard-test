@@ -1,7 +1,8 @@
-package operations;
+package movegen;
 
 import java.util.ArrayList;
 
+import bitboards.BitboardOperations;
 import board.BoardManager;
 import board.FullGameState;
 

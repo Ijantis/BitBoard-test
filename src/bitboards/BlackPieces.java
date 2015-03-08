@@ -1,6 +1,5 @@
-package operations.pieces;
+package bitboards;
 
-import operations.BitboardOperations;
 
 public class BlackPieces {
 

@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Stack;
 
 import main.GameLoop;
 import operations.BitboardOperations;
@@ -23,6 +24,7 @@ public class ChessBoard {
 			whiteQueens, whiteKing;
 	private long blackPawns, blackRooks, blackKnights, blackBishops,
 			blackQueens, blackKing;
+
 	private boolean whiteToMove = true;
 	private boolean whiteCastleKing = true;
 	private boolean whiteCastleQueen = true;
@@ -31,6 +33,8 @@ public class ChessBoard {
 	private long enPassantSquare = 100;
 	private int numberOfFullMoves = 1;
 	private int numberOfHalfMoves = 0;
+
+	private Stack<FullGameState> listOfMoves = new Stack<FullGameState>();
 
 	// Upper case for WHITE
 	// Lower case for BLACK
@@ -46,32 +50,33 @@ public class ChessBoard {
 			{ 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' } };;
 
 	public ChessBoard() {
-		long time = System.currentTimeMillis();
-		long timeNano = System.nanoTime();
+		// long time = System.currentTimeMillis();
+		// long timeNano = System.nanoTime();
+		//
+		// System.out.println("That took :" + (System.currentTimeMillis() -
+		// time)
+		// + "ms");
+		// System.out.println("That took :"
+		// + ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
 
-//		newGameFromFEN("4k3/8/8/8/8/8/8/R3K3 w Q - 0 1");
-//
-//		ArrayList<FullGameState> depthOne = MoveGenerator
-//				.generateWhiteLegalMoves(createGamestate());
-//
-//		ArrayList<FullGameState> depthTwo = new ArrayList<>();
-//
-//		for (int i = 0; i < depthOne.size(); i++) {
-//			depthTwo.addAll(MoveGenerator.generateBlackLegalMoves(depthOne
-//					.get(i)));
-//			printBoardFromBitboards(depthOne.get(i));
-//		}
-//
-//		System.out.println(depthOne.size());
-//
-//		for (int i = 0; i < depthTwo.size(); i++) {
-//			printBoardFromBitboards(depthTwo.get(i));
-//		}
+	}
 
-		System.out.println("That took :" + (System.currentTimeMillis() - time)
-				+ "ms");
-		System.out.println("That took :"
-				+ ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
+	private void printStatus() {
+
+		System.out.println("White to move: " + whiteToMove);
+		System.out.println("White castling kingside: " + whiteCastleKing);
+		System.out.println("White castling queenside: " + whiteCastleQueen);
+		System.out.println("Black castling kingside: " + blackCastleKing);
+		System.out.println("Black castling queenside: " + blackCastleQueen);
+
+		if (enPassantSquare == 100) {
+			System.out.println("No en passant square");
+		} else {
+			System.out.println("En passant square is " + enPassantSquare);
+		}
+
+		System.out.println("Full moves: " + numberOfFullMoves);
+		System.out.println("Half moves: " + numberOfHalfMoves);
 
 	}
 
@@ -250,6 +255,7 @@ public class ChessBoard {
 		numberOfHalfMoves = 0;
 
 		updateBitboards();
+		listOfMoves.add(createGamestate());
 
 	}
 
@@ -267,18 +273,22 @@ public class ChessBoard {
 
 		FullGameState temp = Engine.makeMove(difficulty, playingWhite,
 				createGamestate());
-		// TODO: Create a method that looks at the bitboards and creates a 2d
-		// array
 		whiteCastleKing = temp.getWhiteCastleKing();
 		whiteCastleQueen = temp.getWhiteCastleQueen();
 		blackCastleKing = temp.getBlackCastleKing();
 		blackCastleQueen = temp.getBlackCastleQueen();
-		updateBitboards();
 
 		currentBoard[(int) (temp.getToSquare() % 8)][(int) (temp.getToSquare() / 8)] = currentBoard[(int) (temp
 				.getFromSquare() % 8)][(int) (temp.getFromSquare() / 8)];
 		currentBoard[(int) (temp.getFromSquare() % 8)][(int) (temp
 				.getFromSquare() / 8)] = ' ';
+		updateBitboards();
+
+		enPassantSquare = temp.getEnPassantSquare();
+		numberOfFullMoves = temp.getNumberOfFullMoves();
+		numberOfHalfMoves = temp.getNumberOfHalfMoves();
+
+		listOfMoves.push(createGamestate());
 
 		if (isCheckmate()) {
 			updateBitboards();
@@ -445,6 +455,7 @@ public class ChessBoard {
 
 					currentBoard = tempBoard;
 					updateBitboards();
+					listOfMoves.push(createGamestate());
 					whiteToMove = !whiteToMove;
 
 					// TODO: Draw by repetition check should happen here at some
@@ -837,7 +848,7 @@ public class ChessBoard {
 		blackCastleQueen = false;
 	}
 
-	private void printBoardFromBitboards(FullGameState state) {
+	private char[][] createArrayFromBitboards(FullGameState state) {
 
 		char[][] tempBoard = new char[8][8];
 		for (int i = 0; i < 64; i++) {
@@ -870,6 +881,14 @@ public class ChessBoard {
 
 			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
 			tempBoard[nextLength % 8][nextLength / 8] = 'N';
+			temp = Long.highestOneBit(temp) ^ temp;
+		}
+
+		temp = state.getWhiteBishops();
+		while (temp != 0) {
+
+			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+			tempBoard[nextLength % 8][nextLength / 8] = 'B';
 			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
@@ -910,6 +929,14 @@ public class ChessBoard {
 			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
+		temp = state.getBlackBishops();
+		while (temp != 0) {
+
+			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+			tempBoard[nextLength % 8][nextLength / 8] = 'b';
+			temp = Long.highestOneBit(temp) ^ temp;
+		}
+
 		temp = state.getBlackQueens();
 		while (temp != 0) {
 
@@ -918,7 +945,34 @@ public class ChessBoard {
 			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
-		printBoard(tempBoard);
+		return tempBoard;
+
+	}
+
+	public void undoMove() {
+
+		if (!listOfMoves.isEmpty()) {
+			listOfMoves.pop();
+			if (listOfMoves.isEmpty()) {
+				newGame();
+			} else {
+				FullGameState previousState = listOfMoves.peek();
+
+				whiteCastleKing = previousState.getWhiteCastleKing();
+				whiteCastleQueen = previousState.getWhiteCastleQueen();
+				blackCastleKing = previousState.getBlackCastleKing();
+				blackCastleQueen = previousState.getBlackCastleQueen();
+
+				enPassantSquare = previousState.getEnPassantSquare();
+				numberOfFullMoves = previousState.getNumberOfFullMoves();
+				numberOfHalfMoves = previousState.getNumberOfHalfMoves();
+
+				whiteToMove = !whiteToMove;
+
+				currentBoard = createArrayFromBitboards(previousState);
+			}
+
+		}
 
 	}
 

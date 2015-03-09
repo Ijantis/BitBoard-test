@@ -1,5 +1,7 @@
 package board;
 
+import hash.ZobristKey;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -54,7 +56,7 @@ public class ChessBoard {
 		long timeNano = System.nanoTime();
 
 		newGame();
-		generateDepthMoves(5);
+		System.out.println(Long.toHexString(ZobristKey.getKey(createGamestate())));
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");

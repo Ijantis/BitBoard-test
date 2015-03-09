@@ -55,7 +55,7 @@ public class ChessBoard {
 		long time = System.currentTimeMillis();
 		long timeNano = System.nanoTime();
 
-		newGame();
+		newGameFromFEN("rnbqkbnr/p1pppppp/8/8/P6P/R1p5/1P1PPPP1/1NBQKBNR b Kkq - 0 4");
 		System.out.println(Long.toHexString(ZobristKey.getKey(createGamestate())));
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)

@@ -1,5 +1,6 @@
 package hash;
 
+import bitboards.BitboardOperations;
 import board.FullGameState;
 
 public class ZobristKey {
@@ -450,17 +451,62 @@ public class ZobristKey {
 		}
 
 		if (currentGameState.getEnPassantSquare() != 100) {
-			key ^= polyglotRandom64[offsetEnPassant
-					+ (int) (currentGameState.getEnPassantSquare() % 8)];
+			if (currentGameState.getEnPassantSquare() >= 40) {
+				long enPassantBitboard = BitboardOperations
+						.getPositionBitboard(currentGameState
+								.getEnPassantSquare());
+				printBitboard(enPassantBitboard);
+				if (((enPassantBitboard >>> 7) & currentGameState
+						.getWhitePawns()) != 0
+						|| ((enPassantBitboard >>> 9) & currentGameState
+								.getWhitePawns()) != 0) {
+					key ^= polyglotRandom64[offsetEnPassant
+							+ (int) (currentGameState.getEnPassantSquare() % 8)];
+
+					System.out.println("White pawn can capture");
+				}
+			} else if (currentGameState.getEnPassantSquare() <= 23) {
+				long enPassantBitboard = BitboardOperations
+						.getPositionBitboard(currentGameState
+								.getEnPassantSquare());
+				if (((enPassantBitboard << 7) & currentGameState
+						.getBlackPawns()) != 0
+						|| ((enPassantBitboard >>> 9) & currentGameState
+								.getBlackPawns()) != 0) {
+					System.out.println("Black pawn can capture");
+					key ^= polyglotRandom64[offsetEnPassant
+							+ (int) (currentGameState.getEnPassantSquare() % 8)];
+				}
+			}
+
 		}
+
+		System.out.println(polyglotRandom64.length);
 
 		if (currentGameState.getWhiteToMove()) {
 			key ^= polyglotRandom64[offsetWhiteToMove];
-		} else {
-			key ^= polyglotRandom64[offsetWhiteToMove + 1];
 		}
 
 		return key;
+	}
+
+	private static void printBitboard(long bitBoard) {
+		String stringBitBoard = Long.toBinaryString(bitBoard);
+		System.out.println("Value : " + stringBitBoard);
+		while (stringBitBoard.length() != 64) {
+			stringBitBoard = "0" + stringBitBoard;
+		}
+
+		for (int i = 0; i < 8; i++) {
+			StringBuilder stringReverser = new StringBuilder(
+					stringBitBoard.substring(i * 8, ((i + 1) * 8)));
+			stringReverser.reverse();
+			for (int j = 0; j < stringReverser.toString().length(); j++) {
+				System.out.print(stringReverser.toString().charAt(j) + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
 	}
 
 }

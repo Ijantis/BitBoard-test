@@ -68,7 +68,7 @@ public class Engine {
 		} else {
 			return calculateAlphaBeta(currentGameState, whiteToMove, nextDepth);
 		}
-		return currentGameState;
+		return calculateAlphaBeta(currentGameState, whiteToMove, nextDepth);
 	}
 
 	private static FullGameState calculateAlphaBeta(

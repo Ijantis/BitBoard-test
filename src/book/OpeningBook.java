@@ -12,10 +12,15 @@ public class OpeningBook {
 
 		ArrayList<String> listOfMoves = getListOfMoves(zobristKey);
 
-		Random myRandom = new Random();
-		int test = myRandom.nextInt(listOfMoves.size());
+		if (listOfMoves.size() == 0) {
+			return "N";
+		} else {
 
-		return decipherMove(listOfMoves.get(test).substring(0, 8));
+			Random myRandom = new Random();
+			int test = myRandom.nextInt(listOfMoves.size());
+
+			return decipherMove(listOfMoves.get(test).substring(0, 8));
+		}
 	}
 
 	private static ArrayList<String> getListOfMoves(String zobristKey) {
@@ -46,7 +51,6 @@ public class OpeningBook {
 
 	private static String decipherMove(String move) {
 
-		System.out.println(Integer.parseInt(move, 16));
 		String moveBinaryString = Integer.toBinaryString(Integer.parseInt(
 				move.substring(0, 4), 16));
 		String weightBinaryString = Integer.toBinaryString(Integer.parseInt(

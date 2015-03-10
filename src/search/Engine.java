@@ -1,18 +1,22 @@
 package search;
 
+import hash.ZobristKey;
+
 import java.util.Random;
 import java.util.ArrayList;
-import java.util.Vector;
+import java.util.Scanner;
 
 import evaluation.Evaluator;
 import movegen.MoveGenerator;
 import board.FullGameState;
+import book.OpeningBook;
 
 public class Engine {
 
 	public static final int AI_RANDOM = 0;
 	public static final int AI_VERY_EASY = 1;
 	public static final int AI_EASY = 2;
+	public static final int AI_NORMAL = 3;
 
 	public static FullGameState makeMove(int difficulty, boolean whiteToMove,
 			FullGameState currentGameState) {
@@ -24,18 +28,53 @@ public class Engine {
 			return makeEvaluatedMove(whiteToMove, currentGameState);
 		case AI_EASY:
 			return calculateAlphaBeta(currentGameState, whiteToMove);
+		case AI_NORMAL:
+			return makeNormalMove(currentGameState, whiteToMove);
 		default:
 			return null;
 		}
 
 	}
 
-	private static FullGameState calculateAlphaBeta(
-			FullGameState currentGameState, boolean whiteToMove) {
+	private static FullGameState makeNormalMove(FullGameState currentGameState,
+			boolean whiteToMove) {
 
 		ArrayList<FullGameState> nextDepth;
+
 		if (whiteToMove) {
 			nextDepth = MoveGenerator.generateWhiteLegalMoves(currentGameState);
+		} else {
+			nextDepth = MoveGenerator.generateBlackLegalMoves(currentGameState);
+		}
+
+		String nextBookMove = OpeningBook.makeBookMove(ZobristKey
+				.getKey(currentGameState));
+
+		if (!nextBookMove.equals("N")) {
+			Scanner myScanner = new Scanner(nextBookMove);
+			myScanner.useDelimiter("-");
+			String one = myScanner.next();
+			String two = myScanner.next();
+			for (int i = 0; i < nextDepth.size(); i++) {
+				if (nextDepth.get(i).getFromSquare() == Integer.parseInt(one)
+						&& nextDepth.get(i).getToSquare() == Integer
+								.parseInt(two)) {
+					System.out.println("book move made");
+					myScanner.close();
+					return nextDepth.get(i);
+				}
+			}
+			myScanner.close();
+		} else {
+			return calculateAlphaBeta(currentGameState, whiteToMove, nextDepth);
+		}
+		return currentGameState;
+	}
+
+	private static FullGameState calculateAlphaBeta(
+			FullGameState currentGameState, boolean whiteToMove,
+			ArrayList<FullGameState> nextDepth) {
+		if (whiteToMove) {
 			int bestIndex = 0;
 			long bestValue = Integer.MIN_VALUE;
 			long currentScore;
@@ -52,7 +91,6 @@ public class Engine {
 			return nextDepth.get(bestIndex);
 
 		} else {
-			nextDepth = MoveGenerator.generateBlackLegalMoves(currentGameState);
 			int bestIndex = 0;
 			long bestValue = Integer.MAX_VALUE;
 			long currentScore;
@@ -68,7 +106,19 @@ public class Engine {
 
 			return nextDepth.get(bestIndex);
 		}
+	}
 
+	private static FullGameState calculateAlphaBeta(
+			FullGameState currentGameState, boolean whiteToMove) {
+
+		ArrayList<FullGameState> nextDepth;
+		if (whiteToMove) {
+			nextDepth = MoveGenerator.generateWhiteLegalMoves(currentGameState);
+		} else {
+			nextDepth = MoveGenerator.generateBlackLegalMoves(currentGameState);
+		}
+
+		return calculateAlphaBeta(currentGameState, whiteToMove, nextDepth);
 	}
 
 	private static long alphaBeta(FullGameState currentGameState, int depth,

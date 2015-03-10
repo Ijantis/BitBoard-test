@@ -13,8 +13,6 @@ public class BlackPieceMoves {
 	private static final long topRightCorner = Long.parseLong(
 			"100000000000000000000000000000000000000000000000000000000000000",
 			2) << 1;
-	private static final long bottomLeftCorner = Long.parseLong("1", 2);
-	private static final long bottomRightCorner = Long.parseLong("10000000", 2);
 
 	protected static ArrayList<FullGameState> BlackKingMoves(
 			long nextKingBitboard, long possibleMovesBitboard,
@@ -728,17 +726,6 @@ public class BlackPieceMoves {
 		}
 
 		return listOfMoves;
-	}
-
-	private static char[][] copyCurrentBoard(char[][] currentBoard) {
-		char[][] temp = new char[currentBoard.length][currentBoard.length];
-
-		for (int x = 0; x < temp.length; x++) {
-			for (int y = 0; y < temp.length; y++) {
-				temp[x][y] = currentBoard[x][y];
-			}
-		}
-		return temp;
 	}
 
 }

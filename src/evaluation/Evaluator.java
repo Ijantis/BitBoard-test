@@ -147,8 +147,8 @@ public class Evaluator {
 		blackScore += evaluateBlackCentralControl(currentGameState);
 
 		// this evaluates negatively for black
-		whiteScore += evaluatePositional(currentGameState.getCurrentBoard(),
-				Long.bitCount(currentGameState.getAllPieces()));
+		// whiteScore += evaluatePositional(currentGameState.getCurrentBoard(),
+		// Long.bitCount(currentGameState.getAllPieces()));
 
 		// System.out.println("White score " + whiteScore);
 		// System.out.println("Black score " + blackScore);
@@ -449,25 +449,6 @@ public class Evaluator {
 		score += Long.bitCount(myGameState.getBlackKnights()) * knightMaterial;
 		score += Long.bitCount(myGameState.getBlackQueens()) * queenMaterial;
 		return score;
-	}
-
-	private static void printBitboard(long bitBoard) {
-		String stringBitBoard = Long.toBinaryString(bitBoard);
-		System.out.println("Value : " + stringBitBoard);
-		while (stringBitBoard.length() != 64) {
-			stringBitBoard = "0" + stringBitBoard;
-		}
-
-		for (int i = 0; i < 8; i++) {
-			StringBuilder stringReverser = new StringBuilder(
-					stringBitBoard.substring(i * 8, ((i + 1) * 8)));
-			stringReverser.reverse();
-			for (int j = 0; j < stringReverser.toString().length(); j++) {
-				System.out.print(stringReverser.toString().charAt(j) + " ");
-			}
-			System.out.println();
-		}
-		System.out.println();
 	}
 
 }

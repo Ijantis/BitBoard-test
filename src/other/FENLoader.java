@@ -94,7 +94,7 @@ public class FENLoader {
 		}
 
 		// System.out.println(FENPieces);
-
+		pieceScanner.close();
 		return currentBoard;
 	}
 

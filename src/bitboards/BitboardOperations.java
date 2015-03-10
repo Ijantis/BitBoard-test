@@ -205,7 +205,7 @@ public class BitboardOperations {
 		return downSquares;
 	}
 
-	private static void printBitboard(long bitBoard) {
+	public static void printBitboard(long bitBoard) {
 		String stringBitBoard = Long.toBinaryString(bitBoard);
 		System.out.println("Value : " + stringBitBoard);
 		while (stringBitBoard.length() != 64) {
@@ -218,6 +218,21 @@ public class BitboardOperations {
 			stringReverser.reverse();
 			for (int j = 0; j < stringReverser.toString().length(); j++) {
 				System.out.print(stringReverser.toString().charAt(j) + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
+	}
+
+	public static void printBoard(char[][] board) {
+		for (int y = 7; y >= 0; y--) {
+			for (int x = 0; x < board.length; x++) {
+				char temp = board[x][y];
+				if (temp == ' ') {
+					System.out.print(", ");
+				} else {
+					System.out.print(board[x][y] + " ");
+				}
 			}
 			System.out.println();
 		}

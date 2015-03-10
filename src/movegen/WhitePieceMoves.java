@@ -8,11 +8,6 @@ import board.FullGameState;
 
 public class WhitePieceMoves {
 
-	private static final long topLeftCorner = Long.parseLong(
-			"100000000000000000000000000000000000000000000000000000000", 2);
-	private static final long topRightCorner = Long.parseLong(
-			"100000000000000000000000000000000000000000000000000000000000000",
-			2) << 1;
 	private static final long bottomLeftCorner = Long.parseLong("1", 2);
 	private static final long bottomRightCorner = Long.parseLong("10000000", 2);
 
@@ -27,10 +22,10 @@ public class WhitePieceMoves {
 
 			// this is the bitboard after having moved the piece to the next
 			// move
-			
+
 			long possiblePieceMoveBitboard = (nextKingBitboard ^ nextMove)
 					^ myGamestate.getWhiteKing();
-			
+
 			boolean isValid = BoardManager.IsSelfCheck(
 					myGamestate.getWhitePawns(), myGamestate.getWhiteRooks(),
 					myGamestate.getWhiteKnights(),
@@ -53,7 +48,7 @@ public class WhitePieceMoves {
 
 				long rookBitboard = myGamestate.getWhiteRooks();
 				boolean canMove = true;
-				
+
 				if (fromCoord == 4 && toCoord == 6) {
 					if ((rookBitboard & bottomRightCorner) == 0) {
 						canMove = false;
@@ -728,36 +723,6 @@ public class WhitePieceMoves {
 		}
 
 		return listOfMoves;
-	}
-
-	private static char[][] copyCurrentBoard(char[][] currentBoard) {
-		char[][] temp = new char[currentBoard.length][currentBoard.length];
-
-		for (int x = 0; x < temp.length; x++) {
-			for (int y = 0; y < temp.length; y++) {
-				temp[x][y] = currentBoard[x][y];
-			}
-		}
-		return temp;
-	}
-	
-	private static void printBitboard(long bitBoard) {
-		String stringBitBoard = Long.toBinaryString(bitBoard);
-		System.out.println("Value : " + stringBitBoard);
-		while (stringBitBoard.length() != 64) {
-			stringBitBoard = "0" + stringBitBoard;
-		}
-
-		for (int i = 0; i < 8; i++) {
-			StringBuilder stringReverser = new StringBuilder(
-					stringBitBoard.substring(i * 8, ((i + 1) * 8)));
-			stringReverser.reverse();
-			for (int j = 0; j < stringReverser.toString().length(); j++) {
-				System.out.print(stringReverser.toString().charAt(j) + " ");
-			}
-			System.out.println();
-		}
-		System.out.println();
 	}
 
 }

@@ -224,14 +224,14 @@ public class BitboardOperations {
 		System.out.println();
 	}
 
-	public static void printBoard(char[][] board) {
+	public static void printBoard(char[][] currentBoard) {
 		for (int y = 7; y >= 0; y--) {
-			for (int x = 0; x < board.length; x++) {
-				char temp = board[x][y];
+			for (int x = 0; x < currentBoard.length; x++) {
+				char temp = currentBoard[x][y];
 				if (temp == ' ') {
 					System.out.print(", ");
 				} else {
-					System.out.print(board[x][y] + " ");
+					System.out.print(currentBoard[x][y] + " ");
 				}
 			}
 			System.out.println();

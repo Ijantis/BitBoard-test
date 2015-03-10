@@ -276,7 +276,7 @@ public class ZobristKey {
 	 * white bishop 5 black rook 6 white rook 7 black queen 8 white queen 9
 	 * black king 10 white king 11
 	 */
-	public static long getKey(FullGameState currentGameState) {
+	public static String getKey(FullGameState currentGameState) {
 
 		long key = 0L;
 		long temp = currentGameState.getBlackPawns();
@@ -385,7 +385,6 @@ public class ZobristKey {
 		pieceValue++;
 
 		temp = currentGameState.getBlackQueens();
-		System.out.println("black queens" + pieceValue);
 		while (temp != 0) {
 			int nextLength = Long.toBinaryString(Long.highestOneBit(temp))
 					.length() - 1;
@@ -423,7 +422,6 @@ public class ZobristKey {
 		pieceValue++;
 
 		temp = currentGameState.getWhiteKing();
-		System.out.println("white king" + pieceValue);
 		while (temp != 0) {
 			int nextLength = Long.toBinaryString(Long.highestOneBit(temp))
 					.length() - 1;
@@ -455,7 +453,6 @@ public class ZobristKey {
 				long enPassantBitboard = BitboardOperations
 						.getPositionBitboard(currentGameState
 								.getEnPassantSquare());
-				printBitboard(enPassantBitboard);
 				if (((enPassantBitboard >>> 7) & currentGameState
 						.getWhitePawns()) != 0
 						|| ((enPassantBitboard >>> 9) & currentGameState
@@ -463,7 +460,6 @@ public class ZobristKey {
 					key ^= polyglotRandom64[offsetEnPassant
 							+ (int) (currentGameState.getEnPassantSquare() % 8)];
 
-					System.out.println("White pawn can capture");
 				}
 			} else if (currentGameState.getEnPassantSquare() <= 23) {
 				long enPassantBitboard = BitboardOperations
@@ -473,7 +469,6 @@ public class ZobristKey {
 						.getBlackPawns()) != 0
 						|| ((enPassantBitboard >>> 9) & currentGameState
 								.getBlackPawns()) != 0) {
-					System.out.println("Black pawn can capture");
 					key ^= polyglotRandom64[offsetEnPassant
 							+ (int) (currentGameState.getEnPassantSquare() % 8)];
 				}
@@ -481,32 +476,22 @@ public class ZobristKey {
 
 		}
 
-		System.out.println(polyglotRandom64.length);
 
 		if (currentGameState.getWhiteToMove()) {
 			key ^= polyglotRandom64[offsetWhiteToMove];
 		}
 
-		return key;
-	}
+		System.out.println("key is " + key);
 
-	private static void printBitboard(long bitBoard) {
-		String stringBitBoard = Long.toBinaryString(bitBoard);
-		System.out.println("Value : " + stringBitBoard);
-		while (stringBitBoard.length() != 64) {
-			stringBitBoard = "0" + stringBitBoard;
+		String keyString = Long.toHexString(key);
+
+		System.out.println(keyString);
+
+		while (keyString.length() != 16) {
+			keyString = "0" + keyString;
 		}
 
-		for (int i = 0; i < 8; i++) {
-			StringBuilder stringReverser = new StringBuilder(
-					stringBitBoard.substring(i * 8, ((i + 1) * 8)));
-			stringReverser.reverse();
-			for (int j = 0; j < stringReverser.toString().length(); j++) {
-				System.out.print(stringReverser.toString().charAt(j) + " ");
-			}
-			System.out.println();
-		}
-		System.out.println();
+		return keyString;
 	}
 
 }

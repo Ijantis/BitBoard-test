@@ -55,8 +55,14 @@ public class ChessBoard {
 		long time = System.currentTimeMillis();
 		long timeNano = System.nanoTime();
 
-		newGameFromFEN("rnbqkbnr/p1pppppp/8/8/P6P/R1p5/1P1PPPP1/1NBQKBNR b Kkq - 0 4");
-		System.out.println(Long.toHexString(ZobristKey.getKey(createGamestate())));
+		newGame();
+		BitboardOperations.printBoard(currentBoard);
+		makeAIMove(Engine.AI_NORMAL);
+		BitboardOperations.printBoard(currentBoard);
+		makeMove(52, 36);
+		BitboardOperations.printBoard(currentBoard);
+		makeAIMove(Engine.AI_NORMAL);
+		BitboardOperations.printBoard(currentBoard);
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
@@ -273,9 +279,9 @@ public class ChessBoard {
 				numberOfFullMoves, numberOfHalfMoves, 0, 0);
 	}
 
-	public int makeAIMove(int difficulty, boolean playingWhite) {
+	public int makeAIMove(int difficulty) {
 
-		FullGameState temp = Engine.makeMove(difficulty, playingWhite,
+		FullGameState temp = Engine.makeMove(difficulty, whiteToMove,
 				createGamestate());
 		whiteCastleKing = temp.getWhiteCastleKing();
 		whiteCastleQueen = temp.getWhiteCastleQueen();

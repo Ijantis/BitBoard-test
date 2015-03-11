@@ -4,6 +4,9 @@ Need to check if Kings move into attacked squares.
 Also to be added is if piece is moved and same king in check then move not allowed.
 
 TODO:
+Draw by repetition check.
+Draw by insufficient material check.
+endgame tablebase?
 
 EVALUATION:
 
@@ -85,9 +88,3 @@ Possible moves:
 
 Using char array instead of String array gave me a small speedup from 13000ms to 11500ms from inital position to four moves in.
 
-perft/divide test
-starting position giving me this:
-20
-400
-8902
-197283 - bug????

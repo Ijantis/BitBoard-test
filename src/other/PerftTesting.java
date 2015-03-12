@@ -10,9 +10,9 @@ public class PerftTesting {
 
 	public static void main(String[] args) {
 
-		// new PerftTesting();
+		new PerftTesting();
 
-		new ChessBoard();
+		// new ChessBoard();
 
 	}
 
@@ -33,8 +33,8 @@ public class PerftTesting {
 				readDepth = Long.parseLong(myScanner.next().substring(3));
 				readDepth = Long.parseLong(myScanner.next().substring(3));
 				readDepth = Long.parseLong(myScanner.next().substring(3));
-				readDepth = Long.parseLong(myScanner.next().substring(3));
-				long calcDepth = myboard.generateDepthMoves(5);
+//				readDepth = Long.parseLong(myScanner.next().substring(3));
+				long calcDepth = myboard.generateDepthMoves(4);
 				if (readDepth != calcDepth) {
 					System.out.println();
 					System.out.println("mismatch");
@@ -47,8 +47,10 @@ public class PerftTesting {
 					System.out.println();
 					numberOfMismatches++;
 				}
-				System.out.println("calc depth " + calcDepth);
-				System.out.println("read depth " + readDepth);
+				else {
+					System.out.println("calc depth " + calcDepth);
+					System.out.println("read depth " + readDepth);
+				}
 				System.out.println(count);
 				myScanner.nextLine();
 				count++;

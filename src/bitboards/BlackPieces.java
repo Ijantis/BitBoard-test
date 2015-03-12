@@ -104,12 +104,10 @@ public class BlackPieces {
 			allRookMoves = allRookMoves
 					| getSingleRookMove(nextRook, occupiedSquares);
 
-			String rookBitboard = Long.toBinaryString(rookBitboardToCalculate);
-			if (rookBitboard.length() == 1) {
-				break;
-			}
-			rookBitboardToCalculate = Long.parseLong(rookBitboard.substring(1),
-					2);
+			rookBitboardToCalculate = Long
+					.highestOneBit(rookBitboardToCalculate)
+					- 1
+					& rookBitboardToCalculate;
 		}
 		return allRookMoves;
 	}

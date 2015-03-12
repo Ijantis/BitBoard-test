@@ -99,18 +99,15 @@ public class WhitePieces {
 
 		long nextRook = 0L;
 		long allRookMoves = 0L;
-
 		while (rookBitboardToCalculate != 0) {
 			nextRook = Long.highestOneBit(rookBitboardToCalculate);
 			allRookMoves = allRookMoves
 					| getSingleRookMove(nextRook, occupiedSquares);
 
-			String rookBitboard = Long.toBinaryString(rookBitboardToCalculate);
-			if (rookBitboard.length() == 1) {
-				break;
-			}
-			rookBitboardToCalculate = Long.parseLong(rookBitboard.substring(1),
-					2);
+			rookBitboardToCalculate = Long
+					.highestOneBit(rookBitboardToCalculate)
+					- 1
+					& rookBitboardToCalculate;
 		}
 		return allRookMoves;
 	}

@@ -52,23 +52,21 @@ public class ChessBoard {
 			{ 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' } };;
 
 	public ChessBoard() {
+		newGame();
+
+	}
+
+	private long deleteMe(int i) {
 		long time = System.currentTimeMillis();
 		long timeNano = System.nanoTime();
 
-		newGame();
-		BitboardOperations.printBoard(currentBoard);
-		makeAIMove(Engine.AI_NORMAL);
-		BitboardOperations.printBoard(currentBoard);
-		makeMove(52, 36);
-		BitboardOperations.printBoard(currentBoard);
-		makeAIMove(Engine.AI_NORMAL);
-		BitboardOperations.printBoard(currentBoard);
+		System.out.println(generateDepthMoves(i));
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
 		System.out.println("That took :"
 				+ ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
-
+		return System.currentTimeMillis() - time;
 	}
 
 	private void printStatus() {

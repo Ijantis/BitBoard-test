@@ -74,13 +74,14 @@ public class Engine {
 	private static FullGameState calculateAlphaBeta(
 			FullGameState currentGameState, boolean whiteToMove,
 			ArrayList<FullGameState> nextDepth) {
+		int depth = 3;
 		if (whiteToMove) {
 			int bestIndex = 0;
 			long bestValue = Integer.MIN_VALUE;
 			long currentScore;
 
 			for (int i = 0; i < nextDepth.size(); i++) {
-				currentScore = alphaBeta(nextDepth.get(i), 1,
+				currentScore = alphaBeta(nextDepth.get(i), depth,
 						Integer.MIN_VALUE, Integer.MAX_VALUE, !whiteToMove);
 				if (currentScore > bestValue) {
 					bestIndex = i;
@@ -96,7 +97,7 @@ public class Engine {
 			long currentScore;
 
 			for (int i = 0; i < nextDepth.size(); i++) {
-				currentScore = alphaBeta(nextDepth.get(i), 1,
+				currentScore = alphaBeta(nextDepth.get(i), depth,
 						Integer.MIN_VALUE, Integer.MAX_VALUE, !whiteToMove);
 				if (currentScore < bestValue) {
 					bestIndex = i;

@@ -9,10 +9,13 @@ import board.ChessBoard;
 public class PerftTesting {
 
 	public static void main(String[] args) {
-
+		long time = System.currentTimeMillis();
 		new PerftTesting();
 
 		// new ChessBoard();
+		
+		System.out.println("That took :" + (System.currentTimeMillis() - time)
+				+ "ms");
 
 	}
 

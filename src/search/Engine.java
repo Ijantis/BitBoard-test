@@ -5,9 +5,12 @@ import hash.ZobristKey;
 import java.util.Random;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 import evaluation.Evaluator;
 import movegen.MoveGenerator;
+import bitboards.BitboardOperations;
+import board.ChessBoard;
 import board.FullGameState;
 import book.OpeningBook;
 
@@ -75,6 +78,7 @@ public class Engine {
 			FullGameState currentGameState, boolean whiteToMove,
 			ArrayList<FullGameState> nextDepth) {
 		int depth = 3;
+
 		if (whiteToMove) {
 			int bestIndex = 0;
 			long bestValue = Integer.MIN_VALUE;
@@ -82,7 +86,8 @@ public class Engine {
 
 			for (int i = 0; i < nextDepth.size(); i++) {
 				currentScore = alphaBeta(nextDepth.get(i), depth,
-						Integer.MIN_VALUE, Integer.MAX_VALUE, !whiteToMove);
+						Integer.MIN_VALUE, Integer.MAX_VALUE, !whiteToMove,
+						true);
 				if (currentScore > bestValue) {
 					bestIndex = i;
 					bestValue = currentScore;
@@ -98,7 +103,8 @@ public class Engine {
 
 			for (int i = 0; i < nextDepth.size(); i++) {
 				currentScore = alphaBeta(nextDepth.get(i), depth,
-						Integer.MAX_VALUE, Integer.MIN_VALUE, !whiteToMove);
+						Integer.MAX_VALUE, Integer.MIN_VALUE, !whiteToMove,
+						true);
 				if (currentScore < bestValue) {
 					bestIndex = i;
 					bestValue = currentScore;
@@ -122,46 +128,116 @@ public class Engine {
 		return calculateAlphaBeta(currentGameState, whiteToMove, nextDepth);
 	}
 
+	/**
+	 * 
+	 * @param currentGameState
+	 * @param depth
+	 *            - The depth to analyze to. If depth is 0 then the function
+	 *            returns immeadiately.
+	 * @param alpha
+	 * @param beta
+	 * @param whiteToMove
+	 *            - White to move.
+	 * @param shouldOrder
+	 *            - Whether or not this call should order the list of moves or
+	 *            not.
+	 * @return - The evaluation of the position to a given depth.
+	 */
 	private static long alphaBeta(FullGameState currentGameState, int depth,
-			long alpha, long beta, boolean whiteToMove) {
+			long alpha, long beta, boolean whiteToMove, boolean shouldOrder) {
 
 		if (depth == 0) {
 			return Evaluator.evaluatePosition(currentGameState);
 		}
 
 		if (whiteToMove) {
-			long value = Integer.MIN_VALUE;
-			ArrayList<FullGameState> childNodes = MoveGenerator
-					.generateWhiteLegalMoves(currentGameState);
-			for (int i = 0; i < childNodes.size(); i++) {
-				value = Math.max(
-						value,
-						alphaBeta(childNodes.get(i), depth - 1, alpha, beta,
-								!whiteToMove));
-				alpha = Math.max(alpha, value);
-				if (alpha >= beta) {
-					break;
+			if (shouldOrder) {
+				ArrayList<FullGameState> nextDepth = MoveGenerator
+						.generateWhiteLegalMoves(currentGameState);
+				TreeMap<Long, FullGameState> orderedNextDepth = new TreeMap<Long, FullGameState>();
+				// sorting the moves in order
+				for (int i = 0; i < nextDepth.size(); i++) {
+					orderedNextDepth.put(
+							Evaluator.evaluatePosition(nextDepth.get(i)),
+							nextDepth.get(i));
 				}
+				long value = Integer.MIN_VALUE;
+				// going through each move
+				for (int i = 0; i < orderedNextDepth.size(); i++) {
+					value = Math.max(
+							value,
+							alphaBeta(orderedNextDepth.get(orderedNextDepth
+									.lastKey()), depth - 1, alpha, beta,
+									!whiteToMove, false));
+					alpha = Math.max(alpha, value);
+					if (alpha >= beta) {
+						break;
+					}
+				}
+				return value;
+				// without move ordering
+			} else {
+				long value = Integer.MIN_VALUE;
+				ArrayList<FullGameState> childNodes = MoveGenerator
+						.generateWhiteLegalMoves(currentGameState);
+				for (int i = 0; i < childNodes.size(); i++) {
+					value = Math.max(
+							value,
+							alphaBeta(childNodes.get(i), depth - 1, alpha,
+									beta, !whiteToMove, false));
+					alpha = Math.max(alpha, value);
+					if (alpha >= beta) {
+						break;
+					}
+				}
+				return value;
 			}
-			return value;
 		}
 
 		else {
-			long value = Integer.MAX_VALUE;
-			ArrayList<FullGameState> childNodes = MoveGenerator
-					.generateBlackLegalMoves(currentGameState);
-			for (int i = 0; i < childNodes.size(); i++) {
-				value = Math.min(
-						value,
-						alphaBeta(childNodes.get(i), depth - 1, alpha, beta,
-								!whiteToMove));
-				beta = Math.min(beta, value);
-				if (alpha >= beta) {
-					break;
+			if (shouldOrder) {
+				ArrayList<FullGameState> nextDepth = MoveGenerator
+						.generateBlackLegalMoves(currentGameState);
+				TreeMap<Long, FullGameState> orderedNextDepth = new TreeMap<Long, FullGameState>();
+				// sorting the moves in order
+				for (int i = 0; i < nextDepth.size(); i++) {
+					orderedNextDepth.put(
+							Evaluator.evaluatePosition(nextDepth.get(i)),
+							nextDepth.get(i));
 				}
+				long value = Integer.MAX_VALUE;
+				// going through each move
+				for (int i = 0; i < orderedNextDepth.size(); i++) {
+					value = Math.min(
+							value,
+							alphaBeta(orderedNextDepth.get(orderedNextDepth
+									.firstKey()), depth - 1, alpha, beta,
+									!whiteToMove, false));
+					orderedNextDepth.remove(orderedNextDepth.firstKey());
+					beta = Math.min(beta, value);
+					if (alpha >= beta) {
+						break;
+					}
+				}
+				return value;
+			} else {
 
+				long value = Integer.MAX_VALUE;
+				ArrayList<FullGameState> childNodes = MoveGenerator
+						.generateBlackLegalMoves(currentGameState);
+				for (int i = 0; i < childNodes.size(); i++) {
+					value = Math.min(
+							value,
+							alphaBeta(childNodes.get(i), depth - 1, alpha,
+									beta, !whiteToMove, false));
+					beta = Math.min(beta, value);
+					if (alpha >= beta) {
+						break;
+					}
+
+				}
+				return value;
 			}
-			return value;
 		}
 	}
 
@@ -259,22 +335,4 @@ public class Engine {
 		return MoveGenerator.generateBlackLegalMoves(gamestate);
 	}
 
-	/*
-	 * Temporary class for printing out the current state of the board wihout
-	 * relying on a gui.
-	 */
-	public static void printBoard(char[][] board) {
-		for (int y = 7; y >= 0; y--) {
-			for (int x = 0; x < board.length; x++) {
-				char temp = board[x][y];
-				if (temp == ' ') {
-					System.out.print(", ");
-				} else {
-					System.out.print(board[x][y] + " ");
-				}
-			}
-			System.out.println();
-		}
-		System.out.println();
-	}
 }

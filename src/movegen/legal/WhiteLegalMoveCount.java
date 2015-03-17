@@ -1,4 +1,4 @@
-package movegen;
+package movegen.legal;
 
 import board.BoardManager;
 import board.FullGameState;
@@ -8,7 +8,7 @@ public class WhiteLegalMoveCount {
 	private static final long bottomLeftCorner = Long.parseLong("1", 2);
 	private static final long bottomRightCorner = Long.parseLong("10000000", 2);
 
-	protected static long whiteKingMoves(long nextKingBitboard,
+	public static long whiteKingMoves(long nextKingBitboard,
 			long possibleMovesBitboard, FullGameState myGamestate) {
 
 		long count = 0;
@@ -73,7 +73,7 @@ public class WhiteLegalMoveCount {
 		return count;
 	}
 
-	protected static long whitePawnMoves(long nextPawnBitboard,
+	public static long whitePawnMoves(long nextPawnBitboard,
 			long possibleMovesBitboard, FullGameState myGamestate) {
 
 		long nextMove;
@@ -143,7 +143,7 @@ public class WhiteLegalMoveCount {
 		return count;
 	}
 
-	protected static long whiteKnightMoves(long nextKnightBitboard,
+	public static long whiteKnightMoves(long nextKnightBitboard,
 			long possibleMovesBitboard, FullGameState myGamestate) {
 		long count = 0;
 
@@ -195,7 +195,7 @@ public class WhiteLegalMoveCount {
 		return count;
 	}
 
-	protected static long whiteBishopMoves(long nextBishopBitboard,
+	public static long whiteBishopMoves(long nextBishopBitboard,
 			long possibleMovesBitboard, FullGameState myGamestate) {
 		long count = 0;
 
@@ -248,7 +248,7 @@ public class WhiteLegalMoveCount {
 		return count;
 	}
 
-	protected static long whiteQueenMoves(long nextQueenBitboard,
+	public static long whiteQueenMoves(long nextQueenBitboard,
 			long possibleMovesBitboard, FullGameState myGamestate) {
 
 		long count = 0;
@@ -302,7 +302,7 @@ public class WhiteLegalMoveCount {
 		return count;
 	}
 
-	protected static long whiteRookMoves(long nextRookBitboard,
+	public static long whiteRookMoves(long nextRookBitboard,
 			long possibleMovesBitboard, FullGameState myGamestate) {
 
 		long count = 0;

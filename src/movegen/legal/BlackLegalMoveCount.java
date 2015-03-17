@@ -1,4 +1,4 @@
-package movegen;
+package movegen.legal;
 
 import board.BoardManager;
 import board.FullGameState;
@@ -11,7 +11,7 @@ public class BlackLegalMoveCount {
 			"100000000000000000000000000000000000000000000000000000000000000",
 			2) << 1;
 
-	protected static long BlackKingMoves(long nextKingBitboard,
+	public static long BlackKingMoves(long nextKingBitboard,
 			long possibleMovesBitboard, FullGameState myGamestate) {
 		long count = 0;
 
@@ -78,7 +78,7 @@ public class BlackLegalMoveCount {
 		return count;
 	}
 
-	protected static long BlackPawnMoves(long nextPawnBitboard,
+	public static long BlackPawnMoves(long nextPawnBitboard,
 			long possibleMovesBitboard, FullGameState myGamestate) {
 		long count = 0;
 
@@ -145,7 +145,7 @@ public class BlackLegalMoveCount {
 		return count;
 	}
 
-	protected static long BlackKnightMoves(long nextKnightBitboard,
+	public static long BlackKnightMoves(long nextKnightBitboard,
 			long possibleMovesBitboard, FullGameState myGamestate) {
 		long count = 0;
 
@@ -196,7 +196,7 @@ public class BlackLegalMoveCount {
 		return count;
 	}
 
-	protected static long BlackBishopMoves(long nextBishopBitboard,
+	public static long BlackBishopMoves(long nextBishopBitboard,
 			long possibleMovesBitboard, FullGameState myGamestate) {
 		long count = 0;
 
@@ -248,7 +248,7 @@ public class BlackLegalMoveCount {
 		return count;
 	}
 
-	protected static long BlackQueenMoves(long nextQueenBitboard,
+	public static long BlackQueenMoves(long nextQueenBitboard,
 			long possibleMovesBitboard, FullGameState myGamestate) {
 		long count = 0;
 
@@ -299,7 +299,7 @@ public class BlackLegalMoveCount {
 		return count;
 	}
 
-	protected static long BlackRookMoves(long nextRookBitboard,
+	public static long BlackRookMoves(long nextRookBitboard,
 			long possibleMovesBitboard, FullGameState myGamestate) {
 		long count = 0;
 

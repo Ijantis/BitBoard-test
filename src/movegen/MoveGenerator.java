@@ -2,6 +2,11 @@ package movegen;
 
 import java.util.ArrayList;
 
+import movegen.legal.BlackLegalMoveCount;
+import movegen.legal.BlackLegalMoves;
+import movegen.legal.WhiteLegalMoveCount;
+import movegen.legal.WhiteLegalMoves;
+import movegen.pseudo.WhitePseudoMoves;
 import bitboards.BlackPieces;
 import bitboards.WhitePieces;
 import board.FullGameState;
@@ -190,7 +195,7 @@ public class MoveGenerator {
 					currentGameState.getOccupiedSquares(),
 					currentGameState.getBlackPieces(),
 					currentGameState.getEnPassantSquare());
-			possibleStates.addAll(WhiteLegalMoves.whitePawnMoves(nextPawn,
+			possibleStates.addAll(WhitePseudoMoves.whitePawnMoves(nextPawn,
 					bitboardOfMoves, currentGameState));
 
 			temp = Long.highestOneBit(temp) ^ temp;
@@ -341,8 +346,7 @@ public class MoveGenerator {
 	}
 
 	public static long generateWhiteLegalMoveCount(
-
-	FullGameState currentGameState) {
+			FullGameState currentGameState) {
 		long count = 0;
 
 		long temp;

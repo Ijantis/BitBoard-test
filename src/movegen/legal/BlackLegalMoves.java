@@ -1,4 +1,4 @@
-package movegen;
+package movegen.legal;
 
 import java.util.ArrayList;
 
@@ -14,7 +14,7 @@ public class BlackLegalMoves {
 			"100000000000000000000000000000000000000000000000000000000000000",
 			2) << 1;
 
-	protected static ArrayList<FullGameState> BlackKingMoves(
+	public static ArrayList<FullGameState> BlackKingMoves(
 			long nextKingBitboard, long possibleMovesBitboard,
 			FullGameState myGamestate) {
 		ArrayList<FullGameState> listOfMoves = new ArrayList<FullGameState>();
@@ -105,7 +105,7 @@ public class BlackLegalMoves {
 		return listOfMoves;
 	}
 
-	protected static ArrayList<FullGameState> BlackPawnMoves(
+	public static ArrayList<FullGameState> BlackPawnMoves(
 			long nextPawnBitboard, long possibleMovesBitboard,
 			FullGameState myGamestate) {
 		ArrayList<FullGameState> listOfMoves = new ArrayList<FullGameState>();
@@ -353,7 +353,7 @@ public class BlackLegalMoves {
 		return listOfMoves;
 	}
 
-	protected static ArrayList<FullGameState> BlackKnightMoves(
+	public static ArrayList<FullGameState> BlackKnightMoves(
 			long nextKnightBitboard, long possibleMovesBitboard,
 			FullGameState myGamestate) {
 		ArrayList<FullGameState> listOfMoves = new ArrayList<FullGameState>();
@@ -434,7 +434,7 @@ public class BlackLegalMoves {
 		return listOfMoves;
 	}
 
-	protected static ArrayList<FullGameState> BlackBishopMoves(
+	public static ArrayList<FullGameState> BlackBishopMoves(
 			long nextBishopBitboard, long possibleMovesBitboard,
 			FullGameState myGamestate) {
 		ArrayList<FullGameState> listOfMoves = new ArrayList<FullGameState>();
@@ -516,7 +516,7 @@ public class BlackLegalMoves {
 		return listOfMoves;
 	}
 
-	protected static ArrayList<FullGameState> BlackQueenMoves(
+	public static ArrayList<FullGameState> BlackQueenMoves(
 			long nextQueenBitboard, long possibleMovesBitboard,
 			FullGameState myGamestate) {
 		ArrayList<FullGameState> listOfMoves = new ArrayList<FullGameState>();
@@ -596,7 +596,7 @@ public class BlackLegalMoves {
 		return listOfMoves;
 	}
 
-	protected static ArrayList<FullGameState> BlackRookMoves(
+	public static ArrayList<FullGameState> BlackRookMoves(
 			long nextRookBitboard, long possibleMovesBitboard,
 			FullGameState myGamestate) {
 		ArrayList<FullGameState> listOfMoves = new ArrayList<FullGameState>();

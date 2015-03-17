@@ -98,7 +98,7 @@ public class Engine {
 
 			for (int i = 0; i < nextDepth.size(); i++) {
 				currentScore = alphaBeta(nextDepth.get(i), depth,
-						Integer.MIN_VALUE, Integer.MAX_VALUE, !whiteToMove);
+						Integer.MAX_VALUE, Integer.MIN_VALUE, !whiteToMove);
 				if (currentScore < bestValue) {
 					bestIndex = i;
 					bestValue = currentScore;

@@ -6,7 +6,7 @@ import bitboards.BitboardOperations;
 import board.BoardManager;
 import board.FullGameState;
 
-public class WhitePieceMoves {
+public class WhiteLegalMoves {
 
 	private static final long bottomLeftCorner = Long.parseLong("1", 2);
 	private static final long bottomRightCorner = Long.parseLong("10000000", 2);

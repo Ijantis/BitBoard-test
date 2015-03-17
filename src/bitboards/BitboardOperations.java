@@ -1,5 +1,7 @@
 package bitboards;
 
+import board.FullGameState;
+
 public class BitboardOperations {
 
 	/*
@@ -237,5 +239,107 @@ public class BitboardOperations {
 			System.out.println();
 		}
 		System.out.println();
+	}
+	
+	public static char[][] createArrayFromGamestate(FullGameState state) {
+
+		char[][] tempBoard = new char[8][8];
+		for (int i = 0; i < 64; i++) {
+			tempBoard[i % 8][i / 8] = ' ';
+		}
+
+		long temp = state.getWhiteKing();
+
+		int nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+		tempBoard[nextLength % 8][nextLength / 8] = 'K';
+
+		temp = state.getWhitePawns();
+		while (temp != 0) {
+
+			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+			tempBoard[nextLength % 8][nextLength / 8] = 'P';
+			temp = Long.highestOneBit(temp) ^ temp;
+		}
+
+		temp = state.getWhiteRooks();
+		while (temp != 0) {
+
+			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+			tempBoard[nextLength % 8][nextLength / 8] = 'R';
+			temp = Long.highestOneBit(temp) ^ temp;
+		}
+
+		temp = state.getWhiteKnights();
+		while (temp != 0) {
+
+			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+			tempBoard[nextLength % 8][nextLength / 8] = 'N';
+			temp = Long.highestOneBit(temp) ^ temp;
+		}
+
+		temp = state.getWhiteBishops();
+		while (temp != 0) {
+
+			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+			tempBoard[nextLength % 8][nextLength / 8] = 'B';
+			temp = Long.highestOneBit(temp) ^ temp;
+		}
+
+		temp = state.getWhiteQueens();
+		while (temp != 0) {
+
+			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+			tempBoard[nextLength % 8][nextLength / 8] = 'Q';
+			temp = Long.highestOneBit(temp) ^ temp;
+		}
+
+		temp = state.getBlackKing();
+		nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+
+		tempBoard[nextLength % 8][nextLength / 8] = 'k';
+
+		temp = state.getBlackPawns();
+		while (temp != 0) {
+
+			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+			tempBoard[nextLength % 8][nextLength / 8] = 'p';
+			temp = Long.highestOneBit(temp) ^ temp;
+		}
+
+		temp = state.getBlackRooks();
+		while (temp != 0) {
+
+			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+			tempBoard[nextLength % 8][nextLength / 8] = 'r';
+			temp = Long.highestOneBit(temp) ^ temp;
+		}
+
+		temp = state.getBlackKnights();
+		while (temp != 0) {
+
+			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+			tempBoard[nextLength % 8][nextLength / 8] = 'n';
+			temp = Long.highestOneBit(temp) ^ temp;
+		}
+
+		temp = state.getBlackBishops();
+		while (temp != 0) {
+
+			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+			tempBoard[nextLength % 8][nextLength / 8] = 'b';
+			temp = Long.highestOneBit(temp) ^ temp;
+		}
+
+		temp = state.getBlackQueens();
+		while (temp != 0) {
+
+			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
+			tempBoard[nextLength % 8][nextLength / 8] = 'q';
+			temp = Long.highestOneBit(temp) ^ temp;
+		}
+
+		printBoard(tempBoard);
+		return tempBoard;
+
 	}
 }

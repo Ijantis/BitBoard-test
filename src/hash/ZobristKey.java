@@ -481,11 +481,11 @@ public class ZobristKey {
 			key ^= polyglotRandom64[offsetWhiteToMove];
 		}
 
-		System.out.println("key is " + key);
+//		System.out.println("key is " + key);
 
 		String keyString = Long.toHexString(key);
 
-		System.out.println(keyString);
+//		System.out.println(keyString);
 
 		while (keyString.length() != 16) {
 			keyString = "0" + keyString;

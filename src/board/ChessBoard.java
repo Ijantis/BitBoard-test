@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.ArrayList;
 import java.util.Stack;
 
 import evaluation.Evaluator;
@@ -17,6 +16,7 @@ import bitboards.WhitePieces;
 import main.GameLoop;
 import movegen.MoveGenerator;
 import other.FENLoader;
+import other.PerftTesting;
 //import other.HashGenerator;
 import search.Engine;
 
@@ -52,7 +52,15 @@ public class ChessBoard {
 			{ 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' } };;
 
 	public ChessBoard() {
-		newGame();
+		
+		long time = System.currentTimeMillis();
+		
+		newGameFromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
+		makeAIMove(Engine.AI_NORMAL);
+		printBoard();
+		
+		System.out.println("That took :" + (System.currentTimeMillis() - time)
+				+ "ms");
 
 	}
 
@@ -856,107 +864,6 @@ public class ChessBoard {
 		blackCastleQueen = false;
 	}
 
-	private char[][] createArrayFromBitboards(FullGameState state) {
-
-		char[][] tempBoard = new char[8][8];
-		for (int i = 0; i < 64; i++) {
-			tempBoard[i % 8][i / 8] = ' ';
-		}
-
-		long temp = state.getWhiteKing();
-
-		int nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
-		tempBoard[nextLength % 8][nextLength / 8] = 'K';
-
-		temp = state.getWhitePawns();
-		while (temp != 0) {
-
-			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
-			tempBoard[nextLength % 8][nextLength / 8] = 'P';
-			temp = Long.highestOneBit(temp) ^ temp;
-		}
-
-		temp = state.getWhiteRooks();
-		while (temp != 0) {
-
-			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
-			tempBoard[nextLength % 8][nextLength / 8] = 'R';
-			temp = Long.highestOneBit(temp) ^ temp;
-		}
-
-		temp = state.getWhiteKnights();
-		while (temp != 0) {
-
-			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
-			tempBoard[nextLength % 8][nextLength / 8] = 'N';
-			temp = Long.highestOneBit(temp) ^ temp;
-		}
-
-		temp = state.getWhiteBishops();
-		while (temp != 0) {
-
-			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
-			tempBoard[nextLength % 8][nextLength / 8] = 'B';
-			temp = Long.highestOneBit(temp) ^ temp;
-		}
-
-		temp = state.getWhiteQueens();
-		while (temp != 0) {
-
-			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
-			tempBoard[nextLength % 8][nextLength / 8] = 'Q';
-			temp = Long.highestOneBit(temp) ^ temp;
-		}
-
-		temp = state.getBlackKing();
-		nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
-
-		tempBoard[nextLength % 8][nextLength / 8] = 'k';
-
-		temp = state.getBlackPawns();
-		while (temp != 0) {
-
-			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
-			tempBoard[nextLength % 8][nextLength / 8] = 'p';
-			temp = Long.highestOneBit(temp) ^ temp;
-		}
-
-		temp = state.getBlackRooks();
-		while (temp != 0) {
-
-			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
-			tempBoard[nextLength % 8][nextLength / 8] = 'r';
-			temp = Long.highestOneBit(temp) ^ temp;
-		}
-
-		temp = state.getBlackKnights();
-		while (temp != 0) {
-
-			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
-			tempBoard[nextLength % 8][nextLength / 8] = 'n';
-			temp = Long.highestOneBit(temp) ^ temp;
-		}
-
-		temp = state.getBlackBishops();
-		while (temp != 0) {
-
-			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
-			tempBoard[nextLength % 8][nextLength / 8] = 'b';
-			temp = Long.highestOneBit(temp) ^ temp;
-		}
-
-		temp = state.getBlackQueens();
-		while (temp != 0) {
-
-			nextLength = Long.toBinaryString(Long.highestOneBit(temp)).length() - 1;
-			tempBoard[nextLength % 8][nextLength / 8] = 'q';
-			temp = Long.highestOneBit(temp) ^ temp;
-		}
-
-		return tempBoard;
-
-	}
-
 	public void undoMove() {
 
 		if (!listOfMoves.isEmpty()) {
@@ -977,7 +884,7 @@ public class ChessBoard {
 
 				whiteToMove = !whiteToMove;
 
-				currentBoard = createArrayFromBitboards(previousState);
+				currentBoard = BitboardOperations.createArrayFromGamestate(previousState);
 			}
 
 		}

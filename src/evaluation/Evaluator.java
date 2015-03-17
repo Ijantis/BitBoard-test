@@ -106,25 +106,46 @@ public class Evaluator {
 		long whiteScore = 0;
 		long blackScore = 0;
 
-		ArrayList<FullGameState> whiteMoves = MoveGenerator
-				.generateWhiteLegalMoves(currentGameState);
-		ArrayList<FullGameState> blackMoves = MoveGenerator
-				.generateBlackLegalMoves(currentGameState);
-
-		// checkmate gives a lot of points
+		/*
+		 * If its white to move and the king is under attack then you need to
+		 * calculate moves
+		 */
 		if (currentGameState.getWhiteToMove()
 				&& (currentGameState.getWhiteKing() & currentGameState
-						.getBlackAttackingSquares()) != 0
-				&& whiteMoves.size() == 0) {
-			blackScore += 50000;
-			return whiteScore - blackScore;
-			// black checkmated
-		} else if (!currentGameState.getWhiteToMove()
-				&& (currentGameState.getBlackKing() & currentGameState
-						.getWhiteAttackingSquares()) != 0
-				&& blackMoves.size() == 0) {
-			whiteScore += 50000;
-			return whiteScore - blackScore;
+						.getBlackAttackingSquares()) != 0) {
+
+		}
+
+		// if white to move
+		if (currentGameState.getWhiteToMove()) {
+
+			long noMoves = MoveGenerator
+					.generateWhiteLegalMoveCount(currentGameState);
+			// if white king is under attack
+			if ((currentGameState.getWhiteKing() & currentGameState
+					.getBlackAttackingSquares()) != 0) {
+				// checkmate
+				if (noMoves == 0) {
+					whiteScore -= 200000;
+				}
+			} else {
+				// stalemate
+				if (noMoves == 0) {
+					whiteScore -= 150000;
+				}
+			}
+		} else {
+			long noMoves = MoveGenerator
+					.generateBlackLegalMoveCount(currentGameState);
+			if ((currentGameState.getBlackKing() & currentGameState
+					.getWhiteAttackingSquares()) != 0) {
+				if (noMoves == 0) {
+					blackScore -= 200000;
+				}
+			} else if (noMoves == 0) {
+				blackScore -= 150000;
+			}
+
 		}
 
 		// material
@@ -138,10 +159,6 @@ public class Evaluator {
 		// hanging pieces
 		whiteScore += evaluateWhiteProtectedHangingPieces(currentGameState);
 		blackScore += evaluateBlackProtectedHangingPieces(currentGameState);
-
-		// number of possible moves
-		whiteScore += whiteMoves.size() * mobility;
-		blackScore += blackMoves.size() * mobility;
 
 		whiteScore += evaluateWhiteCentralControl(currentGameState);
 		blackScore += evaluateBlackCentralControl(currentGameState);
@@ -416,8 +433,7 @@ public class Evaluator {
 		long maskedFile = BitboardOperations.maskFile(1);
 		for (int file = 0; file < 8; file++) {
 			int pawnsInFile = 0;
-			pawnsInFile = Long.bitCount(pawns
-					& (maskedFile << file));
+			pawnsInFile = Long.bitCount(pawns & (maskedFile << file));
 			if (pawnsInFile > 1) {
 				score -= (pawnsInFile * 20) * (pawnsInFile - 1);
 			}

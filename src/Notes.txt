@@ -1,5 +1,7 @@
 Next thing to do
 
+FOR EVALUATION flip the black value
+
 Need to check if Kings move into attacked squares.
 Also to be added is if piece is moved and same king in check then move not allowed.
 

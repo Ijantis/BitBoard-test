@@ -26,7 +26,7 @@ public class Engine {
 		case AI_RANDOM:
 			return makeRandomMove(whiteToMove, currentGameState);
 		case AI_VERY_EASY:
-			return makeEvaluatedMove(whiteToMove, currentGameState);
+			return makeStaticEvaluatedMove(whiteToMove, currentGameState);
 		case AI_EASY:
 			return AlphaBetaSearch.calculateAlphaBeta(currentGameState,
 					whiteToMove);
@@ -75,7 +75,7 @@ public class Engine {
 				whiteToMove, nextDepth);
 	}
 
-	private static FullGameState makeEvaluatedMove(boolean playingWhite,
+	private static FullGameState makeStaticEvaluatedMove(boolean playingWhite,
 			FullGameState currentGameState) {
 
 		ArrayList<FullGameState> depthOne = new ArrayList<FullGameState>();

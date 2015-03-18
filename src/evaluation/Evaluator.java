@@ -128,7 +128,7 @@ public class Evaluator {
 				// stalemate
 				if (noMoves == 0) {
 					System.out.println("Stalemate white to move");
-//					whiteScore -= 150000;
+					// whiteScore -= 150000;
 					return 0;
 				}
 			}
@@ -142,7 +142,7 @@ public class Evaluator {
 				}
 			} else if (noMoves == 0) {
 				System.out.println("stalemate black to move");
-//				blackScore -= 150000;
+				// blackScore -= 150000;
 				return 0;
 			}
 

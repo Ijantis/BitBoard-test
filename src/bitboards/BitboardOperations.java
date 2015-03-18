@@ -240,8 +240,9 @@ public class BitboardOperations {
 		}
 		System.out.println();
 	}
-	
-	public static char[][] createArrayFromGamestate(FullGameState state) {
+
+	public static char[][] createArrayFromGamestate(FullGameState state,
+			boolean print) {
 
 		char[][] tempBoard = new char[8][8];
 		for (int i = 0; i < 64; i++) {
@@ -338,7 +339,9 @@ public class BitboardOperations {
 			temp = Long.highestOneBit(temp) ^ temp;
 		}
 
-		printBoard(tempBoard);
+		if (print) {
+			printBoard(tempBoard);
+		}
 		return tempBoard;
 
 	}

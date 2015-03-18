@@ -1,9 +1,5 @@
 package evaluation;
 
-import java.awt.BufferCapabilities.FlipContents;
-import java.util.ArrayList;
-import java.util.Vector;
-
 import movegen.MoveGenerator;
 import bitboards.BitboardOperations;
 import board.FullGameState;
@@ -131,7 +127,9 @@ public class Evaluator {
 			} else {
 				// stalemate
 				if (noMoves == 0) {
-					whiteScore -= 150000;
+					System.out.println("Stalemate white to move");
+//					whiteScore -= 150000;
+					return 0;
 				}
 			}
 		} else {
@@ -143,7 +141,9 @@ public class Evaluator {
 					blackScore -= 200000;
 				}
 			} else if (noMoves == 0) {
-				blackScore -= 150000;
+				System.out.println("stalemate black to move");
+//				blackScore -= 150000;
+				return 0;
 			}
 
 		}

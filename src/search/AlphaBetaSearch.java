@@ -24,6 +24,9 @@ public class AlphaBetaSearch {
 				currentScore = alphaBeta(nextDepth.get(i), depth,
 						Integer.MIN_VALUE, Integer.MAX_VALUE, !whiteToMove,
 						moveOrdering);
+				if (currentScore > 100000) {
+					return nextDepth.get(i);
+				}
 				if (currentScore > bestValue) {
 					bestIndex = i;
 					bestValue = currentScore;
@@ -36,11 +39,13 @@ public class AlphaBetaSearch {
 			int bestIndex = 0;
 			long bestValue = Integer.MAX_VALUE;
 			long currentScore;
-
 			for (int i = 0; i < nextDepth.size(); i++) {
 				currentScore = alphaBeta(nextDepth.get(i), depth,
 						Integer.MAX_VALUE, Integer.MIN_VALUE, !whiteToMove,
 						moveOrdering);
+				if (currentScore < 100000) {
+					return nextDepth.get(i);
+				}
 				if (currentScore < bestValue) {
 					bestIndex = i;
 					bestValue = currentScore;

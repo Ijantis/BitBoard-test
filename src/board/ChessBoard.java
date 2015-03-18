@@ -1,23 +1,16 @@
 package board;
 
-import hash.ZobristKey;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
-import java.util.Random;
 import java.util.Scanner;
 import java.util.Stack;
 
-import evaluation.Evaluator;
 import bitboards.BitboardOperations;
 import bitboards.BlackPieces;
 import bitboards.WhitePieces;
-import main.GameLoop;
 import movegen.MoveGenerator;
 import other.FENLoader;
-import other.PerftTesting;
-//import other.HashGenerator;
 import search.Engine;
 
 public class ChessBoard {
@@ -52,13 +45,26 @@ public class ChessBoard {
 			{ 'R', 'P', ' ', ' ', ' ', ' ', 'p', 'r' } };;
 
 	public ChessBoard() {
-		
+
 		long time = System.currentTimeMillis();
-		
-		newGameFromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
-		makeAIMove(Engine.AI_NORMAL);
-		printBoard();
-		
+
+		newGame();
+		int status;
+
+		while ((status = makeAIMove(Engine.AI_VERY_EASY)) == 1) {
+			continue;
+		}
+
+		if (status == 2) {
+			System.out.println("white wins");
+			printBoard();
+		} else if (status == 3) {
+			System.out.println("black wins");
+			printBoard();
+		} else if (status == 4) {
+			System.out.println("stalemate");
+		}
+
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
 
@@ -294,10 +300,7 @@ public class ChessBoard {
 		blackCastleKing = temp.getBlackCastleKing();
 		blackCastleQueen = temp.getBlackCastleQueen();
 
-		currentBoard[(int) (temp.getToSquare() % 8)][(int) (temp.getToSquare() / 8)] = currentBoard[(int) (temp
-				.getFromSquare() % 8)][(int) (temp.getFromSquare() / 8)];
-		currentBoard[(int) (temp.getFromSquare() % 8)][(int) (temp
-				.getFromSquare() / 8)] = ' ';
+		currentBoard = BitboardOperations.createArrayFromGamestate(temp, false);
 		updateBitboards();
 
 		enPassantSquare = temp.getEnPassantSquare();
@@ -506,7 +509,7 @@ public class ChessBoard {
 
 	private boolean isCheckmate() {
 
-		if (whiteToMove) {
+		if (!whiteToMove) {
 			return (generateWhiteLegalMoves().size() == 0)
 					&& ((whiteKing & getBlackAttackingSquares()) != 0);
 		} else {
@@ -518,7 +521,7 @@ public class ChessBoard {
 
 	private boolean isStalemate() {
 
-		if (whiteToMove) {
+		if (!whiteToMove) {
 			return (generateWhiteLegalMoves().size() == 0)
 					&& ((whiteKing & getBlackAttackingSquares()) == 0);
 		} else {
@@ -884,7 +887,8 @@ public class ChessBoard {
 
 				whiteToMove = !whiteToMove;
 
-				currentBoard = BitboardOperations.createArrayFromGamestate(previousState);
+				currentBoard = BitboardOperations.createArrayFromGamestate(
+						previousState, false);
 			}
 
 		}

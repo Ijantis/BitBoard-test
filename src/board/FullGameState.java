@@ -217,4 +217,20 @@ public class FullGameState {
 		}
 	}
 
+	public int getWhitePieceCount() {
+		return Long.bitCount(whitePawns) + Long.bitCount(whiteRooks)
+				+ Long.bitCount(whiteKnights) + Long.bitCount(whiteBishops)
+				+ Long.bitCount(whiteQueens) + Long.bitCount(whiteKing);
+	}
+
+	public int getBlackPieceCount() {
+		return Long.bitCount(blackPawns) + Long.bitCount(blackRooks)
+				+ Long.bitCount(blackKnights) + Long.bitCount(blackBishops)
+				+ Long.bitCount(blackQueens) + Long.bitCount(blackKing);
+	}
+
+	public int getPieceCount() {
+		return getBlackPieceCount() + getWhitePieceCount();
+	}
+
 }

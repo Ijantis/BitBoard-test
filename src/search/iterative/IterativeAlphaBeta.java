@@ -4,12 +4,11 @@ import java.util.ArrayList;
 
 import search.alphabeta.AlphaBetaSearch;
 import movegen.MoveGenerator;
-import bitboards.BitboardOperations;
 import board.FullGameState;
 
 public class IterativeAlphaBeta {
 
-	private static long time = 150;
+	private static long time = 5000;
 
 	public static FullGameState iterativeAlphaBeta(
 			FullGameState currentGameState, boolean whiteToMove) {
@@ -52,7 +51,9 @@ public class IterativeAlphaBeta {
 						forcedMate = false;
 					}
 					if (currentScore > 100000) {
-						System.out.println("Checkmate for white found at depth " + depth);
+						System.out
+								.println("Checkmate for white found at depth "
+										+ depth);
 						System.out.println("Terminating search...");
 						return nextDepth.get(i);
 					}
@@ -105,7 +106,9 @@ public class IterativeAlphaBeta {
 						forcedMate = false;
 					}
 					if (currentScore < -100000) {
-						System.out.println("Checkmate for black found at depth " + depth);
+						System.out
+								.println("Checkmate for black found at depth "
+										+ depth);
 						System.out.println("Terminating search...");
 						return nextDepth.get(i);
 					}

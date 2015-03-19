@@ -102,16 +102,6 @@ public class Evaluator {
 		long whiteScore = 0;
 		long blackScore = 0;
 
-		/*
-		 * If its white to move and the king is under attack then you need to
-		 * calculate moves
-		 */
-		if (currentGameState.getWhiteToMove()
-				&& (currentGameState.getWhiteKing() & currentGameState
-						.getBlackAttackingSquares()) != 0) {
-
-		}
-
 		// if white to move
 		if (currentGameState.getWhiteToMove()) {
 
@@ -129,7 +119,6 @@ public class Evaluator {
 				// stalemate
 				if (noMoves == 0) {
 					// System.out.println("Stalemate white to move");
-					// whiteScore -= 150000;
 					return 0;
 				}
 			}
@@ -144,7 +133,6 @@ public class Evaluator {
 				}
 			} else if (noMoves == 0) {
 				// System.out.println("stalemate black to move");
-				// blackScore -= 150000;
 				return 0;
 			}
 
@@ -159,11 +147,11 @@ public class Evaluator {
 		blackScore -= evaluateBlackPawnStructure(currentGameState);
 
 		// hanging pieces
-		whiteScore += evaluateWhiteProtectedHangingPieces(currentGameState);
-		blackScore -= evaluateBlackProtectedHangingPieces(currentGameState);
-
-		whiteScore += evaluateWhiteCentralControl(currentGameState);
-		blackScore -= evaluateBlackCentralControl(currentGameState);
+//		whiteScore += evaluateWhiteProtectedHangingPieces(currentGameState);
+//		blackScore -= evaluateBlackProtectedHangingPieces(currentGameState);
+//
+//		whiteScore += evaluateWhiteCentralControl(currentGameState);
+//		blackScore -= evaluateBlackCentralControl(currentGameState);
 
 		// this evaluates negatively for black
 		// whiteScore += evaluatePositional(currentGameState.getCurrentBoard(),
@@ -172,7 +160,7 @@ public class Evaluator {
 		// System.out.println("White score " + whiteScore);
 		// System.out.println("Black score " + blackScore);
 
-		return whiteScore - blackScore;
+		return whiteScore + blackScore;
 
 	}
 

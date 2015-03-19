@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import java.util.Scanner;
 import java.util.Stack;
 
+import evaluation.Evaluator;
 import bitboards.BitboardOperations;
 import bitboards.BlackPieces;
 import bitboards.WhitePieces;
@@ -48,39 +49,13 @@ public class ChessBoard {
 
 		long time = System.currentTimeMillis();
 
-		newGame();
-		int status;
-
-		while ((status = makeAIMove(Engine.AI_VERY_EASY)) == 1) {
-			continue;
-		}
-
-		if (status == 2) {
-			System.out.println("white wins");
-			printBoard();
-		} else if (status == 3) {
-			System.out.println("black wins");
-			printBoard();
-		} else if (status == 4) {
-			System.out.println("stalemate");
-		}
+		newGameFromFEN("B7/K1B1p1Q1/5r2/7p/1P1kp1bR/3P3R/1P1NP3/2n5 w - - 0 1");
+		makeAIMove(Engine.AI_ITERATIVE);
+		printBoard();
 
 		System.out.println("That took :" + (System.currentTimeMillis() - time)
 				+ "ms");
 
-	}
-
-	private long deleteMe(int i) {
-		long time = System.currentTimeMillis();
-		long timeNano = System.nanoTime();
-
-		System.out.println(generateDepthMoves(i));
-
-		System.out.println("That took :" + (System.currentTimeMillis() - time)
-				+ "ms");
-		System.out.println("That took :"
-				+ ((System.nanoTime() - timeNano) / 1000) + " micro seconds");
-		return System.currentTimeMillis() - time;
 	}
 
 	private void printStatus() {

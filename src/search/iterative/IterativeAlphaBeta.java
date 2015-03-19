@@ -29,14 +29,11 @@ public class IterativeAlphaBeta {
 			long currentTime = System.currentTimeMillis();
 
 			while ((System.currentTimeMillis() - currentTime) < 5000) {
-
+				forcedMate = true;
 				System.out.println();
 				System.out.println("Attempting depth " + depth);
 				for (int i = 0; i < nextDepth.size(); i++) {
-					// remove this at some point
-					if (depth > 15) {
-						break;
-					}
+
 					if ((System.currentTimeMillis() - currentTime) > 5000) {
 						break;
 					}
@@ -77,10 +74,7 @@ public class IterativeAlphaBeta {
 
 			while ((System.currentTimeMillis() - currentTime) < 5000) {
 				boolean forcedMate = true;
-				// remove this at some point
-				if (depth > 15) {
-					break;
-				}
+
 				System.out.println();
 				System.out.println("Attempting depth " + depth);
 				for (int i = 0; i < nextDepth.size(); i++) {

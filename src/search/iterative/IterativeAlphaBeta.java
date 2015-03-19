@@ -25,6 +25,7 @@ public class IterativeAlphaBeta {
 			int bestIndex = 0;
 			long currentScore;
 			int depth = 0;
+			boolean forcedMate = true;
 			long currentTime = System.currentTimeMillis();
 
 			while ((System.currentTimeMillis() - currentTime) < 5000) {
@@ -42,6 +43,9 @@ public class IterativeAlphaBeta {
 					currentScore = AlphaBetaSearch.alphaBeta(nextDepth.get(i),
 							depth, Integer.MIN_VALUE, Integer.MAX_VALUE,
 							!whiteToMove, depth - 2);
+					if (currentScore > -100000) {
+						forcedMate = false;
+					}
 					if (currentScore > 100000) {
 						System.out.println("Checkmate found at depth " + depth);
 						System.out.println("Terminating search...");
@@ -53,7 +57,10 @@ public class IterativeAlphaBeta {
 						bestIndex = i;
 					}
 				}
-
+				if (forcedMate) {
+					System.out.println("Forced mate found for black");
+					break;
+				}
 				System.out.println("Finished calculating depth " + depth);
 				System.out.println("Best index at depth " + depth + " is "
 						+ bestIndex);
@@ -69,6 +76,7 @@ public class IterativeAlphaBeta {
 			long currentTime = System.currentTimeMillis();
 
 			while ((System.currentTimeMillis() - currentTime) < 5000) {
+				boolean forcedMate = true;
 				// remove this at some point
 				if (depth > 15) {
 					break;
@@ -83,6 +91,9 @@ public class IterativeAlphaBeta {
 					currentScore = AlphaBetaSearch.alphaBeta(nextDepth.get(i),
 							depth, Integer.MAX_VALUE, Integer.MIN_VALUE,
 							!whiteToMove, depth - 2);
+					if (currentScore < 100000) {
+						forcedMate = false;
+					}
 					if (currentScore < -100000) {
 						System.out.println("Checkmate found at depth " + depth);
 						System.out.println("Terminating search...");
@@ -94,7 +105,10 @@ public class IterativeAlphaBeta {
 						bestIndex = i;
 					}
 				}
-
+				if (forcedMate) {
+					System.out.println("Forced mate found for white");
+					break;
+				}
 				System.out.println("Finished calculating depth " + depth);
 				System.out.println("Best index at depth " + depth + " is "
 						+ bestIndex);

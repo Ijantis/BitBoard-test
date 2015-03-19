@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import search.alphabeta.AlphaBetaSearch;
 import movegen.MoveGenerator;
+import bitboards.BitboardOperations;
 import board.FullGameState;
 
 public class IterativeAlphaBeta {
@@ -31,13 +32,16 @@ public class IterativeAlphaBeta {
 				System.out.println();
 				System.out.println("Attempting depth " + depth);
 				for (int i = 0; i < nextDepth.size(); i++) {
-
+					// remove this at some point
+					if (depth > 15) {
+						break;
+					}
 					if ((System.currentTimeMillis() - currentTime) > 5000) {
 						break;
 					}
 					currentScore = AlphaBetaSearch.alphaBeta(nextDepth.get(i),
 							depth, Integer.MIN_VALUE, Integer.MAX_VALUE,
-							whiteToMove, depth - 2);
+							!whiteToMove, depth - 2);
 					if (currentScore > 100000) {
 						System.out.println("Checkmate found at depth " + depth);
 						System.out.println("Terminating search...");
@@ -65,7 +69,10 @@ public class IterativeAlphaBeta {
 			long currentTime = System.currentTimeMillis();
 
 			while ((System.currentTimeMillis() - currentTime) < 5000) {
-
+				// remove this at some point
+				if (depth > 15) {
+					break;
+				}
 				System.out.println();
 				System.out.println("Attempting depth " + depth);
 				for (int i = 0; i < nextDepth.size(); i++) {
@@ -75,7 +82,7 @@ public class IterativeAlphaBeta {
 					}
 					currentScore = AlphaBetaSearch.alphaBeta(nextDepth.get(i),
 							depth, Integer.MAX_VALUE, Integer.MIN_VALUE,
-							whiteToMove, depth - 2);
+							!whiteToMove, depth - 2);
 					if (currentScore < -100000) {
 						System.out.println("Checkmate found at depth " + depth);
 						System.out.println("Terminating search...");

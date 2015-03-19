@@ -122,12 +122,13 @@ public class Evaluator {
 					.getBlackAttackingSquares()) != 0) {
 				// checkmate
 				if (noMoves == 0) {
-					whiteScore -= 200000;
+					// System.out.println("Checkmate for black");
+					return -200000;
 				}
 			} else {
 				// stalemate
 				if (noMoves == 0) {
-					System.out.println("Stalemate white to move");
+					// System.out.println("Stalemate white to move");
 					// whiteScore -= 150000;
 					return 0;
 				}
@@ -138,10 +139,11 @@ public class Evaluator {
 			if ((currentGameState.getBlackKing() & currentGameState
 					.getWhiteAttackingSquares()) != 0) {
 				if (noMoves == 0) {
-					blackScore -= 200000;
+					// System.out.println("Checkmate for white");
+					return 200000;
 				}
 			} else if (noMoves == 0) {
-				System.out.println("stalemate black to move");
+				// System.out.println("stalemate black to move");
 				// blackScore -= 150000;
 				return 0;
 			}
@@ -150,18 +152,18 @@ public class Evaluator {
 
 		// material
 		whiteScore += evaluateWhiteMaterial(currentGameState);
-		blackScore += evaluateBlackMaterial(currentGameState);
+		blackScore -= evaluateBlackMaterial(currentGameState);
 
 		// pawn structure
 		whiteScore += evaluateWhitePawnStructure(currentGameState);
-		blackScore += evaluateBlackPawnStructure(currentGameState);
+		blackScore -= evaluateBlackPawnStructure(currentGameState);
 
 		// hanging pieces
 		whiteScore += evaluateWhiteProtectedHangingPieces(currentGameState);
-		blackScore += evaluateBlackProtectedHangingPieces(currentGameState);
+		blackScore -= evaluateBlackProtectedHangingPieces(currentGameState);
 
 		whiteScore += evaluateWhiteCentralControl(currentGameState);
-		blackScore += evaluateBlackCentralControl(currentGameState);
+		blackScore -= evaluateBlackCentralControl(currentGameState);
 
 		// this evaluates negatively for black
 		// whiteScore += evaluatePositional(currentGameState.getCurrentBoard(),

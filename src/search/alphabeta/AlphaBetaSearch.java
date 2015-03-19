@@ -91,21 +91,30 @@ public class AlphaBetaSearch {
 			return Evaluator.evaluatePosition(currentGameState);
 		}
 
+		// maximising player
 		if (whiteToMove) {
+
+			// Move ordering for speed up
 			if (moveOrderingDepth > 0) {
 				ArrayList<FullGameState> nextDepth = MoveGenerator
 						.generateWhiteLegalMoves(currentGameState);
+
+				// if the next depth contains no nodes then we just evaluate and
+				// return
 				if (nextDepth.size() == 0) {
 					return Evaluator.evaluatePosition(currentGameState);
 				}
 				TreeMap<Long, FullGameState> orderedNextDepth = new TreeMap<Long, FullGameState>();
+
 				// sorting the moves in order
 				for (int i = 0; i < nextDepth.size(); i++) {
 					orderedNextDepth.put(
 							Evaluator.evaluatePosition(nextDepth.get(i)),
 							nextDepth.get(i));
 				}
+
 				long value = Integer.MIN_VALUE;
+
 				// going through each move
 				for (int i = 0; i < orderedNextDepth.size(); i++) {
 					value = Math.max(
@@ -114,25 +123,34 @@ public class AlphaBetaSearch {
 									.lastKey()), depth - 1, alpha, beta,
 									!whiteToMove, moveOrderingDepth - 1));
 					alpha = Math.max(alpha, value);
+
 					if (alpha >= beta) {
 						break;
 					}
 				}
 				return value;
+
 				// without move ordering
 			} else {
+
 				long value = Integer.MIN_VALUE;
 				ArrayList<FullGameState> nextDepth = MoveGenerator
 						.generateWhiteLegalMoves(currentGameState);
+
+				// if the next depth contains no nodes then we just evaluate and
+				// return
 				if (nextDepth.size() == 0) {
 					return Evaluator.evaluatePosition(currentGameState);
 				}
+
+				// going through each move
 				for (int i = 0; i < nextDepth.size(); i++) {
 					value = Math.max(
 							value,
 							alphaBeta(nextDepth.get(i), depth - 1, alpha, beta,
 									!whiteToMove, 0));
 					alpha = Math.max(alpha, value);
+
 					if (alpha >= beta) {
 						break;
 					}

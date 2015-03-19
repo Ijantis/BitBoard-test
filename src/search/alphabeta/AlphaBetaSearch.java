@@ -1,4 +1,4 @@
-package search;
+package search.alphabeta;
 
 import java.util.ArrayList;
 import java.util.TreeMap;
@@ -11,7 +11,8 @@ public class AlphaBetaSearch {
 
 	public static FullGameState calculateAlphaBeta(
 			FullGameState currentGameState, boolean whiteToMove,
-			ArrayList<FullGameState> nextDepth, int depth) {
+			ArrayList<FullGameState> nextDepth) {
+		int depth = 4;
 		int moveOrderingDepth = depth - 2;
 
 		if (whiteToMove) {
@@ -65,7 +66,7 @@ public class AlphaBetaSearch {
 			nextDepth = MoveGenerator.generateBlackLegalMoves(currentGameState);
 		}
 
-		return calculateAlphaBeta(currentGameState, whiteToMove, nextDepth, 4);
+		return calculateAlphaBeta(currentGameState, whiteToMove, nextDepth);
 	}
 
 	/**

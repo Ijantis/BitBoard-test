@@ -3,69 +3,40 @@ package search;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import board.FullGameState;
 import movegen.MoveGenerator;
 import evaluation.Evaluator;
+import board.FullGameState;
 
-public class AlphaBetaSearch {
+public class AlphaBetaThread extends Thread {
 
-	public static FullGameState calculateAlphaBeta(
-			FullGameState currentGameState, boolean whiteToMove,
-			ArrayList<FullGameState> nextDepth, int depth) {
-		int moveOrderingDepth = depth - 2;
+	private long positionScore;
+	private FullGameState currentState;
+	private int depth;
+	private long alpha;
+	private long beta;
+	private boolean whiteToMove;
+	private int shouldOrder;
 
-		if (whiteToMove) {
-			int bestIndex = 0;
-			long bestValue = Integer.MIN_VALUE;
-			long currentScore;
+	public AlphaBetaThread(FullGameState currentGameState, int depth,
+			long alpha, long beta, boolean whiteToMove, int shouldOrder) {
 
-			for (int i = 0; i < nextDepth.size(); i++) {
-				currentScore = alphaBeta(nextDepth.get(i), depth,
-						Integer.MIN_VALUE, Integer.MAX_VALUE, !whiteToMove,
-						moveOrderingDepth);
-				if (currentScore > 100000) {
-					return nextDepth.get(i);
-				}
-				if (currentScore > bestValue) {
-					bestIndex = i;
-					bestValue = currentScore;
-				}
-			}
+		this.currentState = currentGameState;
+		this.depth = depth;
+		this.alpha = alpha;
+		this.beta = beta;
+		this.whiteToMove = whiteToMove;
+		this.shouldOrder = shouldOrder;
 
-			return nextDepth.get(bestIndex);
-
-		} else {
-			int bestIndex = 0;
-			long bestValue = Integer.MAX_VALUE;
-			long currentScore;
-			for (int i = 0; i < nextDepth.size(); i++) {
-				currentScore = alphaBeta(nextDepth.get(i), depth,
-						Integer.MAX_VALUE, Integer.MIN_VALUE, !whiteToMove,
-						moveOrderingDepth);
-				if (currentScore < -100000) {
-					return nextDepth.get(i);
-				}
-				if (currentScore < bestValue) {
-					bestIndex = i;
-					bestValue = currentScore;
-				}
-			}
-
-			return nextDepth.get(bestIndex);
-		}
 	}
 
-	public static FullGameState calculateAlphaBeta(
-			FullGameState currentGameState, boolean whiteToMove) {
+	public long getScore() {
+		return this.positionScore;
+	}
 
-		ArrayList<FullGameState> nextDepth;
-		if (whiteToMove) {
-			nextDepth = MoveGenerator.generateWhiteLegalMoves(currentGameState);
-		} else {
-			nextDepth = MoveGenerator.generateBlackLegalMoves(currentGameState);
-		}
-
-		return calculateAlphaBeta(currentGameState, whiteToMove, nextDepth, 4);
+	@Override
+	public void run() {
+		positionScore = alphaBeta(this.currentState, this.depth, this.alpha,
+				this.beta, this.whiteToMove, this.shouldOrder);
 	}
 
 	/**
@@ -78,20 +49,20 @@ public class AlphaBetaSearch {
 	 * @param beta
 	 * @param whiteToMove
 	 *            - White to move.
-	 * @param moveOrderingDepth
+	 * @param shouldOrder
 	 *            - Whether or not this call should order the list of moves or
 	 *            not.
 	 * @return - The evaluation of the position to a given depth.
 	 */
 	public static long alphaBeta(FullGameState currentGameState, int depth,
-			long alpha, long beta, boolean whiteToMove, int moveOrderingDepth) {
+			long alpha, long beta, boolean whiteToMove, int shouldOrder) {
 
 		if (depth == 0) {
 			return Evaluator.evaluatePosition(currentGameState);
 		}
 
 		if (whiteToMove) {
-			if (moveOrderingDepth > 0) {
+			if (shouldOrder > 0) {
 				ArrayList<FullGameState> nextDepth = MoveGenerator
 						.generateWhiteLegalMoves(currentGameState);
 				if (nextDepth.size() == 0) {
@@ -111,7 +82,7 @@ public class AlphaBetaSearch {
 							value,
 							alphaBeta(orderedNextDepth.get(orderedNextDepth
 									.lastKey()), depth - 1, alpha, beta,
-									!whiteToMove, moveOrderingDepth - 1));
+									!whiteToMove, shouldOrder - 1));
 					alpha = Math.max(alpha, value);
 					if (alpha >= beta) {
 						break;
@@ -141,7 +112,7 @@ public class AlphaBetaSearch {
 		}
 
 		else {
-			if (moveOrderingDepth > 0) {
+			if (shouldOrder > 0) {
 				ArrayList<FullGameState> nextDepth = MoveGenerator
 						.generateBlackLegalMoves(currentGameState);
 				if (nextDepth.size() == 0) {
@@ -161,7 +132,7 @@ public class AlphaBetaSearch {
 							value,
 							alphaBeta(orderedNextDepth.get(orderedNextDepth
 									.firstKey()), depth - 1, alpha, beta,
-									!whiteToMove, moveOrderingDepth - 1));
+									!whiteToMove, shouldOrder - 1));
 					orderedNextDepth.remove(orderedNextDepth.firstKey());
 					beta = Math.min(beta, value);
 					if (alpha >= beta) {

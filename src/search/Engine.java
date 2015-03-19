@@ -18,6 +18,7 @@ public class Engine {
 	public static final int AI_VERY_EASY = 1;
 	public static final int AI_EASY = 2;
 	public static final int AI_NORMAL = 3;
+	public static final int AI_THREAD = 4;
 
 	public static FullGameState makeMove(int difficulty, boolean whiteToMove,
 			FullGameState currentGameState) {
@@ -32,6 +33,9 @@ public class Engine {
 					whiteToMove);
 		case AI_NORMAL:
 			return makeNormalMove(currentGameState, whiteToMove);
+		case AI_THREAD:
+			return ThreadManager.alphaBetaThreaded(currentGameState,
+					whiteToMove);
 		default:
 			return null;
 		}

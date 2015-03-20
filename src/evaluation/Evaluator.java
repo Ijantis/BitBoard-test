@@ -101,7 +101,7 @@ public class Evaluator {
 
 		long whiteScore = 0;
 		long blackScore = 0;
-
+		
 		// if white to move
 		if (currentGameState.getWhiteToMove()) {
 
@@ -147,11 +147,11 @@ public class Evaluator {
 		blackScore -= evaluateBlackPawnStructure(currentGameState);
 
 		// hanging pieces
-//		whiteScore += evaluateWhiteProtectedHangingPieces(currentGameState);
-//		blackScore -= evaluateBlackProtectedHangingPieces(currentGameState);
+		whiteScore += evaluateWhiteProtectedHangingPieces(currentGameState);
+		blackScore -= evaluateBlackProtectedHangingPieces(currentGameState);
 //
-//		whiteScore += evaluateWhiteCentralControl(currentGameState);
-//		blackScore -= evaluateBlackCentralControl(currentGameState);
+		whiteScore += evaluateWhiteCentralControl(currentGameState);
+		blackScore -= evaluateBlackCentralControl(currentGameState);
 
 		// this evaluates negatively for black
 		// whiteScore += evaluatePositional(currentGameState.getCurrentBoard(),

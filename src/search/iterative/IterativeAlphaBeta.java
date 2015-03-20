@@ -8,7 +8,7 @@ import board.FullGameState;
 
 public class IterativeAlphaBeta {
 
-	private static long time = 5000;
+	private static long timeLimit = 60000;
 
 	public static FullGameState iterativeAlphaBeta(
 			FullGameState currentGameState, boolean whiteToMove) {
@@ -21,119 +21,136 @@ public class IterativeAlphaBeta {
 			nextDepth = MoveGenerator.generateBlackLegalMoves(currentGameState);
 		}
 
+		// maximising player
 		if (whiteToMove) {
-			long bestValue = Integer.MIN_VALUE;
+
+			int currentDepth = 0;
 			int bestIndex = 0;
-			long currentScore;
-			int depth = 0;
-			boolean forcedMate = true;
-			long currentTime = System.currentTimeMillis();
-			System.out.println("Playing white");
+			System.out.println("Initialising iterative deepening for white");
+			long timeAtStart = System.currentTimeMillis();
 
-			while ((System.currentTimeMillis() - currentTime) < time) {
-				boolean terminatedEarly = false;
-				bestValue = Integer.MIN_VALUE;
-				forcedMate = true;
+			// The begining of the iterative deepening
+			while ((System.currentTimeMillis() - timeAtStart) < timeLimit
+					&& currentDepth < 2) {
 				System.out.println();
-				System.out.println("Attempting depth " + depth);
-				int currentIndex = 0;
+				System.out.println("Starting search at depth " + currentDepth);
+				long bestScore = Integer.MIN_VALUE;
+				int currentBestIndex = 0;
+				long currentScore;
+				boolean terminatedEarly = false;
 
+				// looping through
 				for (int i = 0; i < nextDepth.size(); i++) {
-					if ((System.currentTimeMillis() - currentTime) > time) {
+					// this checks to see if we run out of time during the
+					// current depth
+					if ((System.currentTimeMillis() - timeAtStart) > timeLimit) {
+						System.out
+								.println("Search terminated early due to time constraint");
 						terminatedEarly = true;
-						System.out.println("RAN OUT OF TIME AT DEPTH " + depth);
 						break;
 					}
 					currentScore = AlphaBetaSearch.alphaBeta(nextDepth.get(i),
-							depth, Integer.MIN_VALUE, Integer.MAX_VALUE,
-							!whiteToMove, depth - 2);
-					if (currentScore > -100000) {
-						forcedMate = false;
-					}
+							currentDepth, Integer.MIN_VALUE, Integer.MAX_VALUE,
+							!whiteToMove, currentDepth - 2);
+					// we check to see if a forced mate is found.
 					if (currentScore > 100000) {
-						System.out
-								.println("Checkmate for white found at depth "
-										+ depth);
-						System.out.println("Terminating search...");
+						System.out.println("Checkmate found for white");
 						return nextDepth.get(i);
 					}
-					if (currentScore > bestValue) {
-						bestValue = currentScore;
-						currentIndex = i;
+
+					// if the current evaluation is better update the index
+					if (currentScore > bestScore) {
+						System.out.println("New best index " + i + " at depth "
+								+ currentDepth);
+						currentBestIndex = i;
+						bestScore = currentScore;
 					}
 				}
+				// end of current search at this depth
+
+				// if the search was terminated early we disregard the
+				// currentIndex
 				if (terminatedEarly) {
+					System.out
+							.println("Search was terminated early with current best index "
+									+ currentBestIndex);
+					System.out.println("Best index from previous depth is "
+							+ bestIndex);
 					return nextDepth.get(bestIndex);
+				} else {
+					bestIndex = currentBestIndex;
 				}
-				if (forcedMate) {
-					System.out.println("Forced mate found for black");
-					break;
-				}
-				System.out.println("Finished calculating depth " + depth);
-				System.out.println("Best index at depth " + depth + " is "
-						+ bestIndex);
-				depth++;
-				bestIndex = currentIndex;
+				System.out.println("Finished search at depth " + currentDepth);
+				currentDepth++;
 			}
+			// once time has run out this is run
 			return nextDepth.get(bestIndex);
 
+			// minimizing player
 		} else {
-			long bestValue = Integer.MAX_VALUE;
+
+			int currentDepth = 0;
 			int bestIndex = 0;
-			long currentScore;
-			int depth = 0;
-			System.out.println("Playing black");
-			long currentTime = System.currentTimeMillis();
+			System.out.println("Initialising iterative deepening for black");
+			long timeAtStart = System.currentTimeMillis();
 
-			while ((System.currentTimeMillis() - currentTime) < time) {
-				boolean terminatedEarly = false;
-				bestValue = Integer.MAX_VALUE;
-				boolean forcedMate = true;
+			// The begining of the iterative deepening
+			while ((System.currentTimeMillis() - timeAtStart) < timeLimit) {
 				System.out.println();
-				System.out.println("Attempting depth " + depth);
-				int currentIndex = 0;
-				for (int i = 0; i < nextDepth.size(); i++) {
+				System.out.println("Starting search at depth " + currentDepth);
+				long bestScore = Integer.MAX_VALUE;
+				int currentBestIndex = 0;
+				long currentScore;
+				boolean terminatedEarly = false;
 
-					if ((System.currentTimeMillis() - currentTime) > time) {
+				// looping through
+				for (int i = 0; i < nextDepth.size(); i++) {
+					// this checks to see if we run out of time during the
+					// current depth
+					if ((System.currentTimeMillis() - timeAtStart) > timeLimit) {
+						System.out
+								.println("Search terminated early due to time constraint");
 						terminatedEarly = true;
-						System.out.println("RAN OUT OF TIME AT DEPTH " + depth);
 						break;
 					}
 					currentScore = AlphaBetaSearch.alphaBeta(nextDepth.get(i),
-							depth, Integer.MAX_VALUE, Integer.MIN_VALUE,
-							!whiteToMove, depth - 2);
-					if (currentScore < 100000) {
-						forcedMate = false;
-					}
+							currentDepth, Integer.MAX_VALUE, Integer.MIN_VALUE,
+							!whiteToMove, currentDepth - 2);
+					// we check to see if a forced mate is found.
 					if (currentScore < -100000) {
-						System.out
-								.println("Checkmate for black found at depth "
-										+ depth);
-						System.out.println("Terminating search...");
+						System.out.println("Checkmate found for white");
 						return nextDepth.get(i);
 					}
 
-					if (currentScore < bestValue) {
-						bestValue = currentScore;
-						currentIndex = i;
+					// if the current evaluation is better update the index
+					if (currentScore < bestScore) {
+						System.out.println("New best index " + i + " at depth "
+								+ currentDepth);
+						currentBestIndex = i;
+						bestScore = currentScore;
 					}
 				}
-				if (terminatedEarly) {
-					return nextDepth.get(bestIndex);
-				}
-				if (forcedMate) {
-					System.out.println("Forced mate found for white");
-					break;
-				}
-				System.out.println("Finished calculating depth " + depth);
-				System.out.println("Best index at depth " + depth + " is "
-						+ bestIndex);
-				depth++;
-				bestIndex = currentIndex;
-			}
-			return nextDepth.get(bestIndex);
-		}
+				// end of current search at this depth
 
+				// if the search was terminated early we disregard the
+				// currentIndex
+				if (terminatedEarly) {
+					System.out
+							.println("Search was terminated early with current best index "
+									+ currentBestIndex);
+					System.out.println("Best index from previous depth is "
+							+ bestIndex);
+					return nextDepth.get(bestIndex);
+				} else {
+					bestIndex = currentBestIndex;
+				}
+				System.out.println("Finished search at depth " + currentDepth);
+				currentDepth++;
+			}
+			// once time has run out this is run
+			return nextDepth.get(bestIndex);
+
+		}
 	}
 
 }

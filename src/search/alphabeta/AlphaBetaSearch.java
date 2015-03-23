@@ -119,7 +119,7 @@ public class AlphaBetaSearch {
 				for (int i = 0; i < orderedNextDepth.size(); i++) {
 					value = Math.max(
 							value,
-							alphaBeta(orderedNextDepth.get(orderedNextDepth
+							alphaBeta(orderedNextDepth.remove(orderedNextDepth
 									.lastKey()), depth - 1, alpha, beta,
 									!whiteToMove, moveOrderingDepth - 1));
 					alpha = Math.max(alpha, value);
@@ -178,10 +178,9 @@ public class AlphaBetaSearch {
 				for (int i = 0; i < orderedNextDepth.size(); i++) {
 					value = Math.min(
 							value,
-							alphaBeta(orderedNextDepth.get(orderedNextDepth
+							alphaBeta(orderedNextDepth.remove(orderedNextDepth
 									.firstKey()), depth - 1, alpha, beta,
 									!whiteToMove, moveOrderingDepth - 1));
-					orderedNextDepth.remove(orderedNextDepth.firstKey());
 					beta = Math.min(beta, value);
 					if (alpha >= beta) {
 						break;

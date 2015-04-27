@@ -30,8 +30,7 @@ public class IterativeAlphaBeta {
 			long timeAtStart = System.currentTimeMillis();
 
 			// The begining of the iterative deepening
-			while ((System.currentTimeMillis() - timeAtStart) < timeLimit
-					&& currentDepth < 2) {
+			while ((System.currentTimeMillis() - timeAtStart) < timeLimit) {
 				System.out.println();
 				System.out.println("Starting search at depth " + currentDepth);
 				long bestScore = Integer.MIN_VALUE;
@@ -54,7 +53,7 @@ public class IterativeAlphaBeta {
 							!whiteToMove, currentDepth - 2);
 					// we check to see if a forced mate is found.
 					if (currentScore > 100000) {
-						System.out.println("Checkmate found for white");
+						System.out.println("Checkmate found for white at index " + i);
 						return nextDepth.get(i);
 					}
 
@@ -118,7 +117,7 @@ public class IterativeAlphaBeta {
 							!whiteToMove, currentDepth - 2);
 					// we check to see if a forced mate is found.
 					if (currentScore < -100000) {
-						System.out.println("Checkmate found for white");
+						System.out.println("Checkmate found for black at index " + i);
 						return nextDepth.get(i);
 					}
 

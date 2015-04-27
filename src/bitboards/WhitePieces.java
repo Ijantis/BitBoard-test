@@ -20,10 +20,8 @@ public class WhitePieces {
 		long upOne = (whitePawns << 8) & ~occupiedSquares;
 
 		// Moving up 2 spaces from 2nd rank
-		long secondRankPawns = whitePawns & BitboardOperations.maskRank(2);
-		long pawnsNotBlocked = (((secondRankPawns << 8) & ~occupiedSquares) >>> 8);
-		long upTwo = pawnsNotBlocked << 16 & ~occupiedSquares;
-
+		long upTwo = ((upOne & BitboardOperations.maskRank(3)) << 8) &~occupiedSquares;
+		
 		return upOne | upTwo;
 	}
 

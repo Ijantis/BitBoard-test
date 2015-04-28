@@ -8,7 +8,7 @@ import board.FullGameState;
 
 public class IterativeAlphaBeta {
 
-	private static long timeLimit = 60000;
+	private static long timeLimit = 2000;
 
 	public static FullGameState iterativeAlphaBeta(
 			FullGameState currentGameState, boolean whiteToMove) {
@@ -153,3 +153,60 @@ public class IterativeAlphaBeta {
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

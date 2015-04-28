@@ -1,0 +1,10 @@
+quit -  Close the program.
+help -  Display the help text.
+d2d4 -  Move a piece.
+h7h8Q - Move resulting in a promotion [Q,R,N,B,q,r,n,b]
+disp - Show the board.
+clear - Clear the console.
+perft# -
+setboard <FEN> - Sets the board position to the following FEN.
+testmovegen - Tests the move generator against a test suite.
+engine - Toggle the engine

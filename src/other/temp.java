@@ -160,25 +160,20 @@ public class AlphaBetaSearch {
 		}
 
 		else {
-			
 			if (moveOrderingDepth > 0) {
 				ArrayList<FullGameState> nextDepth = MoveGenerator
 						.generateBlackLegalMoves(currentGameState);
-				
 				if (nextDepth.size() == 0) {
 					return Evaluator.evaluatePosition(currentGameState);
 				}
 				TreeMap<Long, FullGameState> orderedNextDepth = new TreeMap<Long, FullGameState>();
-				
 				// sorting the moves in order
 				for (int i = 0; i < nextDepth.size(); i++) {
 					orderedNextDepth.put(
 							Evaluator.evaluatePosition(nextDepth.get(i)),
 							nextDepth.get(i));
 				}
-				
 				long value = Integer.MAX_VALUE;
-				
 				// going through each move
 				for (int i = 0; i < orderedNextDepth.size(); i++) {
 					value = Math.min(
@@ -197,18 +192,15 @@ public class AlphaBetaSearch {
 				long value = Integer.MAX_VALUE;
 				ArrayList<FullGameState> nextDepth = MoveGenerator
 						.generateBlackLegalMoves(currentGameState);
-				
 				if (nextDepth.size() == 0) {
 					return Evaluator.evaluatePosition(currentGameState);
 				}
-				
 				for (int i = 0; i < nextDepth.size(); i++) {
 					value = Math.min(
 							value,
 							alphaBeta(nextDepth.get(i), depth - 1, alpha, beta,
 									!whiteToMove, 0));
 					beta = Math.min(beta, value);
-					
 					if (alpha >= beta) {
 						break;
 					}
@@ -220,62 +212,3 @@ public class AlphaBetaSearch {
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

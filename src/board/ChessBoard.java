@@ -47,15 +47,6 @@ public class ChessBoard {
 
 	public ChessBoard() {
 
-		long time = System.currentTimeMillis();
-
-		newGameFromFEN("B7/K1B1p1Q1/5r2/7p/1P1kp1bR/3P3R/1P1NP3/2n5 w - - 0 1");
-		makeAIMove(Engine.AI_ITERATIVE);
-		printBoard();
-
-		System.out.println("That took :" + (System.currentTimeMillis() - time)
-				+ "ms");
-
 	}
 
 	private void printStatus() {

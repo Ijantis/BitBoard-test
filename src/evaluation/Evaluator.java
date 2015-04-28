@@ -101,7 +101,7 @@ public class Evaluator {
 
 		long whiteScore = 0;
 		long blackScore = 0;
-		
+
 		// if white to move
 		if (currentGameState.getWhiteToMove()) {
 
@@ -149,7 +149,7 @@ public class Evaluator {
 		// hanging pieces
 		whiteScore += evaluateWhiteProtectedHangingPieces(currentGameState);
 		blackScore -= evaluateBlackProtectedHangingPieces(currentGameState);
-//
+		//
 		whiteScore += evaluateWhiteCentralControl(currentGameState);
 		blackScore -= evaluateBlackCentralControl(currentGameState);
 
@@ -157,8 +157,9 @@ public class Evaluator {
 		// whiteScore += evaluatePositional(currentGameState.getCurrentBoard(),
 		// Long.bitCount(currentGameState.getAllPieces()));
 
-		// System.out.println("White score " + whiteScore);
-		// System.out.println("Black score " + blackScore);
+		System.out.println("White score " + whiteScore);
+		System.out.println("Black score " + blackScore);
+		System.out.println(whiteScore + blackScore);
 
 		return whiteScore + blackScore;
 
